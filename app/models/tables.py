@@ -74,11 +74,20 @@ blog_api_table_preliminary = (
     status status_type DEFAULT 'drafted',
     created_at TIMESTAMPZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ,
-    FOREIGN KEY tag_id REFERENCES tags(tag_id)
+    FOREIGN KEY tag_id REFERENCES tags(tag_id),
+    FOREIGN KEY user_id REFERENCES user(user_id)
     )
     """,
     """
-    CREATE TABLE IF NOT EXISTS comment
+    CREATE TABLE IF NOT EXISTS comments(
+    comment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    content TEXT NOT NULL,
+    post_id UUID NOT NULL, 
+    user_id UUID NOT NULL,
+    parent_comment_id UUID FOREIGN KEY REFERENCES comments(comment_id),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    FOREIGN KEY user_id REFERENCES users(user_id)
+    FOREIGN KEY post_id REFERENCED posts(post_id))
 
     """
 )
