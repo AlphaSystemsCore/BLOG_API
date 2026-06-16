@@ -15,11 +15,22 @@ blog_api_table_preliminary = (
     credential_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT NOT NULL UNIQUE,
     hashed_password TEXT NOT NULL UNIQUE,
-    is_verified BOOLEAN DEFAULT 'false',
-    is_revoked BOOLEAN DEFAULT 'false',
+    is_verified BOOLEAN DEFAULT false,
+    is_revoked BOOLEAN DEFAULT false,
     created_at TIMESTAMPTZ DEFAULT NOW()
     )
     """,
+    """
+    CREATE TABLE IF NOT EXISTS email_verification(
+    token_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    hashed_token TEXT NOT NULL,
+    credential_id UUID NOT NULL,
+    is_used BOOLEAN DEFAULT false,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ,
+
+    )
+    """
     """
     CREATE TABLE IF NOT EXISTS roles(
     role_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -47,7 +58,8 @@ blog_api_table_preliminary = (
     username VARCHAR(80),
     role_id INTEGER NOT NULL,
     credential_id UUID NOT NULL UNIQUE,
-    created_at TIMSTAMPTZ DEFAULT NOW()
+    created_at TIMSTAMPTZ DEFAULT NOW(),
+    FOREIGN KEY credential_id REFERENCES oauth2_credentials(credential_id),
     FOREIGN KEY role_id REFERENCES roles(role_id)
     )
     """,
@@ -71,6 +83,7 @@ blog_api_table_preliminary = (
     image_link TEXT,
     social_link TEXT,
     tag_id INT,
+    is_allowed BOOLEAN DEFAULT true,
     status status_type DEFAULT 'drafted',
     created_at TIMESTAMPZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ,
@@ -86,8 +99,20 @@ blog_api_table_preliminary = (
     user_id UUID NOT NULL,
     parent_comment_id UUID FOREIGN KEY REFERENCES comments(comment_id),
     created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ,
     FOREIGN KEY user_id REFERENCES users(user_id)
-    FOREIGN KEY post_id REFERENCED posts(post_id))
-
+    FOREIGN KEY post_id REFERENCED posts(post_id)
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS likes(
+    like_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID NOT NULL,
+    user_id UUID NOT NULL,
+    created_at TIMESTAMPZ DEFAULT NOW(),
+    CONSTRAINT UNIQUE(post_id, user_id),
+    FOREIGN KEY post_id REFERENCES post,
+    FOREIGN KEY users_id REFERENCES users
+    )
     """
 )
