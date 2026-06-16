@@ -16,7 +16,8 @@ blog_api_table_preliminary = (
     email TEXT NOT NULL UNIQUE,
     hashed_password TEXT NOT NULL UNIQUE,
     is_verified BOOLEAN DEFAULT 'false',
-    created_at TIMESTAMPTZ
+    is_revoked BOOLEAN DEFAULT 'false',
+    created_at TIMESTAMPTZ DEFAULT NOW()
     )
     """,
     """
@@ -46,7 +47,38 @@ blog_api_table_preliminary = (
     username VARCHAR(80),
     role_id INTEGER NOT NULL,
     credential_id UUID NOT NULL UNIQUE,
-    created_at TIMSTAMPTZ DEFAULT NOW())
+    created_at TIMSTAMPTZ DEFAULT NOW()
+    FOREIGN KEY role_id REFERENCES roles(role_id)
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS email_verification_token(
+    token_id UUID PRIMARY KEY gen_random_uuid(),
+    hashed_token TEXT NOT NULL,
+    credential_id UUID NOT NULL,
+    is_used BOOLEAN DEFAULT 'false',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    expire_at TIMESTAMPTZ NOT NULL
+    )
+    """,
+    "CREATE TYPE status_types AS ENUM('drafted', 'published', 'deleted')",
+    """
+    CREATE TABLE IF NOT EXISTS posts(
+    post_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID NOT NULL,
+    titles TEXT NOT NULL,
+    content NOT NULL,
+    image_link TEXT,
+    social_link TEXT,
+    tag_id INT,
+    status status_type DEFAULT 'drafted',
+    created_at TIMESTAMPZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ,
+    FOREIGN KEY tag_id REFERENCES tags(tag_id)
+    )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS comment
 
     """
 )
