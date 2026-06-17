@@ -14,7 +14,7 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS oauth2_credential(
     credential_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     email TEXT NOT NULL UNIQUE,
-    hashed_password TEXT NOT NULL UNIQUE,
+    hashed_password TEXT NOT NULL,
     is_verified BOOLEAN DEFAULT false,
     is_revoked BOOLEAN DEFAULT false,
     created_at TIMESTAMPTZ DEFAULT NOW()
@@ -33,8 +33,8 @@ blog_api_table_preliminary = (
     """
     """
     CREATE TABLE IF NOT EXISTS roles(
-    role_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    role_name VARCHAR(30)
+    role_id  SERIAL PRIMARY KEY,
+    role_name VARCHAR(30) UNIQUE NOT NULL
     )
     """,
     """
@@ -54,12 +54,13 @@ blog_api_table_preliminary = (
     """,
     """
     CREATE TABLE IF NOT EXISTS users(
-    user_id UUID PRIMARY KEY gen_random uuid(),
+    user_id UUID PRIMARY KEY gen_random_uuid(),
     username VARCHAR(80),
     role_id INTEGER NOT NULL,
     credential_id UUID NOT NULL UNIQUE,
     created_at TIMSTAMPTZ DEFAULT NOW(),
-    FOREIGN KEY credential_id REFERENCES oauth2_credentials(credential_id),
+    updated_at TIMESTAMPTZ ---ILL MAKE AUTOMATIC
+    FOREIGN KEY credential_id REFERENCES oauth2_credential(credential_id),
     FOREIGN KEY role_id REFERENCES roles(role_id)
     )
     """,
