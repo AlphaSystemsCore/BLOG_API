@@ -39,17 +39,18 @@ blog_api_table_preliminary = (
     """,
     """
     CREATE TABLE IF NOT EXISTS preferences(
-    preference_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-    name VARCHAR(50),
+    preference_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
     category VARCHAR(50)
     )
     """,
     """
     CREATE TABLE IF NOT EXISTS users_preferences(
     user_id UUID NOT NULL,
-    preference_id NOT NULL,
-    FOREING KEY user_id REFERENCES users(user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY preference_id REFERENCES preferences(preference_id) ON DELETE CASCADE
+    preference_id INT NOT NULL,
+    PRIMARY KEY (user_id, preference_id)
+    FOREING KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ,
+    FOREIGN KEY (preference_id) REFERENCES preferences(preference_id) ON DELETE CASCADE
     )
     """,
     """
@@ -79,7 +80,7 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS posts(
     post_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
-    titles TEXT NOT NULL,
+    title TEXT NOT NULL,
     content NOT NULL,
     image_link TEXT,
     social_link TEXT,
