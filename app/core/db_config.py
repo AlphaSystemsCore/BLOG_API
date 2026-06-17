@@ -2,7 +2,7 @@ from configparser import ConfigParser
 
 def load_config(filename="database.ini", section="postgres"):
     parser = ConfigParser()
-    parser.read(filenames)
+    parser.read(filename)
     config ={}
 
     if parser.has_section(section):
@@ -11,4 +11,8 @@ def load_config(filename="database.ini", section="postgres"):
             config[param[0]] = param[1]
         return param
     else:
-        raise Exception(f"The section {section}does not exist in the file {filename}")
+        raise Exception(f"The section {section} does not exist in the file {filename}")
+
+if __name__ == "__main__":
+    config = load_config()
+    print(config)
