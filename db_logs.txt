@@ -95,3 +95,11 @@ ERROR:root:Error: syntax error at or near "darmaris"
 LINE 1: SELECT email FROM users WHERE email = ''darmaris@cheka.com''...
                                                 ^
  2026-06-17 19:35:54.679823+00:00
+ERROR:root:Error: insert or update on table "users" violates foreign key constraint "users_role_id_fkey"
+DETAIL:  Key (role_id)=(1) is not present in table "roles".
+ 2026-06-17 20:17:49.627040+00:00
+ERROR:root:Error: name 'hashed_token' is not defined 2026-06-17 20:20:13.515641+00:00
+ERROR:root:Error: relation "email_verifiacation" does not exist
+LINE 2:             INSERT INTO email_verifiacation
+                                ^
+ 2026-06-17 20:20:49.732596+00:00
