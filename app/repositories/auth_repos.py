@@ -8,5 +8,11 @@ def get_email(email: str) -> None| tuple:
         email  = cur.fetchone()
     return email
 
-def create_user(emaiL:str, hashed_password: str):
-    pass
+def create_user(emaiL:str, hashed_password: str, hashed_emvt:str):
+    with get_cur() as cur:
+        cur.execute(
+            INSERT INTO oauth2_credential
+            (hashed_password)
+            VALUES(%s) RETURNING credential_id
+
+        )

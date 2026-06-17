@@ -4,7 +4,6 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS oauth2_credential(
     credential_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     hashed_password TEXT NOT NULL,
-    is_verified BOOLEAN DEFAULT false,
     created_at TIMESTAMPTZ DEFAULT NOW()
     )
     """,
@@ -47,11 +46,12 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS email_verification(
     token_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     hashed_token TEXT NOT NULL,
-    credential_id UUID NOT NULL,
+    user_id UUID NOT NULL,
     is_used BOOLEAN DEFAULT false,
+    is_verified BOOLEAN DEFAULT false,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ,
-    FOREIGN KEY (credential_id)  REFERENCES oauth2_credential(credential_id)
+    FOREIGN KEY (user_id)  REFERENCES users(user_id)
 
     )
     """,
