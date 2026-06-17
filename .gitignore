@@ -1,5 +1,5 @@
 database.ini
 venv
 .env
-__pycache__.py
+__pycache__
 
