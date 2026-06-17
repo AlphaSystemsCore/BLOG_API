@@ -75,35 +75,36 @@ blog_api_table_preliminary = (
     expire_at TIMESTAMPTZ NOT NULL
     )
     """,
-    "CREATE TYPE status_types AS ENUM('drafted', 'published', 'deleted')",
+    "CREATE TYPE status_type AS ENUM('drafted', 'published', 'deleted')",
     """
     CREATE TABLE IF NOT EXISTS posts(
     post_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID NOT NULL,
     title TEXT NOT NULL,
-    content NOT NULL,
+    content TEXT NOT NULL,
     image_link TEXT,
     social_link TEXT,
     tag_id INT,
     is_allowed BOOLEAN DEFAULT true,
     status status_type DEFAULT 'drafted',
-    created_at TIMESTAMPZ DEFAULT NOW(),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ,
     FOREIGN KEY tag_id REFERENCES tags(tag_id),
     FOREIGN KEY user_id REFERENCES user(user_id)
     )
     """,
     """
-    CREATE TABLE IF NOT EXISTS comments(
+    CREATE TABLE IF NOT EXISTS comments (
     comment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     content TEXT NOT NULL,
     post_id UUID NOT NULL, 
     user_id UUID NOT NULL,
-    parent_comment_id UUID FOREIGN KEY REFERENCES comments(comment_id),
+    parent_comment_id UUID,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ,
-    FOREIGN KEY user_id REFERENCES users(user_id)
-    FOREIGN KEY post_id REFERENCED posts(post_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (post_id) REFERENCES posts(post_id),
+    FOREIGN KEY (parent_comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE
     )
     """,
     """
