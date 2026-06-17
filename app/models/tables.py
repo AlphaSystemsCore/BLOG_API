@@ -16,7 +16,7 @@ blog_api_table_preliminary = (
     )
     """,
 
-    "CREATE TYPE account_status_type AS ENUM('active', 'deleted', 'revoked')",
+   
 
     """
     CREATE TABLE IF NOT EXISTS users(
@@ -73,7 +73,7 @@ blog_api_table_preliminary = (
     )
     """,
 
-    "CREATE TYPE status_type AS ENUM('drafted', 'published', 'deleted')",
+
     """
     CREATE TABLE IF NOT EXISTS posts(
     post_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -117,3 +117,5 @@ blog_api_table_preliminary = (
     )
     """
 )
+#  "CREATE TYPE IF NOT EXISTS account_status_type AS ENUM('active', 'deleted', 'revoked')",
+    # --"CREATE TYPE IF NOT EXISTS status_type AS ENUM('drafted', 'published', 'deleted')",

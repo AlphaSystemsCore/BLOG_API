@@ -85,3 +85,13 @@ ERROR:root:Error: column "users_id" referenced in foreign key constraint does no
  2026-06-17 13:23:40.998182+00:00
 ERROR:root:Error: type "account_status_type" already exists
  2026-06-17 13:24:01.274629+00:00
+ERROR:root:Error: type "account_status_type" already exists
+ 2026-06-17 19:19:32.269171+00:00
+ERROR:root:Error: syntax error at or near "NOT"
+LINE 1: CREATE TYPE IF NOT EXISTS account_status_type AS ENUM('activ...
+                       ^
+ 2026-06-17 19:21:00.260300+00:00
+ERROR:root:Error: syntax error at or near "darmaris"
+LINE 1: SELECT email FROM users WHERE email = ''darmaris@cheka.com''...
+                                                ^
+ 2026-06-17 19:35:54.679823+00:00
