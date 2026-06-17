@@ -113,9 +113,9 @@ blog_api_table_preliminary = (
     post_id UUID NOT NULL,
     user_id UUID NOT NULL,
     created_at TIMESTAMPZ DEFAULT NOW(),
-    CONSTRAINT UNIQUE(post_id, user_id),
-    FOREIGN KEY post_id REFERENCES post,
-    FOREIGN KEY users_id REFERENCES users
+    CONSTRAINT unique_like UNIQUE(post_id, user_id),
+    FOREIGN KEY (post_id) REFERENCES posts(post_id),
+    FOREIGN KEY (users_id) REFERENCES users(user_id)
     )
     """
 )
