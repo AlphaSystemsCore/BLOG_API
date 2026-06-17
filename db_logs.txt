@@ -1,0 +1,87 @@
+ERROR:root:Error: syntax error at or near "user_id"
+LINE 7:     FOREIGN KEY user_id REFERENCES users(user_id)
+                        ^
+ 2026-06-17 15:29:52.404944 STATUS: ROLLBACK
+ERROR:root:Error: syntax error at or near "user_id"
+LINE 7:     FOREIGN KEY user_id REFERENCES users(user_id)
+                        ^
+ 2026-06-17 12:30:34.801344+00:00 STATUS: ROLLBACK
+ERROR:root:Error: syntax error at or near "user_id"
+LINE 7:     FOREIGN KEY user_id REFERENCES users(user_id)
+                        ^
+ 2026-06-17 12:30:34.802202+00:00
+ERROR:root:Error: 'str' object is not callable 2026-06-17 12:54:03.957534+00:00
+ERROR:root:Error: syntax error at or near "user_id"
+LINE 7:     FOREIGN KEY user_id REFERENCES users(user_id)
+                        ^
+ 2026-06-17 12:54:43.194031+00:00
+ERROR:root:Error: syntax error at or near "gen_random_uuid"
+LINE 3:     user_id UUID PRIMARY KEY gen_random_uuid(),
+                                     ^
+ 2026-06-17 13:00:19.006948+00:00
+ERROR:root:Error: syntax error at or near "role_id"
+LINE 6:     role_id INTEGER DEFAULT 1,
+            ^
+ 2026-06-17 13:02:54.237859+00:00
+ERROR:root:Error: syntax error at or near "FOREIGN"
+LINE 10:     FOREIGN KEY credential_id REFERENCES oauth2_credential(c...
+             ^
+ 2026-06-17 13:03:10.647252+00:00
+ERROR:root:Error: syntax error at or near "credential_id"
+LINE 10:     FOREIGN KEY credential_id REFERENCES oauth2_credential(c...
+                         ^
+ 2026-06-17 13:09:07.633383+00:00
+ERROR:root:Error: syntax error at or near "role_id"
+LINE 11:     FOREIGN KEY role_id REFERENCES roles(role_id)
+                         ^
+ 2026-06-17 13:10:51.103076+00:00
+ERROR:root:Error: type "timstamptz" does not exist
+LINE 8:     created_at TIMSTAMPTZ DEFAULT NOW(),
+                       ^
+ 2026-06-17 13:11:13.986213+00:00
+ERROR:root:Error: syntax error at or near "user_id"
+LINE 7:     FOREIGN KEY user_id REFERENCES users(user_id)
+                        ^
+ 2026-06-17 13:12:03.553961+00:00
+ERROR:root:Error: syntax error at or near "credentail_id"
+LINE 9:     FOREIGN KEY credentail_id  REFERENCES oauth2_credential(...
+                        ^
+ 2026-06-17 13:12:22.526349+00:00
+ERROR:root:Error: syntax error at or near "CREATE"
+LINE 13:     CREATE TABLE IF NOT EXISTS preferences(
+             ^
+ 2026-06-17 13:12:49.103324+00:00
+ERROR:root:Error: column "credentail_id" referenced in foreign key constraint does not exist
+ 2026-06-17 13:13:18.123486+00:00
+ERROR:root:Error: syntax error at or near "FOREING"
+LINE 6:     FOREING KEY (user_id) REFERENCES users(user_id) ON DELET...
+            ^
+ 2026-06-17 13:16:38.854842+00:00
+ERROR:root:Error: syntax error at or near "FOREIGN"
+LINE 6:     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELET...
+            ^
+ 2026-06-17 13:17:36.785244+00:00
+ERROR:root:Error: syntax error at or near "tag_id"
+LINE 14:     FOREIGN KEY tag_id REFERENCES tags(tag_id),
+                         ^
+ 2026-06-17 13:18:14.075927+00:00
+ERROR:root:Error: syntax error at or near "tag_id"
+LINE 14:     FOREIGN KEY tag_id REFERENCES preferences(preference_id)...
+                         ^
+ 2026-06-17 13:19:37.599878+00:00
+ERROR:root:Error: syntax error at or near "preference_id"
+LINE 14:     FOREIGN KEY preference_id REFERENCES preferences(prefere...
+                         ^
+ 2026-06-17 13:21:05.657076+00:00
+ERROR:root:Error: syntax error at or near "user"
+LINE 15:     FOREIGN KEY (user_id) REFERENCES user(user_id)
+                                              ^
+ 2026-06-17 13:22:12.554748+00:00
+ERROR:root:Error: type "timestampz" does not exist
+LINE 6:     created_at TIMESTAMPZ DEFAULT NOW(),
+                       ^
+ 2026-06-17 13:22:19.525389+00:00
+ERROR:root:Error: column "users_id" referenced in foreign key constraint does not exist
+ 2026-06-17 13:23:40.998182+00:00
+ERROR:root:Error: type "account_status_type" already exists
+ 2026-06-17 13:24:01.274629+00:00
