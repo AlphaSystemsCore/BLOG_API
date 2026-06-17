@@ -88,7 +88,7 @@ blog_api_table_preliminary = (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ,
     FOREIGN KEY (tag_id) REFERENCES preferences(preference_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
     """
@@ -101,7 +101,7 @@ blog_api_table_preliminary = (
     created_at TIMESTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ,
     FOREIGN KEY (user_id) REFERENCES users(user_id),
-    FOREIGN KEY (post_id) REFERENCES posts(post_id),
+    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
     FOREIGN KEY (parent_comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE
     )
     """,
@@ -112,8 +112,8 @@ blog_api_table_preliminary = (
     user_id UUID NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
     CONSTRAINT unique_like UNIQUE(post_id, user_id),
-    FOREIGN KEY (post_id) REFERENCES posts(post_id),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """
 )
