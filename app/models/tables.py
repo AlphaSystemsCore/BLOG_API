@@ -4,7 +4,7 @@ blog_api_table_preliminary = (
     profile_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     avatar_link TEXT, 
     social_link TEXT, 
-    user_id UUID
+    user_id UUID UNIQUE NOT NULL
     FOREIGN KEY user_id REFERENCES users(user_id)
     )
     """,
@@ -57,7 +57,7 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS users(
     user_id UUID PRIMARY KEY gen_random_uuid(),
     username VARCHAR(80),
-    role_id INTEGER NOT NULL,
+    role_id INTEGER DEFAULT 1,
     credential_id UUID NOT NULL UNIQUE,
     created_at TIMSTAMPTZ DEFAULT NOW(),
     updated_at TIMESTAMPTZ ---ILL MAKE AUTOMATIC
