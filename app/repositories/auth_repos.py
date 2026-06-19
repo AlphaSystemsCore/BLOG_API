@@ -8,7 +8,7 @@ def get_email(email: str) -> None| tuple:
         email  = cur.fetchone()
     return email
 
-def create_user(email:str, hashed_password: str, hashed_emvt:str):
+def register_user_repo(email:str, hashed_password: str, hashed_emvt:str):
     with get_cur() as cur:
 
         cur.execute(

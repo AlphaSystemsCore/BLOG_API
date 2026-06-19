@@ -13,6 +13,8 @@ def gen_email_verification_token():
     # generation of token for email verification 
     return secrets.token_urlsafe(64)
 
+def gen_refresh_token():
+    return secrets.token_urlsafe(32)
 
 def register_user_service(email:str, password: str):
     # registers_user in the system
@@ -31,5 +33,7 @@ def register_user_service(email:str, password: str):
         print("Error: ",e)
         raise 
     return email_verification_token
-    
 
+
+def login_user_service(email: str, password: str):
+    save#
