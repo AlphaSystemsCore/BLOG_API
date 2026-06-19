@@ -12,7 +12,7 @@ def gen_email_verification_token():
     # generation of token for email verification 
     return secrets.token_urlsafe(64)
 
-def signup_user(email:str, password: str):
+def signup_user_service(email:str, password: str):
     # registers_user in the system
     try:
         if len(password) < 8:
@@ -30,9 +30,4 @@ def signup_user(email:str, password: str):
         raise 
     return email_verification_token
     
-
-    
-
-if __name__ == "__main__":
-    signup_user("darmaris@cheka.com", "kkdadasasdf")
 

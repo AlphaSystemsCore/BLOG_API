@@ -3,6 +3,7 @@ blog_api_table_preliminary = (
     --credentials
     CREATE TABLE IF NOT EXISTS oauth2_credential(
     credential_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    identifier TEXT DEFAULT 'email',
     hashed_password TEXT NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW()
     )
@@ -14,8 +15,6 @@ blog_api_table_preliminary = (
     role_name VARCHAR(30) UNIQUE NOT NULL
     )
     """,
-
-   
 
     """
     CREATE TABLE IF NOT EXISTS users(
