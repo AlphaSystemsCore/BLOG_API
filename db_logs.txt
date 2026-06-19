@@ -103,3 +103,17 @@ ERROR:root:Error: relation "email_verifiacation" does not exist
 LINE 2:             INSERT INTO email_verifiacation
                                 ^
  2026-06-17 20:20:49.732596+00:00
+ERROR:root:Error: type "account_status_type" does not exist
+LINE 6:     account_status account_status_type DEFAULT 'active',
+                           ^
+ 2026-06-19 10:23:18.070943+00:00
+ERROR:root:Error: syntax error at or near ""CREATE TYPE IF NOT EXISTS account_status_type AS ENUM('active', 'deleted', 'revoked')""
+LINE 2:     "CREATE TYPE IF NOT EXISTS account_status_type AS ENUM('...
+            ^
+ 2026-06-19 10:24:40.161633+00:00
+ERROR:root:Error: syntax error at or near ""CREATE TYPE account_status_type AS ENUM('active', 'deleted', 'revoked')""
+LINE 2:     "CREATE TYPE account_status_type AS ENUM('active', 'dele...
+            ^
+ 2026-06-19 10:25:45.308329+00:00
+ERROR:root:Error: type "account_status_type" already exists
+ 2026-06-19 10:26:42.805568+00:00

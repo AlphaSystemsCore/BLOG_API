@@ -1,5 +1,9 @@
 blog_api_table_preliminary = (
-     """
+
+    "CREATE TYPE account_status_type AS ENUM('active', 'deleted', 'revoked')",
+
+    "CREATE TYPE status_type AS ENUM('drafted', 'published', 'deleted')",
+    """
     --credentials
     CREATE TABLE IF NOT EXISTS oauth2_credential(
     credential_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -114,7 +118,16 @@ blog_api_table_preliminary = (
     FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
+    """,
+    """
+    CREATE TABLE IF NOT EXISTS refresh_token(
+    refresh_token_id UUID PRIMARY KEY DEFAULT gen_random_uuid(), 
+    hashed_refresh_token TEXT NOT NULL,
+    user_id UUID NOT NULL,
+    is_verified BOOLEAN DEFAULT true,
+    expiry_time TIMESTAMPTZ,
+    client TEXT,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    )
     """
 )
-#  "CREATE TYPE IF NOT EXISTS account_status_type AS ENUM('active', 'deleted', 'revoked')",
-    # --"CREATE TYPE IF NOT EXISTS status_type AS ENUM('drafted', 'published', 'deleted')",

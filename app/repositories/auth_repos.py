@@ -37,21 +37,4 @@ def create_user(email:str, hashed_password: str, hashed_emvt:str):
             """, (hashed_emvt, user_id)
         )
 
-def get_hashed_password(email):
-    with get_cur() as cur:
-        with get_cur() as cur:
-        cur.execute(
-            "SELECT email FROM users WHERE email = %s ", (email,)
-        )
-        email  = cur.fetchone()
-        cur.execute(
-            """
-            SELECT ac.hashed_password
-            FROM users u
-            JOIN oauth2_credential ac
-            USING (credential_id)
-            WHERE u.email = %s
-            """, (email,)
-        )
-        hash_password = cur.fetchone()
 
