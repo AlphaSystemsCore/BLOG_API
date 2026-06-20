@@ -1,7 +1,8 @@
 from app.auth.password_handler import DUMMY_HASH, verify_password, hash_password
 from app.repositories.auth_repos import (
     get_email,
-    create_user,)
+    register_user_repo,
+    get_hashed_password_repo,)
 
 class EmailExistsError(Exception):
     pass
@@ -18,6 +19,7 @@ def gen_refresh_token():
 
 def register_user_service(email:str, password: str):
     # registers_user in the system
+    emvt is email_verification_token
     try:
         if len(password) < 8:
             raise InvalidPasswordLenghtError("Password length must be greater than 7")
@@ -28,12 +30,23 @@ def register_user_service(email:str, password: str):
         email_verification_token = gen_email_verification_token()
         hashed_emvt = hash_password(email_verification_token)
         
-        create_user(email, hashed_password, hashed_emvt)
+        register_user_repo(email, hashed_password, hashed_emvt)
     except Exception as e:
         print("Error: ",e)
         raise 
     return email_verification_token
-
+#to exceptions
+class CredentialError(Exception):
+    pass
+  
 
 def login_user_service(email: str, password: str):
-    save#
+    hashed_password = get_hashed_password_repo(email)
+    if hashed_password is None:
+        hash_password(password, DUMMY_HASH)
+        raise  CredentialError
+    if not verify_password(password, hashed_password):
+        raise CredentialError
+
+
+

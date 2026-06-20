@@ -37,4 +37,17 @@ def register_user_repo(email:str, hashed_password: str, hashed_emvt:str):
             """, (hashed_emvt, user_id)
         )
 
-
+def get_hashed_password_repo(email: str):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            SELECT oc.hashed_password 
+                FROM users u
+                JOIN oauth2_credential oc
+                USING(credential_id)
+                WHERE email = %s
+            """,
+            (email,)
+        )
+        hashed_password = cur.fetchone()
+    return
