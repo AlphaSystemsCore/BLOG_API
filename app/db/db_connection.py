@@ -22,7 +22,6 @@ def get_conn():
         yield conn
     except Exception as e:
         logging.error(f"Error: {e} {datetime.now(timezone.utc)}")
-        print("Error: ",e)
         raise
     finally:
         db_pool.putconn(conn)
@@ -37,7 +36,6 @@ def get_cur():
         except Exception as e:
             logging.error((f"Error: {e} "), (f"{datetime.now(timezone.utc)}"),("STATUS: ROLLBACK"))
             conn.rollback()
-            print("Error: ", e)
             raise
         finally:
             cur.close()

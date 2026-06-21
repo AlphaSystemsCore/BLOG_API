@@ -1,8 +1,10 @@
+from datetime import datetime, timedelta, timezone
+
 from app.auth.password_handler import DUMMY_HASH, verify_password, hash_password
 from app.repositories.auth_repos import (
     get_email,
     register_user_repo,
-    get_hashed_password_repo,)
+    get_hashed_password_user_id_repo)
 
 class EmailExistsError(Exception):
     pass
@@ -19,7 +21,7 @@ def gen_refresh_token():
 
 def register_user_service(email:str, password: str):
     # registers_user in the system
-    emvt is email_verification_token
+    # emvt is email_verification_token
     try:
         if len(password) < 8:
             raise InvalidPasswordLenghtError("Password length must be greater than 7")
@@ -29,8 +31,9 @@ def register_user_service(email:str, password: str):
             raise EmailExistsError
         email_verification_token = gen_email_verification_token()
         hashed_emvt = hash_password(email_verification_token)
+        expire_at = datetime.now(timezone.utc) + timedelta(minutes=15)
         
-        register_user_repo(email, hashed_password, hashed_emvt)
+        register_user_repo(email, hashed_password, hashed_emvt, expire_at)
     except Exception as e:
         print("Error: ",e)
         raise 
@@ -41,12 +44,20 @@ class CredentialError(Exception):
   
 
 def login_user_service(email: str, password: str):
-    hashed_password = get_hashed_password_repo(email)
-    if hashed_password is None:
+    row = get_hashed_password_user_id_repo(email)
+    if not row:
         hash_password(password, DUMMY_HASH)
         raise  CredentialError
-    if not verify_password(password, hashed_password):
+    data = {
+        "hashed_password": row[0],
+        "user_id": row[1]
+    }
+    if not verify_password(password, data.get("hashed_password")):
         raise CredentialError
+    return data.get("user_id")
 
 
+if __name__ == "__main__":
+    emt = login_user_service("alpha@gmail.com", "ksajdkfljsakldfj")
+    print(emt)
 

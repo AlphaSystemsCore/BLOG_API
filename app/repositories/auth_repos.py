@@ -8,7 +8,7 @@ def get_email(email: str) -> None| tuple:
         email  = cur.fetchone()
     return email
 
-def register_user_repo(email:str, hashed_password: str, hashed_emvt:str):
+def register_user_repo(email:str, hashed_password: str, hashed_emvt:str, expire_at):
     with get_cur() as cur:
 
         cur.execute(
@@ -32,16 +32,16 @@ def register_user_repo(email:str, hashed_password: str, hashed_emvt:str):
         cur.execute(
             """
             INSERT INTO email_verification
-            (hashed_token, user_id)
-            VALUES(%s, %s)
-            """, (hashed_emvt, user_id)
+            (hashed_token, user_id, expire_at)
+            VALUES(%s, %s, %s)
+            """, (hashed_emvt, user_id, expire_at)
         )
 
-def get_hashed_password_repo(email: str):
+def get_hashed_password_user_id_repo(email: str):
     with get_cur() as cur:
         cur.execute(
             """
-            SELECT oc.hashed_password 
+            SELECT oc.hashed_password, u.user_id
                 FROM users u
                 JOIN oauth2_credential oc
                 USING(credential_id)
@@ -49,5 +49,5 @@ def get_hashed_password_repo(email: str):
             """,
             (email,)
         )
-        hashed_password = cur.fetchone()
-    return
+        row = cur.fetchone()
+    return row

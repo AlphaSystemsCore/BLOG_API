@@ -21,13 +21,27 @@ blog_api_table_preliminary = (
     )
     """,
 
+   
     """
+    CREATE TABLE IF NOT EXISTS users(
+        user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        username VARCHAR(80) UNIQUE,
+        email TEXT NOT NULL UNIQUE,
+        account_status account_status_type DEFAULT 'active',
+        credential_id UUID NOT NULL UNIQUE,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ,
+    FOREIGN KEY (credential_id) REFERENCES oauth2_credential(credential_id) ON DELETE CASCADE
+    )
+    """,
+
+     """
     CREATE TABLE users_roles(
         user_id UUID NOT NULL,
-        role_id INTEGER NOT NULL DEFAULT '1'
-    PRIMARY KEY(user_id, role_id),
-    FOREIGN KEY user_id REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY role_id REFERENCES roles(role_id) ON DELETE CASCADE
+        role_id INTEGER NOT NULL DEFAULT '1',
+    PRIMARY KEY (user_id, role_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles(role_id) ON DELETE CASCADE
     )
     """,
 
@@ -36,18 +50,6 @@ blog_api_table_preliminary = (
         ON users_roles(user_id)
     """,
 
-    """
-    CREATE TABLE IF NOT EXISTS users(
-        user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        username VARCHAR(80) UNIQUE NOT NULL,
-        email TEXT NOT NULL UNIQUE,
-        account_status account_status_type DEFAULT 'active',
-        credential_id UUID NOT NULL UNIQUE,
-        created_at TIMESTAMPTZ DEFAULT NOW(),
-        updated_at TIMESTAMPTZ,
-    FOREIGN KEY (credential_id) REFERENCES oauth2_credential(credential_id) ON DELETE CASCADE,
-    )
-    """,
 
     """
     CREATE INDEX users_status
@@ -87,7 +89,7 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS preferences(
         preference_id SERIAL PRIMARY KEY,
         pref_name VARCHAR(50) NOT NULL UNIQUE,
-        pref_category VARCHAR(50),
+        pref_category VARCHAR(50)
     )
     """,
 
@@ -127,8 +129,8 @@ blog_api_table_preliminary = (
         post_id UUID,
         preference_id INTEGER,
         PRIMARY KEY (post_id, preference_id),
-        FOREIGN KEY post_id REFERENCE posts(post_id) ON DELETE CASCADE,
-        FOREIGN KEY preference REFERENCES preferences(preferece_id) ON DELETE CASCADE
+        FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+        FOREIGN KEY (preference_id) REFERENCES preferences(preference_id) ON DELETE CASCADE
     )
     """,
 
@@ -149,7 +151,7 @@ blog_api_table_preliminary = (
     """
     CREATE INDEX  idx_comment_parent_child
         ON comments(parent_comment_id)
-    """
+    """,
 
     """
     CREATE INDEX idx_comments_post_id_user_id

@@ -117,3 +117,53 @@ LINE 2:     "CREATE TYPE account_status_type AS ENUM('active', 'dele...
  2026-06-19 10:25:45.308329+00:00
 ERROR:root:Error: type "account_status_type" already exists
  2026-06-19 10:26:42.805568+00:00
+ERROR:root:Error: syntax error at or near "("
+LINE 5:     PRIMARY KEY(user_id, role_id),
+                       ^
+ 2026-06-20 22:49:33.552399+00:00
+ERROR:root:Error: syntax error at or near "("
+LINE 5:     PRIMARY KEY (user_id, role_id),
+                        ^
+ 2026-06-20 22:50:44.605975+00:00
+ERROR:root:Error: syntax error at or near "user_id"
+LINE 6:     FOREIGN KEY user_id REFERENCES users(user_id) ON DELETE ...
+                        ^
+ 2026-06-20 22:51:11.999583+00:00
+ERROR:root:Error: relation "users" does not exist
+ 2026-06-20 22:53:45.185860+00:00
+ERROR:root:Error: syntax error at or near ")"
+LINE 11:     )
+             ^
+ 2026-06-20 22:55:10.802139+00:00
+ERROR:root:Error: syntax error at or near ")"
+LINE 6:     )
+            ^
+ 2026-06-20 22:56:17.170325+00:00
+ERROR:root:Error: syntax error at or near "post_id"
+LINE 6:         FOREIGN KEY post_id REFERENCE posts(post_id) ON DELE...
+                            ^
+ 2026-06-20 22:57:41.725616+00:00
+ERROR:root:Error: syntax error at or near "REFERENCE"
+LINE 6:         FOREIGN KEY (post_id) REFERENCE posts(post_id) ON DE...
+                                      ^
+ 2026-06-20 22:58:10.939203+00:00
+ERROR:root:Error: syntax error at or near "preference"
+LINE 7:         FOREIGN KEY preference REFERENCES preferences(prefer...
+                            ^
+ 2026-06-20 22:58:26.848650+00:00
+ERROR:root:Error: syntax error at or near "preference_id"
+LINE 7:         FOREIGN KEY preference_id REFERENCES preferences(pre...
+                            ^
+ 2026-06-20 22:58:51.853150+00:00
+ERROR:root:Error: column "preferece_id" referenced in foreign key constraint does not exist
+ 2026-06-20 22:59:09.555238+00:00
+ERROR:root:Error: syntax error at or near "CREATE"
+LINE 5:     CREATE INDEX idx_comments_post_id_user_id
+            ^
+ 2026-06-20 23:00:44.389375+00:00
+ERROR:root:Error: null value in column "username" of relation "users" violates not-null constraint
+DETAIL:  Failing row contains (e7be58e4-107e-47a1-8ee7-27fff7b750a1, null, alpha@gmail.com, active, 05914a29-687a-4be6-83f5-49cfd90665fe, 2026-06-21 02:08:24.484514+03, null).
+ 2026-06-20 23:08:24.508698+00:00
+ERROR:root:Error: null value in column "expire_at" of relation "email_verification" violates not-null constraint
+DETAIL:  Failing row contains (1, $argon2id$v=19$m=65536,t=3,p=4$up4KD1JrxhSo5juh2m/yMg$usVkASBpbu..., 1e357168-e94a-4219-b1fb-9d28491a460c, f, 2026-06-21 02:13:53.141531+03, null, null).
+ 2026-06-20 23:13:53.152586+00:00
