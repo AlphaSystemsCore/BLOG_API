@@ -4,7 +4,9 @@ from app.auth.password_handler import DUMMY_HASH, verify_password, hash_password
 from app.repositories.auth_repos import (
     get_email,
     register_user_repo,
-    get_hashed_password_user_id_repo)
+    get_hashed_password_user_id_repo,
+    )
+from app.auth.jwt_handler import create_access_token, create_refresh_token
 
 class EmailExistsError(Exception):
     pass
@@ -54,10 +56,5 @@ def login_user_service(email: str, password: str):
     }
     if not verify_password(password, data.get("hashed_password")):
         raise CredentialError
-    return data.get("user_id")
-
-
-if __name__ == "__main__":
-    emt = login_user_service("alpha@gmail.com", "ksajdkfljsakldfj")
-    print(emt)
+    
 

@@ -1,5 +1,7 @@
 import jwt
 from fastapi.security import OAuth2PasswordBearer
+from fastapi import HTTPException
+from typing import Annotated
 from datetime import datetime, timedelta, timezone
 
 ALGORITHM = "HS256"
@@ -17,7 +19,7 @@ def create_access_token(sub:str,  expiry_delta: timedelta | None = None):
     if expiry_delta:
         exp = datetime.now(timezone.utc) + expiry_delta
     else: 
-        exp = datetime.now(timezone.utc) + timedelta(minutes=15)
+        exp = datetime.now(timezone.utc) + timedelta(minutes=20)
     to_encode.update({"exp": exp})
     encoded = jwt.encode(to_encode, ACCESS_TOKEN_SECRET, algorithm=ALGORITHM)
     return encoded
@@ -59,7 +61,7 @@ def create_refresh_token(sub: str, jti: str):
         "jti": jti,
         "type": "refresh_token"
     }
-    exp = datetime.now(timezone.utc) + timedelta(days=30)
+    exp = datetime.now(timezone.utc) + timedelta(days=20)
     to_encode.update({"exp":exp})
     encoded = jwt.encode(to_encode, REFRESH_TOKEN_SECRET, algorithm=ALGORITHM)
     return encoded
