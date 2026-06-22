@@ -188,3 +188,20 @@ LINE 5:                 updated_at = true
                                      ^
 HINT:  You will need to rewrite or cast the expression.
  2026-06-22 20:03:45.259845+00:00
+ERROR:root:Error: column "expire_at" of relation "refresh_token" does not exist
+LINE 3: ...          (hashed_refresh_token, user_id, client, expire_at)
+                                                             ^
+ 2026-06-22 20:41:15.106025+00:00
+ERROR:root:Error: name 'expiry_at' is not defined 2026-06-22 20:42:11.832890+00:00
+ERROR:root:Error: column "expire_at" of relation "refresh_token" does not exist
+LINE 3: ...          (hashed_refresh_token, user_id, client, expire_at)
+                                                             ^
+ 2026-06-22 20:44:00.778886+00:00
+ERROR:root:Error: column "expire_at" of relation "refresh_token" does not exist
+LINE 3: ...          (hashed_refresh_token, user_id, client, expire_at)
+                                                             ^
+ 2026-06-22 20:46:36.086894+00:00
+ERROR:root:Error: column "expire_at" of relation "refresh_token" does not exist
+LINE 3: ...          (hashed_refresh_token, user_id, client, expire_at)
+                                                             ^
+ 2026-06-22 20:46:37.613364+00:00

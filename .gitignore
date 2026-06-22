@@ -1,5 +1,7 @@
-database.ini
+db_logs.txt
 venv
-.env
 __pycache__
+database.ini
+requirements.txt
+__init__.py 
 

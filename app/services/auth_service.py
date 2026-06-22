@@ -51,32 +51,34 @@ def login_user_service(email: str, password: str, client: str):
     try:
         row = get_hashed_password_user_id_repo(email)
         if not row:
-            hash_password(password, DUMMY_HASH)
+            verify_password(password, DUMMY_HASH)
             raise  CredentialError()
         if not row[2]:
             raise EmailNotVerifiedError()
     
         hashed_password= row[0]
         user_id =row[1]
-
         if not verify_password(password, hashed_password):
             raise CredentialError()
+
         # creating access_oken
         access_token =  create_access_token(user_id)
         # creating refresh_token
+
         refresh_token_value = gen_refresh_token()
         hashed_refresh_token = hash_password(refresh_token_value)
-        refresh_token = create_refresh_token_service(user_id, hashed_refresh_token, client, expire_at=datetime.now(timezone.utc) + timedelta(days=30))
+        refresh_token = create_refresh_token_service(user_id, hashed_refresh_token, client, datetime.now(timezone.utc) + timedelta(days=30))
+
     except CredentialError:
         raise
     else:
         return access_token, refresh_token, refresh_token_value
 
 
-def create_refresh_token_service(user_id: str, hashed_refresh_token: str, client: str, expire_at: datetime):
+def create_refresh_token_service(user_id: str, hashed_refresh_token: str, client: str, expiry_at: datetime):
     # creating refresh token service to seperated from login for sepereration of concern
-    refresh_token_id = save_refresh_token(user_id, hashed_refresh_token, client, expire_at)
-    refresh_token = create_refresh_token(sub=user_id, jti=refresh_token_id, expire_at=expire_at)
+    refresh_token_id = save_refresh_token(user_id, hashed_refresh_token, client, expiry_at)
+    refresh_token = create_refresh_token(sub=user_id, jti=refresh_token_id, expiry_at=expire_at)
     return refresh_token
 
 

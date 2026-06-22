@@ -1,10 +1,14 @@
-from fastapi import APIRouter, Depends, Form, HTTPException, status
+from fastapi import APIRouter, Depends, Form, HTTPException, status, Request
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import EmailStr
 auth_router = APIRouter(tags=["Auths"])
 
 
-from app.services.auth_service import register_user_service, validate_email_verification_service
+from app.services.auth_service import (
+    register_user_service, 
+    validate_email_verification_service, 
+    login_user_service
+    )
 from app.schemas.auth_schemas import RegisterUser
 from app.exceptions.auth_exception import *
 
@@ -56,13 +60,23 @@ async def verify_user_email(user_id:str, email_verification_token: str):
             status_code=status.HTTP_404_NOT_FOUND,
             detail="NOT_FOUND !"
         )
-    return {
+    else:
+        return {
         "msg":"email verified successfully, proceed to login"
     }
 
 @auth_router.post("/auth/login")
-async def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    pass
+async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
+    # try:
+    client = request.headers['User-Agent']
+    a_t, r_t, r_t_v =login_user_service(form_data.username, form_data.password, client)
+    # except Exception as e:
+    #     print(e)
+    #     raise HTTPException(
+    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #         detail="INTERNAL_SERVER_ERROR"
+    #     )
+    # return a_t
 
 @auth_router.get("/auth/refresh-access-token")
 async def refresh_token():
