@@ -5,6 +5,7 @@ from app.repositories.auth_repos import (
     get_email,
     register_user_repo,
     get_hashed_password_user_id_repo,
+    save_refresh_token
     )
 from app.auth.jwt_handler import create_access_token, create_refresh_token
 
@@ -45,7 +46,7 @@ class CredentialError(Exception):
     pass
   
 
-def login_user_service(email: str, password: str):
+def login_user_service(email: str, password: str, client: str):
     row = get_hashed_password_user_id_repo(email)
     if not row:
         hash_password(password, DUMMY_HASH)
@@ -56,5 +57,16 @@ def login_user_service(email: str, password: str):
     }
     if not verify_password(password, data.get("hashed_password")):
         raise CredentialError
-    
+    # creating access_oken
+    access_token =  create_access_token(data.get("user_id"))
+    # creating refresh_token
+    refresh_token_value = gen_refresh_token()
+    hashed_refresh_token = hash_password(refresh_token_value)
+    refresh_token = create_refresh_token_service(data.get("user_id"), hashed_refresh_token, client, expire_at=datetime.now(timezone.utc) + timedelta(days=30))
+
+
+def create_refresh_token_service(user_id: str, hashed_refresh_token: str, client: str, expire_at: datetime):
+    refresh_token_id = save_refresh_token(user_id, hashed_refresh_token, client, expire_at)
+    refresh_token = create_refresh_token(sub=user_id, jti=refresh_token_id, expire_at=expire_at)
+    return refresh_token
 

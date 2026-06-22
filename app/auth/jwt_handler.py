@@ -55,14 +55,13 @@ def decode_access_token(token: Annotated[str, Depends(oauth2_scheme)]):
     else: 
         return user_id
 
-def create_refresh_token(sub: str, jti: str):
+def create_refresh_token(sub: str, jti: str, expire_at: datetime):
     to_encode = {
         "sub": sub,
         "jti": jti,
-        "type": "refresh_token"
+        "type": "refresh_token",
+        "exp": expire_at
     }
-    exp = datetime.now(timezone.utc) + timedelta(days=20)
-    to_encode.update({"exp":exp})
     encoded = jwt.encode(to_encode, REFRESH_TOKEN_SECRET, algorithm=ALGORITHM)
     return encoded
 
