@@ -12,3 +12,5 @@ class EmailVerificationTokenExpired(Exception):
     pass
 class EmailVerificationTokenInvalidError(Exception):
     pass
+class EmailVerificationTokenNotFoundError(Exception):
+    pass

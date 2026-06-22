@@ -35,7 +35,7 @@ def register_user_service(email:str, password: str):
         # emvt means email verification token
         email_verification_token = gen_email_verification_token()
         hashed_emvt = hash_password(email_verification_token)
-        expire_at = datetime.now(timezone.utc) + timedelta(minutes=15)
+        expire_at = datetime.now(timezone.utc) + timedelta(minutes=5)
         
         user_id = register_user_repo(email, hashed_password, hashed_emvt, expire_at)
         if user_id is None:
@@ -98,8 +98,11 @@ def validate_email_verification_service(user_id: str, email_verification_token: 
         raise EmailVerificationTokenInvalidError()
     is_used = True
     is_verified =  True
-    is_verify = update_email_verification_repo(user_id, is_used, is_verified)
-    print(is_verify)
+    try:
+        update_email_verification_repo(user_id, is_used, datetime.now(timezone.utc), is_verified)
+    except Exception:
+        raise
+    
     
 
     

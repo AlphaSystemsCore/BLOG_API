@@ -91,7 +91,7 @@ def update_email_verification_repo(user_id: str, is_used: bool, updated_at:datet
             UPDATE email_verification
             SET 
                 is_used = %s,
-                update_at = %s
+                updated_at = %s
             WHERE user_id = %s
             """,(is_used, updated_at, user_id)
         )
@@ -105,4 +105,3 @@ def update_email_verification_repo(user_id: str, is_used: bool, updated_at:datet
         )
         row = cur.fetchone()
     return row
-    

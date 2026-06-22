@@ -39,7 +39,23 @@ async def register_user(user: RegisterUser):
 
 @auth_router.get("/auth/verify-email/{user_id}/{email_verification_token}")
 async def verify_user_email(user_id:str, email_verification_token: str):
-    validate_email_verification_service(user_id, email_verification_token)
+    try:
+        validate_email_verification_service(user_id, email_verification_token)
+    except EmailVerificationTokenExpired as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Email verification token expired"
+        )
+    except EmailVerificationTokenInvalidError as e:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Verification link already used."
+        )
+    except EmailVerificationTokenNotFoundError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="NOT_FOUND !"
+        )
     return {
         "msg":"email verified successfully, proceed to login"
     }

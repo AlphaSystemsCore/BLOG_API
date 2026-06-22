@@ -179,3 +179,12 @@ ERROR:root:Error: column "hashed_token" of relation "email_verification" does no
 LINE 3:             (hashed_token, user_id, expire_at)
                      ^
  2026-06-22 19:37:30.743285+00:00
+ERROR:root:Error: column "update_at" of relation "email_verification" does not exist
+LINE 5:                 update_at = '2026-06-22T20:00:39.294956+00:0...
+                        ^
+ 2026-06-22 20:00:39.314734+00:00
+ERROR:root:Error: column "updated_at" is of type timestamp with time zone but expression is of type boolean
+LINE 5:                 updated_at = true
+                                     ^
+HINT:  You will need to rewrite or cast the expression.
+ 2026-06-22 20:03:45.259845+00:00
