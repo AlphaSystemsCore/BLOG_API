@@ -63,7 +63,7 @@ def save_refresh_token(
         cur.execute(
             """
             INSERT INTO refresh_token
-            (hashed_refresh_token, user_id, client, expire_at)
+            (hashed_refresh_token, user_id, client, expiry_at)
             VALUES(%s, %s, %s, %s) RETURNING refresh_token_id
             """,(hashed_refresh_token, user_id, client, expiry_at)
         )

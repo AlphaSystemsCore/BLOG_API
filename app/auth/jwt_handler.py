@@ -24,7 +24,7 @@ def create_access_token(sub:str,  expiry_delta: timedelta | None = None):
     encoded = jwt.encode(to_encode, ACCESS_TOKEN_SECRET, algorithm=ALGORITHM)
     return encoded
 
-def decode_access_token(token: Annotated[str, Depends(oauth2_scheme)]):
+def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     try:
     
         payload = jwt.decode(token, ACCESS_TOKEN_SECRET, algorithms=[ALGORITHM])
@@ -94,5 +94,9 @@ def decode_refresh_token(token: Annotated[str, Depends(oauth2_scheme)]):
     except HTTPException:
         raise 
     else:
-        return user_id, jti
+        return {
+            "user_id":user_id,
+            "jti": jti
+            }
+
 

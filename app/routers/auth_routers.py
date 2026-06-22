@@ -1,15 +1,16 @@
-from fastapi import APIRouter, Depends, Form, HTTPException, status, Request
+from fastapi import APIRouter, Depends, Form, HTTPException, status, Request, Response
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import EmailStr
+from fastapi.responses import JSONResponse
+from typing import Annotated
 auth_router = APIRouter(tags=["Auths"])
 
-
+from app.auth.jwt_handler import decode_refresh_token, decode_access_token
 from app.services.auth_service import (
     register_user_service, 
     validate_email_verification_service, 
     login_user_service
     )
-from app.schemas.auth_schemas import RegisterUser
+from app.schemas.auth_schemas import RegisterUser, AccessRefreshTokenOut
 from app.exceptions.auth_exception import *
 
 @auth_router.post("/auth/register")
@@ -67,17 +68,40 @@ async def verify_user_email(user_id:str, email_verification_token: str):
 
 @auth_router.post("/auth/login")
 async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
-    # try:
-    client = request.headers['User-Agent']
-    a_t, r_t, r_t_v =login_user_service(form_data.username, form_data.password, client)
-    # except Exception as e:
-    #     print(e)
-    #     raise HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #         detail="INTERNAL_SERVER_ERROR"
-    #     )
-    # return a_t
+    try:
+
+        client = request.headers.get("User-Agent")
+        access_token, refresh_token, refresh_token_value = login_user_service(form_data.username, form_data.password, client)
+        access_refresh_token = AccessRefreshTokenOut(access_token=access_token, refresh_token=refresh_token)
+        response = JSONResponse(content=access_refresh_token.dict())
+        response.set_cookie(
+            key="refresh_token",
+            value=refresh_token_value,
+            httponly=True,
+            secure=False
+        )
+    except EmailNotVerifiedError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Email Must Be Verified"
+        )
+    except CredentialError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Wrong email or password, please try again"
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="UNEXPECTED_ERROR"
+        )
+    else:
+        return response
 
 @auth_router.get("/auth/refresh-access-token")
-async def refresh_token():
-    pass
+async def refresh_token(request: Request, token_meta:Annotated[dict, decode_refresh_token] ):
+    print(token_meta)
+    print(request.cookies.get("refresh_token"))
+    
+@auth_router.get("/auth/logout")
+async def logout_user(user_id: ):

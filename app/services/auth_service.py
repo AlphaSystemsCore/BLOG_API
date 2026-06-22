@@ -78,7 +78,7 @@ def login_user_service(email: str, password: str, client: str):
 def create_refresh_token_service(user_id: str, hashed_refresh_token: str, client: str, expiry_at: datetime):
     # creating refresh token service to seperated from login for sepereration of concern
     refresh_token_id = save_refresh_token(user_id, hashed_refresh_token, client, expiry_at)
-    refresh_token = create_refresh_token(sub=user_id, jti=refresh_token_id, expiry_at=expire_at)
+    refresh_token = create_refresh_token(sub=user_id, jti=refresh_token_id, expire_at=expiry_at)
     return refresh_token
 
 
