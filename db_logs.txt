@@ -167,3 +167,15 @@ DETAIL:  Failing row contains (e7be58e4-107e-47a1-8ee7-27fff7b750a1, null, alpha
 ERROR:root:Error: null value in column "expire_at" of relation "email_verification" violates not-null constraint
 DETAIL:  Failing row contains (1, $argon2id$v=19$m=65536,t=3,p=4$up4KD1JrxhSo5juh2m/yMg$usVkASBpbu..., 1e357168-e94a-4219-b1fb-9d28491a460c, f, 2026-06-21 02:13:53.141531+03, null, null).
  2026-06-20 23:13:53.152586+00:00
+ERROR:root:Error: column ev.hashed_email_verification_token does not exist
+LINE 2:             SELECT ev.hashed_email_verification_token ,ev.is...
+                           ^
+ 2026-06-22 19:32:26.237925+00:00
+ERROR:root:Error: column ev.hashed_email_verification_token does not exist
+LINE 2:             SELECT ev.hashed_email_verification_token ,ev.is...
+                           ^
+ 2026-06-22 19:32:28.979909+00:00
+ERROR:root:Error: column "hashed_token" of relation "email_verification" does not exist
+LINE 3:             (hashed_token, user_id, expire_at)
+                     ^
+ 2026-06-22 19:37:30.743285+00:00

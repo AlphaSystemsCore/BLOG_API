@@ -7,7 +7,7 @@ blog_api_table_preliminary = (
     """
     CREATE TABLE IF NOT EXISTS oauth2_credential(
         credential_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        identifier TEXT DEFAULT 'email',
+        identifier VARCHAR(20) DEFAULT 'email',
         hashed_password TEXT NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW()
     )
@@ -69,7 +69,7 @@ blog_api_table_preliminary = (
     """
     CREATE TABLE IF NOT EXISTS email_verification(
         token_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-        hashed_token TEXT NOT NULL,
+        hashed_email_verification_token TEXT NOT NULL,
         user_id UUID NOT NULL,
         is_used BOOLEAN DEFAULT false,
         created_at TIMESTAMPTZ DEFAULT NOW(),
