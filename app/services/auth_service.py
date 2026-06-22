@@ -36,10 +36,13 @@ def register_user_service(email:str, password: str):
         hashed_emvt = hash_password(email_verification_token)
         expire_at = datetime.now(timezone.utc) + timedelta(minutes=15)
         
-        register_user_repo(email, hashed_password, hashed_emvt, expire_at)
+        user_id = register_user_repo(email, hashed_password, hashed_emvt, expire_at)
+        if user_id is None:
+            raise ValueError
     except Exception as e:
-        raise 
-    return email_verification_token
+        raise
+    else:
+        return email_verification_token, user_id
 
 #>>>>to exceptions
 class CredentialError(Exception):
@@ -75,3 +78,6 @@ def create_refresh_token_service(user_id: str, hashed_refresh_token: str, client
     refresh_token = create_refresh_token(sub=user_id, jti=refresh_token_id, expire_at=expire_at)
     return refresh_token
 
+def validate_email_token(user_id: str, email_verification_token: str):
+    pass
+    

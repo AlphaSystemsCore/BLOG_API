@@ -37,6 +37,7 @@ def register_user_repo(email:str, hashed_password: str, hashed_emvt:str, expire_
             VALUES(%s, %s, %s)
             """, (hashed_emvt, user_id, expire_at)
         )
+    return user_id
 
 def get_hashed_password_user_id_repo(email: str):
     with get_cur() as cur:
@@ -68,3 +69,6 @@ def save_refresh_token(
         )
         refresh_token_id = cur.fetchone()
     return refresh_token_id
+
+def get_email_verification_token_service(user_id):
+   pass

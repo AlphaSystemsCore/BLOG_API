@@ -9,7 +9,6 @@ blog_api_table_preliminary = (
         credential_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         identifier TEXT DEFAULT 'email',
         hashed_password TEXT NOT NULL,
-        is_verified BOOLEAN DEFAULT false,
         created_at TIMESTAMPTZ DEFAULT NOW()
     )
     """,
@@ -28,6 +27,7 @@ blog_api_table_preliminary = (
         username VARCHAR(80) UNIQUE,
         email TEXT NOT NULL UNIQUE,
         account_status account_status_type DEFAULT 'active',
+        is_verified BOOLEAN DEFAULT false,
         credential_id UUID NOT NULL UNIQUE,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ,
