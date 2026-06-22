@@ -38,31 +38,36 @@ def register_user_service(email:str, password: str):
         
         register_user_repo(email, hashed_password, hashed_emvt, expire_at)
     except Exception as e:
-        print("Error: ",e)
         raise 
     return email_verification_token
-#to exceptions
+
+#>>>>to exceptions
 class CredentialError(Exception):
     pass
   
 
 def login_user_service(email: str, password: str, client: str):
-    row = get_hashed_password_user_id_repo(email)
-    if not row:
-        hash_password(password, DUMMY_HASH)
-        raise  CredentialError
-    data = {
-        "hashed_password": row[0],
-        "user_id": row[1]
-    }
-    if not verify_password(password, data.get("hashed_password")):
-        raise CredentialError
-    # creating access_oken
-    access_token =  create_access_token(data.get("user_id"))
-    # creating refresh_token
-    refresh_token_value = gen_refresh_token()
-    hashed_refresh_token = hash_password(refresh_token_value)
-    refresh_token = create_refresh_token_service(data.get("user_id"), hashed_refresh_token, client, expire_at=datetime.now(timezone.utc) + timedelta(days=30))
+    try:
+        row = get_hashed_password_user_id_repo(email)
+        if not row:
+            hash_password(password, DUMMY_HASH)
+            raise  CredentialError()
+    
+        hashed_password= row[0]
+        user_id =row[1]
+
+        if not verify_password(password, hashed_password):
+            raise CredentialError()
+        # creating access_oken
+        access_token =  create_access_token(user_id)
+        # creating refresh_token
+        refresh_token_value = gen_refresh_token()
+        hashed_refresh_token = hash_password(refresh_token_value)
+        refresh_token = create_refresh_token_service(user_id, hashed_refresh_token, client, expire_at=datetime.now(timezone.utc) + timedelta(days=30))
+    except CredentialError:
+        raise
+    else:
+        return access_token, refresh_token, refresh_token_value
 
 
 def create_refresh_token_service(user_id: str, hashed_refresh_token: str, client: str, expire_at: datetime):
