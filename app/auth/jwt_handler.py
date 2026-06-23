@@ -26,12 +26,14 @@ def create_access_token(sub:str,  expiry_delta: timedelta | None = None):
     return encoded
 
 def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    print(token)
     try:
     
         payload = jwt.decode(token, ACCESS_TOKEN_SECRET, algorithms=[ALGORITHM])
         if payload.get('type') == "access_token":
             user_id = payload.get("sub")
             if user_id == None:
+                # ill add database check for lookup??
                 raise HTTPException(
                     status_code=401,
                     detail="Not authorized"
@@ -56,49 +58,52 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     else: 
         return user_id
 
-def create_refresh_token(sub: str, jti: str, expire_at: datetime):
-    to_encode = {
-        "sub": sub,
-        "jti": jti,
-        "type": "refresh_token",
-        "exp": expire_at
-    }
-    encoded = jwt.encode(to_encode, REFRESH_TOKEN_SECRET, algorithm=ALGORITHM)
-    return encoded
+# depracated
+# def create_refresh_token(sub: str, jti: str, expire_at: datetime):
+#     to_encode = {
+#         "sub": sub,
+#         "jti": jti,
+#         "type": "refresh_token",
+#         "exp": expire_at
+#     }
+#     encoded = jwt.encode(to_encode, REFRESH_TOKEN_SECRET, algorithm=ALGORITHM)
+#     return encoded
 
-def decode_refresh_token(token: Annotated[str, Depends(oauth2_scheme)]):
+# def decode_refresh_token(token: Annotated[str, Depends(oauth2_scheme)]):
+#     print(token)
     
-    try:
-        payload = jwt.decode(token, REFRESH_TOKEN_SECRET, algorithms=[ALGORITHM])
-        if payload.get('type') == 'refresh_token':
-            user_id = payload.get("sub")
-            jti = payload.get("jti")
-            if user_id == None or jti == None:
-                raise HTTPException(
-                    status_code=401,
-                    detail="Not authorized"
-                )
-        else: 
-            raise HTTPException(
-                status_code = 401,
-                detail = "Not Authorized"
-            )
-    except jwt.ExpiredSignatureError:
-        raise HTTPException(
-            status_code = 401,
-            detail = "Invalid token"
-        )
-    except jwt.InvalidTokenError:
-        raise HTTPException(
-            status_code = 401,
-            detail = "Token not valid"
-        )
-    except HTTPException:
-        raise 
-    else:
-        return {
-            "user_id":user_id,
-            "jti": jti
-            }
+#     try:
+#         payload = jwt.decode(token, REFRESH_TOKEN_SECRET, algorithms=[ALGORITHM])
+#         print(payload)
+#         if payload.get('type') == 'refresh_token':
+#             user_id = payload.get("sub")
+#             jti = payload.get("jti")
+#             if user_id == None or jti == None:
+#                 raise HTTPException(
+#                     status_code=401,
+#                     detail="Not authorized"
+#                 )
+#         else: 
+#             raise HTTPException(
+#                 status_code = 401,
+#                 detail = "Not Authorized"
+#             )
+#     except jwt.ExpiredSignatureError:
+#         raise HTTPException(
+#             status_code = 401,
+#             detail = "Invalid token"
+#         )
+#     except jwt.InvalidTokenError:
+#         raise HTTPException(
+#             status_code = 401,
+#             detail = "Token not valid"
+#         )
+#     except HTTPException:
+#         raise 
+#     else:
+#         return {
+#             "user_id":user_id,
+#             "jti": jti
+#             }
 
 

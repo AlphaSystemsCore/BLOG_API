@@ -9,7 +9,7 @@ from app.repositories.auth_repos import (
     get_email_verification_metadate_repo,
     update_email_verification_repo
     )
-from app.auth.jwt_handler import create_access_token, create_refresh_token
+from app.auth.jwt_handler import create_access_token
 from app.exceptions.auth_exception import *
 
 
@@ -67,20 +67,28 @@ def login_user_service(email: str, password: str, client: str):
 
         refresh_token_value = gen_refresh_token()
         hashed_refresh_token = hash_password(refresh_token_value)
-        refresh_token = create_refresh_token_service(user_id, hashed_refresh_token, client, datetime.now(timezone.utc) + timedelta(days=30))
+        refresh_token = create_refresh_token_service(user_id, hashed_refresh_token, client, expiry_at=datetime.now(timezone.utc))
+        refresh_token.update({
+            "user_id": user_id,
+            "refresh_token_value": refresh_token_value
+        })
+        
 
     except CredentialError:
         raise
     else:
-        return access_token, refresh_token, refresh_token_value
+        return access_token, refresh_token
+
 
 
 def create_refresh_token_service(user_id: str, hashed_refresh_token: str, client: str, expiry_at: datetime):
-    # creating refresh token service to seperated from login for sepereration of concern
+    # creating refresh token service to seperated from login for sepereration of con
     refresh_token_id = save_refresh_token(user_id, hashed_refresh_token, client, expiry_at)
-    refresh_token = create_refresh_token(sub=user_id, jti=refresh_token_id, expire_at=expiry_at)
+    refresh_token = {
+        "session_id": refresh_token_id
+    }
     return refresh_token
-
+    
 
 def validate_email_verification_service(user_id: str, email_verification_token: str):
     row = get_email_verification_metadate_repo(user_id)

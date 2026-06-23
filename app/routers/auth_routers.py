@@ -72,7 +72,7 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
 
         client = request.headers.get("User-Agent")
         access_token, refresh_token, refresh_token_value = login_user_service(form_data.username, form_data.password, client)
-        access_refresh_token = AccessRefreshTokenOut(access_token=access_token, refresh_token=refresh_token)
+        access_refresh_token = AccessRefreshTokenOut(refresh_token=refresh_token, access_token=access_token )
         response = JSONResponse(content=access_refresh_token.dict())
         response.set_cookie(
             key="refresh_token",
@@ -99,7 +99,7 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
         return response
 
 @auth_router.get("/auth/refresh-access-token")
-async def refresh_token(request: Request, token_meta:Annotated[dict, Depends(decode_refresh_token)] ):
+async def refresh_token(request: Request, token_meta:dict = Depends(decode_refresh_token) ):
     # to continue from here 
     print(token_meta)
     print(request.cookies.get("refresh_token"))
