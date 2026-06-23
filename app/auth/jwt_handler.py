@@ -4,6 +4,7 @@ from fastapi import HTTPException, Depends
 from typing import Annotated
 from datetime import datetime, timedelta, timezone
 
+# for development only values
 ALGORITHM = "HS256"
 ACCESS_TOKEN_SECRET="43d34b96c25e5cdddcfa4362134f580ee17d2004a2b21004c5dfca79e696bc25"
 REFRESH_TOKEN_SECRET = "08678f712780dfa5bb45e108ada6f698d2ec565390a3069c2884df5e39e001d9"
@@ -66,12 +67,13 @@ def create_refresh_token(sub: str, jti: str, expire_at: datetime):
     return encoded
 
 def decode_refresh_token(token: Annotated[str, Depends(oauth2_scheme)]):
+    
     try:
         payload = jwt.decode(token, REFRESH_TOKEN_SECRET, algorithms=[ALGORITHM])
         if payload.get('type') == 'refresh_token':
             user_id = payload.get("sub")
             jti = payload.get("jti")
-            if user_id == None and jti == None:
+            if user_id == None or jti == None:
                 raise HTTPException(
                     status_code=401,
                     detail="Not authorized"

@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from typing import Annotated
 auth_router = APIRouter(tags=["Auths"])
 
-from app.auth.jwt_handler import decode_refresh_token, decode_access_token
+from app.auth.jwt_handler import decode_refresh_token, get_current_user
 from app.services.auth_service import (
     register_user_service, 
     validate_email_verification_service, 
@@ -99,9 +99,15 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
         return response
 
 @auth_router.get("/auth/refresh-access-token")
-async def refresh_token(request: Request, token_meta:Annotated[dict, decode_refresh_token] ):
+async def refresh_token(request: Request, token_meta:Annotated[dict, Depends(decode_refresh_token)] ):
+    # to continue from here 
     print(token_meta)
     print(request.cookies.get("refresh_token"))
     
 @auth_router.get("/auth/logout")
-async def logout_user(user_id: ):
+async def logout_user(user_id:str = Depends(get_current_user)):
+    # delete continue 
+    # revoke the session
+    return{
+        "msg": "logging user out ..."
+    }
