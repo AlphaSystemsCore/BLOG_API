@@ -111,38 +111,40 @@ def validate_email_verification_service(user_id: str, email_verification_token: 
     
     
 def refresh_access_token_service(user_id, jti, refresh_token, client):
-    try:
-        row = get_refresh_token_metadata(jti)
-        if row is None:
-            raise 
-        hashed_refresh_token = row[0]
-        is_revoked = row[1]
-        expiry_at = row[2]
+    class RefreshTokenExpiredError(Exception):
+        pass
+    class InvalidRefreshToken(Exception):
+        pass
+    class RefreshTokenNotFoundError(Exception):
+        pass
+    row = get_refresh_token_metadata(jti)
+    if row is None:
+        raise  RefreshTokenNotFoundError()
+    hashed_refresh_token = row[0]
+    is_revoked = row[1]
+    expiry_at = row[2]
 
-        if expiry_at < datetime.now(timezone.utc):
-            raise
-        if is_revoked or not verify_password(refresh_token, hashed_refresh_token):
-            raise
-    except Exception as e:
-        raise Exception
-    try:
-        new_refresh_token = gen_refresh_token()
-        hashed_new_refresh_token = hash_password(new_refresh_token)
-        # creating new refresh token 
-        new_refresh_token = create_refresh_token_service(user_id, hashed_new_refresh_token, client, expiry_at=datetime.now(timezone.utc))
-        # creating new refresh token 
-        new_refresh_token.update({
-            "sub":user_id,
-            "type": "refresh_token",
-            "token":new_refresh_token
-        })
-        update_refresh_token(jti)
-        refresh_token = create_refresh_token(new_refresh_token)
-        access_token = create_access_token(user_id)
-    except Exception as e:
-        raise
-    else:
-        return access_token, refresh_token
+    if expiry_at < datetime.now(timezone.utc):
+        raise RefreshTokenExpiredError()
+    if is_revoked or not verify_password(refresh_token, hashed_refresh_token):
+        raise InvalidRefreshToken()
+
+
+    new_refresh_token = gen_refresh_token()
+    hashed_new_refresh_token = hash_password(new_refresh_token)
+    # creating new refresh token 
+    new_refresh_token = create_refresh_token_service(user_id, hashed_new_refresh_token, client, expiry_at=datetime.now(timezone.utc))
+    # creating new refresh token 
+    new_refresh_token.update({
+        "sub":user_id,
+        "type": "refresh_token",
+        "token":new_refresh_token
+    })
+    update_refresh_token(jti)
+    refresh_token = create_refresh_token(new_refresh_token)
+    access_token = create_access_token(user_id)
+   
+    return access_token, refresh_token
 
 
     

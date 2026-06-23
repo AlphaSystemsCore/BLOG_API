@@ -14,3 +14,9 @@ class EmailVerificationTokenInvalidError(Exception):
     pass
 class EmailVerificationTokenNotFoundError(Exception):
     pass
+class RefreshTokenExpiredError(Exception):
+    pass
+class InvalidRefreshToken(Exception):
+    pass
+class RefreshTokenNotFoundError(Exception):
+    pass
