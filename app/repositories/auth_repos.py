@@ -105,3 +105,15 @@ def update_email_verification_repo(user_id: str, is_used: bool, updated_at:datet
         )
         row = cur.fetchone()
     return row
+
+def get_refresh_token_metadata(refresh_token_id: str):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            SELECT hashed_refresh_token, user_id, is_revoked, expiry_at
+            FROM refresh_token
+            WHERE refresh_token_id = %s
+            """, (refresh_token_id,)
+        )
+        row = cur.fetchone()
+    return row

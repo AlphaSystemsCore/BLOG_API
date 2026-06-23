@@ -117,6 +117,6 @@ def validate_email_verification_service(user_id: str, email_verification_token: 
         raise
     
     
+def refresh_access_token(user_id, jti, refresh_token, client):
 
-    
     

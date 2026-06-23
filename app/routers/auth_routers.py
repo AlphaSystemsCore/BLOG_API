@@ -100,13 +100,19 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
 @auth_router.get("/auth/refresh-access-token")
 async def refresh_token(request: Request) :
     try:
+        client = request.headers['User-Agent']
         encoded_refresh_token = request.cookies.get("refresh_token")
         print(decode_refresh_token(encoded_refresh_token))
     except Exception as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_401_BAD_REQUEST,
             detail=str(e)
         )
+    else:
+        return {
+            "access_token":"access_token",
+            "token_type": "bearer"
+        }
 @auth_router.get("/auth/logout")
 async def logout_user(user_id:str = Depends(get_current_user)):
     # delete continue 
