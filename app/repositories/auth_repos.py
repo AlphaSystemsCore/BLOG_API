@@ -110,10 +110,21 @@ def get_refresh_token_metadata(refresh_token_id: str):
     with get_cur() as cur:
         cur.execute(
             """
-            SELECT hashed_refresh_token, user_id, is_revoked, expiry_at
+            SELECT hashed_refresh_token, is_revoked, expiry_at
             FROM refresh_token
             WHERE refresh_token_id = %s
             """, (refresh_token_id,)
         )
         row = cur.fetchone()
     return row
+
+def update_refresh_token(refresh_token_id: str):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            UPDATE refresh_token
+                SET is_revoked = true
+            WHERE refresh_token_id = %s
+            """,
+            (refresh_token_id,)
+        )
