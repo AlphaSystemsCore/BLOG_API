@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from typing import Annotated
 auth_router = APIRouter(tags=["Auths"])
 
-from app.auth.jwt_handler import decode_refresh_token, get_current_user
+from app.auth.jwt_handler import get_current_user, decode_refresh_token
 from app.services.auth_service import (
     register_user_service, 
     validate_email_verification_service, 
@@ -71,12 +71,11 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
     try:
 
         client = request.headers.get("User-Agent")
-        access_token, refresh_token, refresh_token_value = login_user_service(form_data.username, form_data.password, client)
-        access_refresh_token = AccessRefreshTokenOut(refresh_token=refresh_token, access_token=access_token )
-        response = JSONResponse(content=access_refresh_token.dict())
+        access_token, refresh_token = login_user_service(form_data.username, form_data.password, client)
+        response = JSONResponse(content={"access_token": access_token, "token_type":"bearer"})
         response.set_cookie(
             key="refresh_token",
-            value=refresh_token_value,
+            value=refresh_token,
             httponly=True,
             secure=False
         )
@@ -90,20 +89,24 @@ async def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Wrong email or password, please try again"
         )
-    except Exception as e:
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="UNEXPECTED_ERROR"
-        )
+    # except Exception as e:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #         detail="UNEXPECTED_ERROR"
+    #     )
     else:
         return response
 
 @auth_router.get("/auth/refresh-access-token")
-async def refresh_token(request: Request, token_meta:dict = Depends(decode_refresh_token) ):
-    # to continue from here 
-    print(token_meta)
-    print(request.cookies.get("refresh_token"))
-    
+async def refresh_token(request: Request) :
+    try:
+        encoded_refresh_token = request.cookies.get("refresh_token")
+        print(decode_refresh_token(encoded_refresh_token))
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
 @auth_router.get("/auth/logout")
 async def logout_user(user_id:str = Depends(get_current_user)):
     # delete continue 
