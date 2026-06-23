@@ -24,7 +24,7 @@ blog_api_table_preliminary = (
     """
     CREATE TABLE IF NOT EXISTS users(
         user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        username VARCHAR(80) UNIQUE,
+        username VARCHAR(80) NOT NULL UNIQUE,
         email TEXT NOT NULL UNIQUE,
         account_status account_status_type DEFAULT 'active',
         is_verified BOOLEAN DEFAULT false,
@@ -65,13 +65,14 @@ blog_api_table_preliminary = (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
+    "CREATE TYPE email_verification_status AS ENUM ('active', 'used', 'expired', 'revoked')",
 
     """
     CREATE TABLE IF NOT EXISTS email_verification(
         token_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         hashed_email_verification_token TEXT NOT NULL,
         user_id UUID NOT NULL,
-        is_used BOOLEAN DEFAULT false,
+        status email_verification_status DEFAULT 'active',
         created_at TIMESTAMPTZ DEFAULT NOW(),
         expire_at TIMESTAMPTZ NOT NULL,
         updated_at TIMESTAMPTZ,
@@ -86,26 +87,26 @@ blog_api_table_preliminary = (
     """,
   
     """
-    CREATE TABLE IF NOT EXISTS preferences(
-        preference_id SERIAL PRIMARY KEY,
-        pref_name VARCHAR(50) NOT NULL UNIQUE,
-        pref_category VARCHAR(50)
+    CREATE TABLE IF NOT EXISTS tags(
+        tag_id SERIAL PRIMARY KEY,
+        tag_name VARCHAR(50) NOT NULL UNIQUE,
+        tag_category VARCHAR(50)
     )
     """,
 
     """
-    CREATE TABLE IF NOT EXISTS users_preferences(
+    CREATE TABLE IF NOT EXISTS users_tags(
         user_id UUID NOT NULL,
-        preference_id INT NOT NULL,
-        PRIMARY KEY (user_id, preference_id),
+        tag_id INT NOT NULL,
+        PRIMARY KEY (user_id, tag_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE ,
-    FOREIGN KEY (preference_id) REFERENCES preferences(preference_id) ON DELETE CASCADE
+    FOREIGN KEY (tag_id) REFERENCES tags(tag_id) ON DELETE CASCADE
     )
     """,
 
     """
-    CREATE INDEX idx_users_preferences
-        ON users_preferences(user_id)
+    CREATE INDEX idx_users_tags
+        ON users_tags(user_id)
     """,
 
     """
@@ -127,10 +128,10 @@ blog_api_table_preliminary = (
     """
     CREATE TABLE IF NOT EXISTS posts_tags(
         post_id UUID,
-        preference_id INTEGER,
-        PRIMARY KEY (post_id, preference_id),
+        tag_id INTEGER,
+        PRIMARY KEY (post_id, tag_id),
         FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
-        FOREIGN KEY (preference_id) REFERENCES preferences(preference_id) ON DELETE CASCADE
+        FOREIGN KEY (tag_id) REFERENCES tags(tag_id) ON DELETE CASCADE
     )
     """,
 
@@ -143,7 +144,7 @@ blog_api_table_preliminary = (
         parent_comment_id UUID,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ,
-    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
     FOREIGN KEY (parent_comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE
     )
@@ -178,13 +179,13 @@ blog_api_table_preliminary = (
         client TEXT NOT NULL,
         is_revoked BOOLEAN DEFAULT false,
         created_at TIMESTAMPTZ DEFAULT NOW(),
-        expiry_at TIMESTAMPTZ NOT NULL,
+        expire_at TIMESTAMPTZ NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
 
     """
-    CREATE INDEX idx_refresh_token_user_id
-        ON refresh_token(user_id)
+    CREATE INDEX idx_refresh_token_user_id_is_revoked
+        ON refresh_token(user_id, is_revoked)
     """
 )
