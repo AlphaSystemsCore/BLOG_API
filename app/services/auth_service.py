@@ -26,6 +26,8 @@ def register_user_service(username: str, email: str, password:str):
     else:
         return email_verification_token
 
-
-
+def email_token_formater_service(user_id, email_verification_token, email):
+    # email to be implemented later, now I return JSON response with the token
+    message = f"http://127.0.0.1:8000/auths/verify-email/{user_id}/{email_verification_token}"
+    return message
     

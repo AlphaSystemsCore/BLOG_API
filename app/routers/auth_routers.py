@@ -21,8 +21,11 @@ def register_user(user: RegisterUser):
             detail= "INTERNAL_SERVER_ERROR"
         )
     else:
-        return email_verification_token
+        return JSONResponse(
+            content="",
+            status_code=status.HTTP_201_CREATED
+        )
 
-@auth_router.get("/auths/verify-email-account")
+@auth_router.get("/auths/verify-email/{user_id}/{email_verification_token}")
 def verify_email(user_id: str, email_verification_token: str):
     pass
