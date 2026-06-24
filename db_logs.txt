@@ -209,3 +209,4 @@ ERROR:root:Error: column "expire_at" of relation "refresh_token" does not exist
 LINE 3: ...          (hashed_refresh_token, user_id, client, expire_at)
                                                              ^
  2026-06-22 21:24:00.930297+00:00
+ERROR:root:Error: not all arguments converted during string formatting 2026-06-23 22:46:20.911594+00:00
