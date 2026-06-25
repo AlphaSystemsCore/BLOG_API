@@ -11,7 +11,7 @@ def delete_tag_service(tag_id):
     delete_tag_repo(tag_id)
 
 def get_tags_service():
-    tags = get_all_tags()
+    tags = get_tags_repo()
     if not tags:
         return []
     else:

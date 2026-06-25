@@ -2,10 +2,13 @@ from fastapi import Depends, APIRouter, HTTPException, status, Request
 from psycopg2 import errors
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
+from typing import Annotated
 
 from app.schemas.auth_schemas import RegisterUser
 from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError
 from app.services.auth_service import register_user_service,  verify_email_service, login_service
+from app.auth.jwt_handler import get_current_user
+
 auth_router = APIRouter(tags=["Auths"])
 
 
@@ -78,3 +81,20 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
     else:
         return response
 
+@auth_router.get("/auths/refresh")
+def refresh(request: Request):
+    refresh_token = request.cookies.get("refresh_token")
+    return refresh_token
+
+@auth_router.get("/auth/logout/")
+def logout(request: Request):
+    refresh_token = request.cookies.get("refresh_token")
+    return {
+        "msg":"soon to be implemented"
+    }
+
+@auth_router.get("/auths/logout-all-devices")
+def logout_all_devices(user_id: Annotated[str, get_current_user]):
+    return {
+        "msg":"soon to be implemented"
+    }

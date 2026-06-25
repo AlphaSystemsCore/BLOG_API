@@ -18,3 +18,5 @@ def get_tags_repo():
         cur.execute(
             "SELECT tag_id, tag_name, tag_category FROM tags"
         )
+        rows = cur.fetchall()
+    return rows
