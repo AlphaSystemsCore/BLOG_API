@@ -55,15 +55,20 @@ def login_service(email:str, password: str, client:str):
         raise EmailNotFoundError
     if verify_password(password, hashed_password):
         raise InvalidPasswordError
-    
+    refresh_token_jwt = create_refresh_token_service(user_id, client)
+    access_token_jwt = create_access_token_service(user_id)
+    return refresh_token_jwt, access_token_jwt
 
 def create_access_token_service(user_id: str):
+    # creating access token and returning the signed token
     payload = {
         "sub": user_id,
     }
-    return payload
+    access_token = create_access_token(payload)
+    return access_token
 
 def create_refresh_token_service(user_id: str, client:str):
+    # all contained creating refresh token, hashing it, saving it and returning the signed token
     refresh_token_value = gen_random_service()
     hashed_refresh_token_value = hash_token(refresh_token_value)
     expire_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_EXPIRE_TIME_DAYS)
@@ -84,5 +89,5 @@ def create_refresh_token_service(user_id: str, client:str):
         return refresh_token_jwt
 
 if __name__ == "__main__":
-    jwt = create_refresh_token_service("0e103f2c-4c8e-490e-88fa-4dda1e429800","123123")
+    jwt = create_access_token_service("0e103f2c-4c8e-490e-88fa-4dda1e429800")
     print(jwt)
