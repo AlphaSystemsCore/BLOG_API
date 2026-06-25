@@ -2,7 +2,7 @@ blog_api_table_preliminary = (
 
     "CREATE TYPE account_status_type AS ENUM('active', 'deleted', 'revoked')",
 
-    "CREATE TYPE status_type AS ENUM('drafted', 'published', 'deleted')",
+    "CREATE TYPE posts_status_type AS ENUM('drafted', 'published', 'deleted')",
 
     """
     CREATE TABLE IF NOT EXISTS oauth2_credential(
@@ -119,7 +119,7 @@ blog_api_table_preliminary = (
         image_link TEXT,
         social_link TEXT,
         is_allowed BOOLEAN DEFAULT true,
-        status status_type DEFAULT 'drafted',
+        status posts_status_type DEFAULT 'drafted',
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE

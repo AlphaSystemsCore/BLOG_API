@@ -25,21 +25,16 @@ def create_access_token(data,  expiry_delta: timedelta | None = None):
     return encoded
 
 def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+    # letter I will scale to be role based auth for endpoints
     try:
-    
         payload = jwt.decode(token, ACCESS_TOKEN_SECRET, algorithms=[ALGORITHM])
-        if payload.get('type') == "access_token":
-            user_id = payload.get("sub")
-            if user_id == None:
-                # ill add database check for lookup??
-                raise HTTPException(
-                    status_code=401,
-                    detail="Not authorized"
-                )
-        else: 
+
+        user_id = payload.get("sub")
+        if user_id == None:
+            # ill add database check for lookup??
             raise HTTPException(
-                status_code = 401,
-                detail = "Not Authorized"
+                status_code=401,
+                detail="Not authorized"
             )
     except jwt.ExpiredSignatureError:
         raise HTTPException(
