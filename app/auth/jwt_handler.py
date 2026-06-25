@@ -55,13 +55,8 @@ def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         return user_id
 
 
-def create_refresh_token(data: dict, expiry_delta:timedelta | None = None):
+def create_refresh_token(data: dict):
     to_encoded = data.copy()
-    if not expiry_delta:
-        exp = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_EXPIRY_DAYS)
-    else:
-        exp = datatime.now(timezone.utc) + expiry_delta
-    to_encoded.update({"exp":exp})
     encoded = jwt.encode(to_encoded, REFRESH_TOKEN_SECRET, algorithm=ALGORITHM)
     return encoded
   

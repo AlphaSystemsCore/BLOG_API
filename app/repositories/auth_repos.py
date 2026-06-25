@@ -62,14 +62,14 @@ def get_hashed_password(email:str):
         row = cur.fetchone()
     return row
 
-def save_refresh_token_repo(user_id, hashed_refresh_token, client):
+def save_refresh_token_repo(user_id, hashed_refresh_token, client, expire_at):
     with get_cur() as cur:
         cur.execute(
             """
             INSERT INTO refresh_token
-            (hashed_refresh_token, user_id, client)
-            VALUES(%s, %s, %s) RETURNING refresh_token_id 
-            """, (hashed_refresh_token, user_id, client)
+            (hashed_refresh_token, user_id, client, expire_at)
+            VALUES(%s, %s, %s, %s) RETURNING refresh_token_id 
+            """, (hashed_refresh_token, user_id, client, expire_at)
         )
         row = cur.fetchone()
     return row
