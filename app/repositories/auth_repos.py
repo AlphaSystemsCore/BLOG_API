@@ -51,12 +51,15 @@ def consume_token_repo(user_id:str, hashed_email_verification_token: str):
         )
     return row
 
-def get_hashed_password(email:str):
+def get_hashed_password_repo(email:str):
     with get_cur() as cur:
         cur.execute(
             """
-            SELECT hashed_password, user_id
-                WHERE email = %s AND is_verified = true AND account_status = 'active'
+            SELECT oc.hashed_password, u.user_id
+                FROM users u
+                JOIN oauth2_credential oc
+                USING(credential_id)
+            WHERE u.email = %s AND u.is_verified = true AND u.account_status = 'active'
             """, (email,)
         )
         row = cur.fetchone()

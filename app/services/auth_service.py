@@ -5,8 +5,8 @@ from datetime import datetime, timedelta, timezone
 from app.auth.jwt_handler import create_access_token, create_refresh_token
 from app.auth.token_handler import hash_token
 from app.auth.password_handler import hash_password, verify_password, DUMMY_HASH
-from app.repositories.auth_repos import register_user_save_evt, consume_token_repo, save_refresh_token_repo
-from app.exceptions.auth_exception import InvalidEmailVerificationTokenError
+from app.repositories.auth_repos import register_user_save_evt, consume_token_repo, save_refresh_token_repo, get_hashed_password_repo
+from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError
 EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES=15
 TOKEN_BYTE_SIZE=32
 ACCESS_TOKEN_VALID_TIME_MINUTES=15
@@ -48,12 +48,15 @@ def verify_email_service(user_id: str, email_verification_token:str):
     print(row)
     return "verified successfully"
 
+
 def login_service(email:str, password: str, client:str):
-    hashed_password, user_id = get_hashed_password(email)
-    if hashed_password is None:
+    row = get_hashed_password_repo(email)
+    if not row:
         verify_password(password, DUMMY_HASH)
         raise EmailNotFoundError
-    if verify_password(password, hashed_password):
+    user_id = row[1]
+    hashed_password = row[0]
+    if not verify_password(password, hashed_password):
         raise InvalidPasswordError
     refresh_token_jwt = create_refresh_token_service(user_id, client)
     access_token_jwt = create_access_token_service(user_id)

@@ -4,8 +4,8 @@ from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 
 from app.schemas.auth_schemas import RegisterUser
-from app.exceptions.auth_exception import InvalidEmailVerificationTokenError
-from app.services.auth_service import register_user_service,  verify_email_service
+from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError
+from app.services.auth_service import register_user_service,  verify_email_service, login_service
 auth_router = APIRouter(tags=["Auths"])
 
 
@@ -51,5 +51,15 @@ def verify_email(user_id: str, email_verification_token: str):
 
 @auth_router.post("/auths/login")
 def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
+    AuthCredentialError = HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong password or email, please try again"
+        )
+    response = JSONResponse(content="Logged in successfully")
     client = request.headers.get('User-Agent')
-    return client
+    try:
+        refresh_token, access_token = login_service(form_data.username, form_data.password, client)
+    except EmailNotFoundError:
+        raise AuthCredentialError
+    else:
+        return response
