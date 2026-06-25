@@ -30,14 +30,25 @@ def register_user_save_evt(username: str, email: str, hashed_password: str, hash
             """,(hashed_evt, user_id, expire_at)
         )
     return user_id
-    
-def update_email_verification_token_repo(user_id:str, token_id: str):
+
+def consume_token_repo(user_id:str, hashed_email_verification_token: str):
     with get_cur() as cur:
         cur.execute("""
             UPDATE email_verification
                 SET status = 'used',
                     updated_at = NOW()
-                WHERE user_id = %s AND token_id = %s AND status='active' AND expire_at > NOW()
-                RETURNING hashed_email_verification_token, expire_at, status
-                """,(user_id, token_id)
+                WHERE user_id = %s AND hashed_email_verification_token = %s AND status='active' AND expire_at > NOW()
+                RETURNING status
+                """,(user_id, hashed_email_verification_token)
         )
+        row = cur.fetchone()
+        cur.execute(
+            """
+             UPDATE users
+                SET is_verified = True, updated_at = NOW()
+                WHERE user_id = %s
+            """ ,(user_id,)
+        )
+    return row
+
+def 

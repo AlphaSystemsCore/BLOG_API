@@ -4,7 +4,8 @@ from datetime import datetime, timedelta, timezone
 
 from app.auth.token_handler import hash_token
 from app.auth.password_handler import hash_password, verify_password, DUMMY_HASH
-from app.repositories.auth_repos import register_user_save_evt
+from app.repositories.auth_repos import register_user_save_evt, consume_token_repo
+from app.exceptions.auth_exception import InvalidEmailVerificationTokenError
 EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES=15
 TOKEN_BYTE_SIZE =32
 
@@ -36,4 +37,14 @@ def email_formater_service(user_id, email_verification_token, email):
     return message
     
 def verify_email_service(user_id: str, email_verification_token:str):
-    pass
+    hashed_email_verification_token = hash_token(email_verification_token)
+    row = consume_token_repo(user_id, hashed_email_verification_token)
+    if not row:
+        print(row)
+        raise InvalidEmailVerificationTokenError
+    print(row)
+    return "verified successfully"
+
+def login_service(email:str, password: str):
+
+

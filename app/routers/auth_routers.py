@@ -1,9 +1,11 @@
 from fastapi import Depends, APIRouter, HTTPException, status
 from psycopg2 import errors
 from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordRequestForm
 
 from app.schemas.auth_schemas import RegisterUser
-from app.services.auth_service import register_user_service, email_formater_service
+from app.exceptions.auth_exception import InvalidEmailVerificationTokenError
+from app.services.auth_service import register_user_service,  verify_email_service
 auth_router = APIRouter(tags=["Auths"])
 
 
@@ -30,7 +32,23 @@ def register_user(user: RegisterUser):
 
 @auth_router.get("/auths/verify-email/{user_id}/{email_verification_token}")
 def verify_email(user_id: str, email_verification_token: str):
+    try:
+        verify_email_service(user_id, email_verification_token)
+    except InvalidEmailVerificationTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Invalid token"
+        )
+
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="INTERNAL_SERVER_ERROR"
+        )
     return {
-        "msg":"email verified proceed to login, at your comfort"
-        ,"token":email_verification_token
+        "msg":"Email verified successfully"
     }
+
+@auth_router.post("/auths/login")
+def login(form_data: OAuth2PasswordRequestForm = Depends()):
+    
