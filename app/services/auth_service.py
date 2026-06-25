@@ -45,6 +45,17 @@ def verify_email_service(user_id: str, email_verification_token:str):
     print(row)
     return "verified successfully"
 
-def login_service(email:str, password: str):
+def login_service(email:str, password: str, client:str):
+    hashed_password, user_id = get_hashed_password(email)
+    if hashed_password is None:
+        verify_password(password, DUMMY_HASH)
+        raise EmailNotFoundError
+    if verify_password(password, hashed_password):
+        raise InvalidPasswordError
+    
 
+def create_access_token(user_id: str):
+    pass
+def create_refresh_token(user_id: str):
+    pass
 

@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, HTTPException, status
+from fastapi import Depends, APIRouter, HTTPException, status, Request
 from psycopg2 import errors
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -50,5 +50,6 @@ def verify_email(user_id: str, email_verification_token: str):
     }
 
 @auth_router.post("/auths/login")
-def login(form_data: OAuth2PasswordRequestForm = Depends()):
-    
+def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
+    client = request.headers.get('User-Agent')
+    return client
