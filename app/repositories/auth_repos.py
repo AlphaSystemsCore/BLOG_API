@@ -26,12 +26,11 @@ def register_user_save_evt(username: str, email: str, hashed_password: str, hash
             """
             INSERT INTO email_verification
             (hashed_email_verification_token, user_id, expire_at)
-            VALUES(%s, %s, %s) RETURNING token_id
+            VALUES(%s, %s, %s) 
             """,(hashed_evt, user_id, expire_at)
         )
-        token_id = cur.fetchone()[0]
-    return user_id, token_id
-
+    return user_id
+    
 def update_email_verification_token_repo(user_id:str, token_id: str):
     with get_cur() as cur:
         cur.execute("""

@@ -28,8 +28,9 @@ def register_user(user: RegisterUser):
             status_code=status.HTTP_201_CREATED
         )
 
-@auth_router.get("/auths/verify-email/{user_id}/{token_id}")
-def verify_email(user_id: str, token_id: str):
+@auth_router.get("/auths/verify-email/{user_id}/{email_verification_token}")
+def verify_email(user_id: str, email_verification_token: str):
     return {
         "msg":"email verified proceed to login, at your comfort"
+        ,"token":email_verification_token
     }

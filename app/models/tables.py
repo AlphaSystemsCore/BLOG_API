@@ -80,6 +80,7 @@ blog_api_table_preliminary = (
 
     )
     """,
+    "CREATE INDEX idx_hashed_email_verifiacation ON email_verification(hashed_email_verification_token)"
 
     """
     CREATE INDEX email_verifiaction_user
