@@ -2,12 +2,15 @@ from psycopg2 import errors
 import secrets
 from datetime import datetime, timedelta, timezone
 
+from auth.jwt_handler import create_access_token, create_refresh_token
 from app.auth.token_handler import hash_token
 from app.auth.password_handler import hash_password, verify_password, DUMMY_HASH
-from app.repositories.auth_repos import register_user_save_evt, consume_token_repo
+from app.repositories.auth_repos import register_user_save_evt, consume_token_repo, save_refresh_token_repo
 from app.exceptions.auth_exception import InvalidEmailVerificationTokenError
 EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES=15
-TOKEN_BYTE_SIZE =32
+TOKEN_BYTE_SIZE=32
+ACCESS_TOKEN_VALID_TIME_MINUTES=15
+REFRESH_EXPIRE_TIME_DAYS=30
 
 def gen_random_service():
     return secrets.token_urlsafe(TOKEN_BYTE_SIZE)
@@ -54,8 +57,25 @@ def login_service(email:str, password: str, client:str):
         raise InvalidPasswordError
     
 
-def create_access_token(user_id: str):
-    pass
-def create_refresh_token(user_id: str):
-    pass
+def create_access_token_service(user_id: str):
+    payload = {
+        "sub": user_id,
+    }
+    return payload
+
+def create_refresh_token_service(user_id: str, client:str):
+    refresh_token_value = gen_random_service()
+    hashed_refresh_token_value = hash_token(token)
+    try:
+        jti = save_refresh_token_repo(user_id, hashed_refresh_token, client)
+        payload = {
+        "sub": user_id,
+        "token": token,
+        "jti": jti
+        }
+    except Exception as exc:
+        print(exc)
+        raise 
+    else:
+        return payload
 
