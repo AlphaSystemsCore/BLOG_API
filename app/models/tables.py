@@ -93,7 +93,7 @@ blog_api_table_preliminary = (
         tag_name VARCHAR(50) NOT NULL UNIQUE,
         tag_category VARCHAR(50),
         user_id UUID NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
     """
