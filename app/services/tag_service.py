@@ -10,7 +10,7 @@ def create_tag_service(user_id, tag_name, tag_category):
 def delete_tag_service(tag_id):
     delete_tag_repo(tag_id)
 
-def view_available_tags_service():
+def get_tags_service():
     tags = get_all_tags()
     if not tags:
         return []
