@@ -12,4 +12,5 @@ def get_all_tags(user_id: Annotated[str, Depends(get_current_user)]):
         "msg":"Hello, to be implemented soon 🙂"
     }
 @tag_router.post("/tags/")
-def create_tag(tag: Tags):
+def create_tag(tag: TagsIn, user_id: Annotated[str, Depends(get_current_user)]):
+    pass

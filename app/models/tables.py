@@ -91,9 +91,15 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS tags(
         tag_id SERIAL PRIMARY KEY,
         tag_name VARCHAR(50) NOT NULL UNIQUE,
-        tag_category VARCHAR(50)
+        tag_category VARCHAR(50),
+        user_id UUID NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
     )
     """,
+    """
+    CREATE INDEX idx_tag_category
+        ON tags(tag_category)
+    """
 
     """
     CREATE TABLE IF NOT EXISTS users_tags(
