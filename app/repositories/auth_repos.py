@@ -86,7 +86,5 @@ def consume_refresh_token_repo(refresh_token_id, hashed_refresh_token):
                 WHERE is_revoked = False AND refresh_token_id =%s AND hashed_refresh_token=%s 
                 """, (refresh_token_id, hashed_refresh_token)
         )
-        print(refresh_token_id)
-        print(hashed_refresh_token)
         updated = cur.rowcount
     return updated > 0

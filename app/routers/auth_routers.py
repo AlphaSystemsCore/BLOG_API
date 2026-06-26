@@ -33,7 +33,7 @@ def register_user(user: RegisterUser):
             status_code=status.HTTP_201_CREATED
         )
 
-@auth_router.get("/auths/verify-email/{user_id}/{email_verification_token}")
+@auth_router.post("/auths/verify-email/{user_id}/{email_verification_token}")
 def verify_email(user_id: str, email_verification_token: str):
     try:
         verify_email_service(user_id, email_verification_token)
@@ -66,7 +66,10 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
         response.set_cookie(
             key="refresh_token",
             value=refresh_token,
-            httponly=True
+            httponly=True,
+            secure=False,
+            samesite="strict",
+            path="/auths/refresh"
         )
     except EmailNotFoundError:
         raise AuthCredentialError
@@ -81,17 +84,41 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
     else:
         return response
 
-@auth_router.get("/auths/refresh")
+@auth_router.post("/auths/refresh")
 def refresh(request: Request):
     client = request.headers.get("User-Agent")
     refresh_token_jwt = request.cookies.get("refresh_token")
+    if refresh_token_jwt is None:
+        response = Response(status_code=401)
+        response.delete_cookie(key="refresh_token")
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid refresh token, please login"
+        )
     
     try:
         new_access_token_jwt, new_refresh_token_jwt = create_new_access_and_refresh_token_service(refresh_token_jwt, client)
+        response = JSONResponse(content={
+            "access_token":new_access_token_jwt,
+            "token_type":"bearer"
+        })
+    except RefreshTokenAlreadyConsumed as exc:
+        response.delete_cookie(key="refresh_token")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid refresh token, please login."
+        )
+    except HTTPException as exc:
+        response.delete_cookie(key="refresh_token")
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid refresh token, please login"
+        )
     except Exception as exc:
+        response.delete_cookie(key="refresh_token")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=str(exc)
+            detail="UNEXPECTED_ERROR_OCCURED"
         )
     else:
         response = JSONResponse(content={
@@ -100,18 +127,21 @@ def refresh(request: Request):
         })
         response.set_cookie(
             key="refresh_token",
-            value=new_refresh_token_jwt
+            value=new_refresh_token_jwt,
+            httponly=True,
+            samesite="strict",
+            path="/auths/refresh"
         )
     return response
 
-@auth_router.get("/auth/logout/")
+@auth_router.post("/auths/logout/")
 def logout(request: Request):
   
     return {
         "msg":"soon to be implemented"
     }
 
-@auth_router.get("/auths/logout-all-devices")
+@auth_router.post("/auths/logout-all-devices")
 def logout_all_devices(user_id: Annotated[str, get_current_user]):
     return {
         "msg":"soon to be implemented"

@@ -122,8 +122,6 @@ blog_api_table_preliminary = (
         user_id UUID NOT NULL,
         title TEXT NOT NULL,
         content TEXT NOT NULL,
-        image_link TEXT,
-        social_link TEXT,
         is_allowed BOOLEAN DEFAULT true,
         status posts_status_type DEFAULT 'drafted',
         created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -131,6 +129,18 @@ blog_api_table_preliminary = (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
+    """
+    CREATE TABLE IF NOT EXISTS media(
+    media_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    post_id UUID,
+    file_path TEXT NOT NULL,
+    created_by UUID NOT NULL,
+    file_type VARCHAR(100) NOT NULL,
+    mime_type VARCHAR(100) NOT NULL,
+    size_bytes INTEGER NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    )
+    """
 
     """
     CREATE TABLE IF NOT EXISTS posts_tags(
