@@ -1,4 +1,4 @@
-from fastapi import Depends, APIRouter, HTTPException, status, Request
+from fastapi import Depends, APIRouter, HTTPException, status, Request, Response
 from psycopg2 import errors
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
@@ -6,7 +6,7 @@ from typing import Annotated
 
 from app.schemas.auth_schemas import RegisterUser
 from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError
-from app.services.auth_service import register_user_service,  verify_email_service, login_service, unpack_refresh_token_jwt
+from app.services.auth_service import register_user_service,  verify_email_service, login_service, create_new_access_and_refresh_token_service
 from app.auth.jwt_handler import get_current_user
 
 auth_router = APIRouter(tags=["Auths"])
@@ -84,21 +84,25 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
 @auth_router.get("/auths/refresh")
 def refresh(request: Request):
     client = request.headers.get("User-Agent")
-    print(client)
     refresh_token_jwt = request.cookies.get("refresh_token")
-    print(refresh_token_jwt)
     
-    # try:
-    unpack_refresh_token_jwt(refresh_token_jwt, client)
-    # except Exception as exc:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #         detail=str(exc)
-    #     )
-
-    return {
-        "msg": "soon to be implemented"
-    }
+    try:
+        new_access_token_jwt, new_refresh_token_jwt = create_new_access_and_refresh_token_service(refresh_token_jwt, client)
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(exc)
+        )
+    else:
+        response = JSONResponse(content={
+            "access_token":new_access_token_jwt,
+            "token_type":"bearer"
+        })
+        response.set_cookie(
+            key="refresh_token",
+            value=new_refresh_token_jwt
+        )
+    return response
 
 @auth_router.get("/auth/logout/")
 def logout(request: Request):

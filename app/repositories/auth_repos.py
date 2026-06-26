@@ -76,3 +76,17 @@ def save_refresh_token_repo(user_id, hashed_refresh_token, client, expire_at):
         )
         row = cur.fetchone()
     return row
+
+def consume_refresh_token_repo(refresh_token_id, hashed_refresh_token):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            UPDATE refresh_token
+                SET is_revoked = True
+                WHERE is_revoked = False AND refresh_token_id =%s AND hashed_refresh_token=%s 
+                """, (refresh_token_id, hashed_refresh_token)
+        )
+        print(refresh_token_id)
+        print(hashed_refresh_token)
+        updated = cur.rowcount
+    return updated > 0

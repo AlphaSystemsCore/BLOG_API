@@ -5,8 +5,8 @@ from datetime import datetime, timedelta, timezone
 from app.auth.jwt_handler import create_access_token, create_refresh_token, decode_refresh_token
 from app.auth.token_handler import hash_token
 from app.auth.password_handler import hash_password, verify_password, DUMMY_HASH
-from app.repositories.auth_repos import register_user_save_evt, consume_token_repo, save_refresh_token_repo, get_hashed_password_repo
-from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError
+from app.repositories.auth_repos import register_user_save_evt, consume_token_repo, save_refresh_token_repo, get_hashed_password_repo, consume_refresh_token_repo
+from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError, RefreshTokenAlreadyConsumed
 EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES=15
 TOKEN_BYTE_SIZE=32
 ACCESS_TOKEN_VALID_TIME_MINUTES=15
@@ -92,12 +92,23 @@ def create_refresh_token_service(user_id: str, client:str):
     else:
         return refresh_token_jwt
 
-if __name__ == "__main__":
-    jwt = create_access_token_service("0e103f2c-4c8e-490e-88fa-4dda1e429800")
-    print(jwt)
-
-def unpack_refresh_token_jwt(refresh_token_jwt: str, client:str):
+def create_new_access_and_refresh_token_service(refresh_token_jwt: str, client:str):
     user_id, jti, refresh_token_value = decode_refresh_token(refresh_token_jwt)
-    print(user_id)
+    #creating new access token
+    access_token = create_access_token_service(user_id)
+
+    hashed_refresh_token_value = hash_token(refresh_token_value)
+    verify_token_service(jti, refresh_token_value)
+    refresh_token = create_refresh_token_service(user_id, client)
+    print(access_token)
+    print(refresh_token)
+    return access_token, refresh_token
+
+def verify_token_service(jti, refresh_token_value):
+    hashed_refresh_token_value = hash_token(refresh_token_value)
+    if not consume_refresh_token_repo(jti, hashed_refresh_token_value):
+        raise RefreshTokenAlreadyConsumed
     
-    
+
+
+
