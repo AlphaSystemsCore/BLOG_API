@@ -130,17 +130,20 @@ blog_api_table_preliminary = (
     )
     """,
     """
-    CREATE TABLE IF NOT EXISTS media(
-    media_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    CREATE TABLE IF NOT EXISTS files(
+    file_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     post_id UUID,
     file_path TEXT NOT NULL,
-    created_by UUID NOT NULL,
+    user_id UUID NOT NULL,
     file_type VARCHAR(100) NOT NULL,
     mime_type VARCHAR(100) NOT NULL,
     size_bytes INTEGER NOT NULL,
     created_at TIMESTAMPTZ DEFAULT NOW(),
+    FOREIGN KEY (post_id) REFERENCES posts(post_id), 
+    FOREIGN KEY (post_id) REFERENCES users(user_id)
     )
-    """
+    """,
+    "CREATE INDEX idx_post_id_user_id ON files(user_id, post_id)",
 
     """
     CREATE TABLE IF NOT EXISTS posts_tags(
