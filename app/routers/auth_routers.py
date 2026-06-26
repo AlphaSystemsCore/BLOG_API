@@ -6,7 +6,7 @@ from typing import Annotated
 
 from app.schemas.auth_schemas import RegisterUser
 from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError
-from app.services.auth_service import register_user_service,  verify_email_service, login_service
+from app.services.auth_service import register_user_service,  verify_email_service, login_service, unpack_refresh_token_jwt
 from app.auth.jwt_handler import get_current_user
 
 auth_router = APIRouter(tags=["Auths"])
@@ -83,12 +83,26 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
 
 @auth_router.get("/auths/refresh")
 def refresh(request: Request):
-    refresh_token = request.cookies.get("refresh_token")
-    return refresh_token
+    client = request.headers.get("User-Agent")
+    print(client)
+    refresh_token_jwt = request.cookies.get("refresh_token")
+    print(refresh_token_jwt)
+    
+    # try:
+    unpack_refresh_token_jwt(refresh_token_jwt, client)
+    # except Exception as exc:
+    #     raise HTTPException(
+    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+    #         detail=str(exc)
+    #     )
+
+    return {
+        "msg": "soon to be implemented"
+    }
 
 @auth_router.get("/auth/logout/")
 def logout(request: Request):
-    refresh_token = request.cookies.get("refresh_token")
+  
     return {
         "msg":"soon to be implemented"
     }

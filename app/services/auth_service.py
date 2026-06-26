@@ -2,7 +2,7 @@ from psycopg2 import errors
 import secrets
 from datetime import datetime, timedelta, timezone
 
-from app.auth.jwt_handler import create_access_token, create_refresh_token
+from app.auth.jwt_handler import create_access_token, create_refresh_token, decode_refresh_token
 from app.auth.token_handler import hash_token
 from app.auth.password_handler import hash_password, verify_password, DUMMY_HASH
 from app.repositories.auth_repos import register_user_save_evt, consume_token_repo, save_refresh_token_repo, get_hashed_password_repo
@@ -76,8 +76,9 @@ def create_refresh_token_service(user_id: str, client:str):
     hashed_refresh_token_value = hash_token(refresh_token_value)
     expire_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_EXPIRE_TIME_DAYS)
     try:
-        jti = save_refresh_token_repo(user_id, hashed_refresh_token_value, client, expire_at)
-        
+        row = save_refresh_token_repo(user_id, hashed_refresh_token_value, client, expire_at)
+        if row:
+            jti = row[0]
         payload = {
         "sub": user_id,
         "refresh_token": refresh_token_value,
@@ -94,3 +95,9 @@ def create_refresh_token_service(user_id: str, client:str):
 if __name__ == "__main__":
     jwt = create_access_token_service("0e103f2c-4c8e-490e-88fa-4dda1e429800")
     print(jwt)
+
+def unpack_refresh_token_jwt(refresh_token_jwt: str, client:str):
+    user_id, jti, refresh_token_value = decode_refresh_token(refresh_token_jwt)
+    print(user_id)
+    
+    

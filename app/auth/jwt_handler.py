@@ -61,26 +61,29 @@ def decode_refresh_token(token:str):
         status_code=401,
         detail="Not Authorized"
     )
-    try:
-        payload = jwt.decode(token, REFRESH_TOKEN_SECRET, algorithms=[ALGORITHM])
-        user_id =payload.get("sub")
-        jti = payload.get("jti")
-        refresh_token =payload.get("token")
-        if user_id is None or jti is None or refresh_token is None:
-            raise CredentialError
+    # try:
+    payload = jwt.decode(token, REFRESH_TOKEN_SECRET, algorithms=[ALGORITHM])
+    user_id =payload.get("sub")
+    print(user_id)
+    jti = payload.get("jti")
+    print(jti)
+    refresh_token =payload.get("refresh_token")
+    print(refresh_token)
+        # if user_id is None and jti is None and refresh_token is None:
+        #     raise CredentialError
 
         #will do db lookup for the user_id
-    except jwt.exceptions.ExpiredSignatureError as e:
-        raise CredentialError
-    except jwt.exceptions.InvalidTokenError as e:
-        raise CredentialError
+    # except jwt.exceptions.ExpiredSignatureError as e:
+    #     raise CredentialError
+    # except jwt.exceptions.InvalidTokenError as e:
+    #     raise CredentialError
 
-    except Exception as e:
-        raise HTTPException(
-            status_code=500,
-            detail=str(e)
-        )
+    # except Exception as e:
+    #     raise HTTPException(
+    #         status_code=500,
+    #         detail=str(e)
+    #     )
 
-    else:
-        return user_id, jti, refresh_token
+    # else:
+    return user_id, jti, refresh_token
     
