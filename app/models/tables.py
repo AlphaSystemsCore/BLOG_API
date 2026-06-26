@@ -129,21 +129,25 @@ blog_api_table_preliminary = (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
+
     """
-    CREATE TABLE IF NOT EXISTS files(
-    file_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    post_id UUID,
-    file_path TEXT NOT NULL,
-    user_id UUID NOT NULL,
-    file_type VARCHAR(100) NOT NULL,
-    mime_type VARCHAR(100) NOT NULL,
-    size_bytes INTEGER NOT NULL,
-    created_at TIMESTAMPTZ DEFAULT NOW(),
+    CREATE TABLE IF NOT EXISTS media(
+        media_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id UUID NOT NULL,
+        post_id UUID,
+        file_path TEXT NOT NULL,
+        original_filename VARCHAR(100) NOT NULL,
+        file_type VARCHAR(100) NOT NULL,
+        mime_type VARCHAR(100) NOT NULL,
+        size INTEGER NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ,
     FOREIGN KEY (post_id) REFERENCES posts(post_id), 
-    FOREIGN KEY (post_id) REFERENCES users(user_id)
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
     )
     """,
-    "CREATE INDEX idx_post_id_user_id ON files(user_id, post_id)",
+
+    "CREATE INDEX idx_post_id_user_id ON media(user_id, post_id)",
 
     """
     CREATE TABLE IF NOT EXISTS posts_tags(
