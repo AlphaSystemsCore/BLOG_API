@@ -22,13 +22,30 @@ def get_all_post_repo():
     return row
     
 
-def get_post_by_id(post_id: str):
-    # to add limit and offset (pagination)
+def get_post_by_id_repo(post_id: str):
     with get_cur() as cur:
         cur.execute("""
         SELECT p.post_id, p.title, p.content, p.created_at 
             FROM posts p 
-            WHERE post_id = %s""", (post_id,)
+            WHERE p.post_id = %s""", (post_id,)
         )
-        row = cur.fetchall()
+        row = cur.fetchone()
     return row
+
+def get_post_by_title_repo(title:str):
+    with get_cur() as cur:
+        cur.execute("""
+        SELECT p.post_id, p.title, p.content, p.created_at 
+            FROM posts p 
+            WHERE p.title = %s""", (title,)
+        )
+        row = cur.fetchone()
+    return row
+
+def delete_post_repo(post_id:str):
+    with get_cur() as cur:
+        cur.execute(
+            "DELETE FROM posts WHERE post_id = %s"
+        )
+        updated_rows = countrow()
+    return updated_rows

@@ -120,7 +120,7 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS posts(
         post_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
-        title TEXT NOT NULL,
+        title TEXT UNIQUE NOT NULL,
         content TEXT NOT NULL,
         is_allowed BOOLEAN DEFAULT true,
         status posts_status_type DEFAULT 'drafted',
@@ -129,7 +129,7 @@ blog_api_table_preliminary = (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
-    "CREATE INDEX idx_post_title ON post(title)",
+    
 
     """
     CREATE TABLE IF NOT EXISTS media(
