@@ -45,7 +45,7 @@ def get_post_by_title_repo(title:str):
 def delete_post_repo(post_id:str):
     with get_cur() as cur:
         cur.execute(
-            "DELETE FROM posts WHERE post_id = %s"
+            "DELETE FROM posts WHERE post_id = %s", (post_id,)
         )
-        updated_rows = countrow()
+        updated_rows = cur.rowcount
     return updated_rows
