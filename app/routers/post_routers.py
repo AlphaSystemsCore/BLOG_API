@@ -7,7 +7,7 @@ from app.services.post_service import create_post_service, get_all_post_service,
 
 post_router = APIRouter(tags=["posts"])
 
-
+# Exception have not been handled this is just a basic version of the working code
 
 @post_router.post("/posts", response_model=CreatePostResponse)
 def create_post(post: PostsIn, user_id: Annotated[str, Depends(get_current_user)]):
@@ -28,13 +28,7 @@ def get_post(post_id):
 
 @post_router.get("/posts/")
 def get_post_by_title(title:str):
-    # try:
     post = get_post_by_title_service(title)
-    # except Exception as e:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #         detail="UNEXPECTED ERROR OCCURRED"
-        # )
     return post
 
     
