@@ -5,7 +5,7 @@ def create_post_repo(user_id:str, title: str, content:str ):
         cur.execute(
             """
             INSERT INTO posts 
-                (user_id, title, content, image_link, video_link, status)
+                (user_id, title, content)
                 VALUES(%s, %s, %s) RETURNING post_id
             """, (user_id, title, content)
         )
