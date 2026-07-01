@@ -2,8 +2,8 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from typing import Annotated
 
 from app.auth.jwt_handler import get_current_user
-from app.schemas.post_schemas import PostsIn, CreatePostResponse
-from app.services.post_service import create_post_service
+from app.schemas.post_schemas import PostsIn, CreatePostResponse, PostOut
+from app.services.post_service import create_post_service, get_all_post_service
 
 post_router = APIRouter(tags=["posts"])
 
@@ -16,11 +16,13 @@ def create_post(post: PostsIn, user_id: Annotated[str, Depends(get_current_user)
 
 
 @post_router.get("/posts")
+# access not restricted 
 def get_posts():
-    pass
+    return get_all_post_service()
+    
 
 
-@post_router.get("/posts/")
+@post_router.get("/posts/{post_id}")
 def get_post(post_id):
     pass
 
