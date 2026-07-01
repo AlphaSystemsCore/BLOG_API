@@ -129,6 +129,7 @@ blog_api_table_preliminary = (
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
+    "CREATE INDEX idx_post_title ON post(title)",
 
     """
     CREATE TABLE IF NOT EXISTS media(

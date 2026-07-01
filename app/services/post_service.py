@@ -1,5 +1,5 @@
 from app.schemas.post_schemas import PostsIn
-from app.repositories.post_repos import create_post_repo, get_all_post_repo
+from app.repositories.post_repos import create_post_repo, get_all_post_repo, get_post_by_id
 
 def create_post_service(user_id, post: PostsIn):
         post_id = create_post_repo(user_id, post.title, post.content)
@@ -15,5 +15,10 @@ def get_all_post_service():
         raise ValueError("Post does not exists")
     return posts
 
-    
+def get_post_by_id_service(post_id: str):
+    post = get_all_post_repo(post_id)
+    if post is None:
+        raise ValueError("Post not found")
+    return post
 
+    
