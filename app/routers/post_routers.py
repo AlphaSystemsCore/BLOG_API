@@ -32,18 +32,14 @@ def get_post_by_title(title:str):
     return post
 
     
-
 @post_router.delete("/posts/")
-def delete_post(post_id:str):
-    feedback = delete_post_service(post_id)
+def delete_post(post_id:str, user_id: Annotated[str, Depends(get_current_user)]):
+    feedback = delete_post_service(user_i, post_id)
     return feedback
 
-@post_router.patch("/posts/")
-def update_post(post_id):
-    pass
 
 @post_router.patch("/posts/{post_id}")
-def publish_post(post_id: str):
+def publish_post(post_id: str, user_id: Annotated[str, Depends(get_current_user)]):
+    # to be implemented
     pass
-
 

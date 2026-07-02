@@ -1,6 +1,7 @@
 from app.db.db_connection import get_cur
 
 def create_post_repo(user_id:str, title: str, content:str ):
+    """Creates the post using title, content and user_id"""
     with get_cur() as cur:
         cur.execute(
             """
@@ -12,8 +13,8 @@ def create_post_repo(user_id:str, title: str, content:str ):
         row = cur.fetchone()
     return row
 
-def get_all_post_repo():
-    # to add limit and offset (pagination)
+def get_all_post_repo(): 
+    # to add limit and offset (pagination) in the next version
     with get_cur() as cur:
         cur.execute(
             "SELECT p.post_id, p.title, p.content, p.created_at FROM posts p"
@@ -42,10 +43,10 @@ def get_post_by_title_repo(title:str):
         row = cur.fetchone()
     return row
 
-def delete_post_repo(post_id:str):
+def delete_post_repo(user_id:str, post_id:str):
     with get_cur() as cur:
         cur.execute(
-            "DELETE FROM posts WHERE post_id = %s", (post_id,)
+            "DELETE FROM posts WHERE user_id = %s AND post_id = %s", (user_id, post_id,)
         )
         updated_rows = cur.rowcount
     return updated_rows
