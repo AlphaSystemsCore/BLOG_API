@@ -55,7 +55,7 @@ blog_api_table_preliminary = (
     CREATE INDEX users_status
     ON users(account_status)
     """,
-
+#user can only have one social link
     """
     CREATE TABLE IF NOT EXISTS profile(
         profile_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
