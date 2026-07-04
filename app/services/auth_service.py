@@ -13,15 +13,19 @@ ACCESS_TOKEN_VALID_TIME_MINUTES=15
 REFRESH_EXPIRE_TIME_DAYS=30
 
 def gen_random_service():
+    """generating random value"""
     return secrets.token_urlsafe(TOKEN_BYTE_SIZE)
 
 def create_email_verification_token_service():
+    """creating email verification token, return the hashed_evt, evt, and expire at: evt-email_verification_token"""
     email_verification_token =  gen_random_service()
     hashed_evt = hash_token(email_verification_token)
     expire_at = datetime.now(timezone.utc) + timedelta(minutes=EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES)
     return email_verification_token, hashed_evt, expire_at
 
 def register_user_service(username: str, email: str, password:str):
+    """this service create user and send an email verification link to the user, to verify their gmail account
+    This to avoid having invalid email and preventing typo email or impersonification using email"""
     hashed_password = hash_password(password)
     email_verification_token, hashed_evt, expire_at = create_email_verification_token_service()
     try:
@@ -34,12 +38,14 @@ def register_user_service(username: str, email: str, password:str):
         return message
 
 def email_formater_service(user_id, email_verification_token, email):
-    # email to be implemented later, now I return JSON response with the token
-    # to --email_formater_and_sender_service
+    """ email service to send email to be implemented later, now Im using JSON response to validate emails which is not
+    even an inch secure.
+    """
     message = f"http://127.0.0.1:8000/auths/verify-email/{user_id}/{email_verification_token}"
     return message
     
 def verify_email_service(user_id: str, email_verification_token:str):
+    """verifys emails using an atomic transaction"""
     hashed_email_verification_token = hash_token(email_verification_token)
     row = consume_token_repo(user_id, hashed_email_verification_token)
     if not row:
@@ -50,6 +56,7 @@ def verify_email_service(user_id: str, email_verification_token:str):
 
 
 def login_service(email:str, password: str, client:str):
+    """Logs in the user using email and password"""
     row = get_hashed_password_repo(email)
     if not row:
         verify_password(password, DUMMY_HASH)
@@ -63,7 +70,7 @@ def login_service(email:str, password: str, client:str):
     return refresh_token_jwt, access_token_jwt
 
 def create_access_token_service(user_id: str):
-    # creating access token and returning the signed token
+    """creating access token and returning the signed token"""
     payload = {
         "sub": user_id,
     }
@@ -71,7 +78,7 @@ def create_access_token_service(user_id: str):
     return access_token
 
 def create_refresh_token_service(user_id: str, client:str):
-    # all contained creating refresh token, hashing it, saving it and returning the signed token
+    """ all contained creating refresh token, hashing it, saving it and returning the signed token"""
     refresh_token_value = gen_random_service()
     hashed_refresh_token_value = hash_token(refresh_token_value)
     expire_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_EXPIRE_TIME_DAYS)
@@ -93,8 +100,9 @@ def create_refresh_token_service(user_id: str, client:str):
         return refresh_token_jwt
 
 def create_new_access_and_refresh_token_service(refresh_token_jwt: str, client:str):
+    """creating new access and refresh tokens during refresh"""
     user_id, jti, refresh_token_value = decode_refresh_token(refresh_token_jwt)
-    #creating new access token
+    """creating new access token """
     access_token = create_access_token_service(user_id)
 
     hashed_refresh_token_value = hash_token(refresh_token_value)
@@ -105,6 +113,7 @@ def create_new_access_and_refresh_token_service(refresh_token_jwt: str, client:s
     return access_token, refresh_token
 
 def verify_token_service(jti, refresh_token_value):
+    """consumes and verifys the refresh token"""
     hashed_refresh_token_value = hash_token(refresh_token_value)
     if not consume_refresh_token_repo(jti, hashed_refresh_token_value):
         raise RefreshTokenAlreadyConsumed
