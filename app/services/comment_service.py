@@ -1,5 +1,6 @@
 from app.schemas.comment_schemas import CommentIn
-from app.repositories.comment_repos import create_comment_repo, delete_comment_repo, get_all_comments_repo
+from app.repositories.comment_repos import create_comment_repo, delete_comment_repo, get_all_comments_repo, get_total_comment_count_repo
+
 
 # will declare a defined exception later
 def create_comment_service(user_id, comment_in: CommentIn):
@@ -22,3 +23,8 @@ def get_all_comments_service(post_id):
     if not comments:
         return []
     return comments
+
+def get_total_comment_count_service(post_id: str):
+    """counts all comment for each post and returns the total"""
+    total_comments = get_total_comment_count_repo(post_id)
+    return {"total_comments": total_comments}

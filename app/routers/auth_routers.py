@@ -21,13 +21,9 @@ def register_user(user: RegisterUser):
             status_code=status.HTTP_409_CONFLICT,
             detail="email/username  already exist in the system"
         ) 
-    # except Exception as exc:
-    #     raise HTTPException(
-    #         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-    #         detail= "INTERNAL_SERVER_ERROR"
-    #     )
+
     else:
-        #returning link for development and testing, later will send link to email
+        #returning link for development and testing, later will send link via an email
         return JSONResponse(
             content=verification_link,
             status_code=status.HTTP_201_CREATED

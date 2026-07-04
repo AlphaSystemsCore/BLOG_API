@@ -33,3 +33,13 @@ def get_all_comments_repo(post_id:str):
         )
         row = cur.fetchall()
     return row
+
+def get_total_comment_count_repo(post_id):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            SELECT COUNT(*) FROM comments WHERE post_id =%s
+            """
+        )
+        comment_count = cur.fetchone()
+    return comment_count

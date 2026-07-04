@@ -2,9 +2,9 @@ from fastapi import APIRouter, status, HTTPException, Depends
 from typing import Annotated
 from app.auth.jwt_handler import get_current_user
 from app.schemas.comment_schemas import CommentIn
-from app.services.comment_service import create_comment_service, get_all_comments_service, delete_comment_service
+from app.services.comment_service import create_comment_service, get_all_comments_service, delete_comment_service, get_total_comment_count_service
 
-
+# execption to be added later
 comment_router = APIRouter(tags=["comments"])
 
 @comment_router.post("/comments")
@@ -22,4 +22,7 @@ def get_all_comments(post_id: str):
     comments = get_all_comments_service(post_id)
     return comments
 
-    
+@comment_router.get("/comments/{post_id}/counts")
+def count_comments(post_id):
+    count_message = get_total_comment_count_service(post_id)
+    return count_message
