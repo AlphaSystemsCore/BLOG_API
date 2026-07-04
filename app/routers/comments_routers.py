@@ -21,3 +21,5 @@ def delete_comment(comment_id:str, user_id:Annotated[str, Depends(get_current_us
 def get_all_comments(post_id: str):
     comments = get_all_comments_service(post_id)
     return comments
+
+    

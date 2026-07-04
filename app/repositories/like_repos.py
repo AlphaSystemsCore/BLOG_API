@@ -22,3 +22,15 @@ def delete_like_repo(user_id, post_id):
         )
         updated_row = cur.rowcount
     return updated_row
+
+def count_likes_repo(post_id):
+    """counts likes per post"""
+    with get_cur() as cur:
+        cur.execute(
+            """
+            SELECT COUNT(*) FROM likes
+            WHERE post_id = %s
+            """,(post_id,)
+        )
+        total_likes = cur.fetchone()
+    return total_likes
