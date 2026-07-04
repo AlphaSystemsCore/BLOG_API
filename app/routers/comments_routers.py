@@ -13,8 +13,8 @@ def create_comment(comment_in:CommentIn, user_id: Annotated[str, Depends(get_cur
     return comment_id
 
 @comment_router.delete("/comments/{comment_id}")
-def delete_comment(comment_id:str, post_id:Annotated[str, Depends(get_current_user)]):
-    feedback = delete_comment_service(post_id, comment_id)
+def delete_comment(comment_id:str, user_id:Annotated[str, Depends(get_current_user)]):
+    feedback = delete_comment_service(user_id, comment_id)
     return feedback
 
 @comment_router.get("/comments/{post_id}")
