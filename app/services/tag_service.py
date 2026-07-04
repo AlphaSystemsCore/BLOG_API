@@ -2,15 +2,18 @@ from psycopg2 import errors
 from app.repositories.tag_repos import save_tag_repo, get_tags_repo, delete_tag_repo
 
 def create_tag_service(user_id, tag_name, tag_category):
+    """creating  tags service"""
     try:
         save_tag_repo(user_id, tag_name, tag_category)
     except errors.UniqueViolation:
         raise
 
 def delete_tag_service(tag_id):
+    """deleting tags service"""
     delete_tag_repo(tag_id)
 
 def get_tags_service():
+    """get tags"""
     tags = get_tags_repo()
     if not tags:
         return []
