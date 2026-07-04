@@ -11,3 +11,14 @@ def create_like_repo(user_id:str, post_id:str):
         )
         updated_row = cur.rowcount
     return updated_row
+
+def delete_like_repo(user_id, post_id):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            DELETE FROM likes
+            WHERE user_id = %s AND post_id = %s
+            """, (user_id, post_id)
+        )
+        updated_row = cur.rowcount
+    return updated_row
