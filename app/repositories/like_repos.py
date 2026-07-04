@@ -23,7 +23,7 @@ def delete_like_repo(user_id, post_id):
         updated_row = cur.rowcount
     return updated_row
 
-def count_likes_repo(post_id):
+def get_total_like_count_repo(post_id):
     """counts likes per post"""
     with get_cur() as cur:
         cur.execute(

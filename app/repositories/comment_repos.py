@@ -29,17 +29,17 @@ def get_all_comments_repo(post_id:str):
             """
             SELECT c.content, c.post_id, c.user_id 
             FROM comments c 
-            WHERE post_id = %s""", (post_id,)
+            WHERE post_id = %s """, (post_id,)
         )
         row = cur.fetchall()
     return row
 
-def get_total_comment_count_repo(post_id):
+def get_total_comment_count_repo(post_id:str):
     with get_cur() as cur:
         cur.execute(
             """
-            SELECT COUNT(*) FROM comments WHERE post_id =%s
-            """
+            SELECT COUNT(*) FROM comments WHERE post_id = %s
+            """, (post_id,)
         )
         comment_count = cur.fetchone()
     return comment_count

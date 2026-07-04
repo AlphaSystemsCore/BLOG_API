@@ -1,4 +1,4 @@
-from app.repositories.like_repos import create_like_repo, delete_like_repo, count_likes_repo
+from app.repositories.like_repos import create_like_repo, delete_like_repo, get_total_like_count_repo
 
 # to add and raise better exceptions later
 
@@ -20,5 +20,5 @@ def delete_like_service(user_id, post_id):
 
 def count_like_service(post_id):
     """counts likes per post"""
-    total_likes = count_likes_repo(post_id)
+    total_likes = get_total_like_count_repo(post_id)
     return {"total_likes": total_likes[0]}
