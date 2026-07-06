@@ -12,6 +12,8 @@ def save_tag_repo(user_id:str, tag_name:str, tag_category:str):
 def delete_tag_repo(tag_id):
     with get_cur() as cur:
         cur.execute("DELETE FROM tags WHERE tag_id = %s", (tag_id,))
+        rows_updated = cur.rowcount
+    return rows_updated
 
 def get_tags_repo():
     with get_cur() as cur:
