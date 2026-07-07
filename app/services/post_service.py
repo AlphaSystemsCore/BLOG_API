@@ -6,7 +6,8 @@ class PostNotFoundError(Exception):
     pass
 class FailedToCreatePostError(Exception):
     pass
-
+class DeletionFailedError(Exception):
+    pass
 
 
 def get_all_post_service():
@@ -56,12 +57,17 @@ def create_post_service(user_id, post: PostsIn):
     post_id = create_post_repo(user_id, post.title, post.content)
     if post_id is None:
         raise FailedToCreatePostError("Failed to create post")
-    return post_id[0]
+    return {
+        "post_id": post_id,
+        "status": "created",
+    }
 
 def delete_post_service(user_id, post_id):
-    """Deletes the post by id post_id and user_id who created the post"""
+    """Deletes the post by post_id and user_id who created the post"""
     updated_rows = delete_post_repo(user_id, post_id)
     if not updated_rows:
-        # will be change to a defined exception
-        raise ValueError("Not deleted")
-    return {"deleted":"successfully"}
+        raise DeletionFailedError("Post not deleted")
+    return {
+        "post_id":post_id,
+        "status":"delete"
+    }

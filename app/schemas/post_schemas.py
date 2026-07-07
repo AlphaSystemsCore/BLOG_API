@@ -4,9 +4,6 @@ from datetime import datetime
 class PostsIn(BaseModel):
     title: str
     content:str
-    
-class CreatePostResponse(BaseModel):
-    post_id: str
 
 class PostOut(BaseModel):
     post_id:str
@@ -14,3 +11,6 @@ class PostOut(BaseModel):
     content:str
     created_at: datetime
 
+class SuccessAction(BaseModel):
+    post_id:str
+    status:str
