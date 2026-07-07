@@ -10,7 +10,7 @@ class FailedToCreatePostError(Exception):
 
 
 def get_all_post_service():
-    """Returns all posts, return a tuple of posts"""
+    """returns a list of dictionary"""
     posts = get_all_post_repo()
     if not posts:
         return []
@@ -27,18 +27,28 @@ def get_all_post_service():
 
 
 def get_post_by_id_service(post_id: str):
-    """Gets post by post_id"""
+    """return a dictionary of post using the PostOut schema"""
     post = get_post_by_id_repo(post_id)
     if post is None:
-        raise PostNotFoundError("Post not found")
-    return post
+        return []
+    return {
+            "post_id":post[0],
+            "title":post[1],
+            "content":post[2],
+            "created_at":post[3]
+        }
 
 def get_post_by_title_service(title: str):
     """Gets the post by it's title"""
     post = get_post_by_title_repo(title)
     if post is None:
         raise PostNotFoundError("Post not found")
-    return post
+    return {
+            "post_id":post[0],
+            "title":post[1],
+            "content":post[2],
+            "created_at":post[3]
+        }
 
 # user defined actions in posts
 def create_post_service(user_id, post: PostsIn):
