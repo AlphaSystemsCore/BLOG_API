@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi.responses import JSONResponse
 from typing import Annotated, List
 
 from app.auth.jwt_handler import get_current_user
@@ -13,7 +14,7 @@ post_router = APIRouter(tags=["posts"])
 @post_router.post("/posts", response_model=SuccessAction)
 def create_post(post: PostsIn, user_id: Annotated[str, Depends(get_current_user)]):
     try:
-        feedback = create_post_service(user_id, post)
+        return create_post_service(user_id, post)
     except FailedToCreatePostError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -25,14 +26,17 @@ def create_post(post: PostsIn, user_id: Annotated[str, Depends(get_current_user)
             detail="UNEXPECTED_ERROR_OCCURED"
 
         )
-    return feedback
 
 
 @post_router.get("/posts",response_model=List[PostOut])
-# access not restricted 
 def get_posts():
-
-    return get_all_post_service()
+    try:
+        return get_all_post_service()
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="UNEXPECTED_ERROR_OCCURED"
+        )
     
 @post_router.get("/posts/{post_id}")
 def get_post(post_id):
@@ -56,3 +60,9 @@ def publish_post(post_id: str, user_id: Annotated[str, Depends(get_current_user)
     # to be implemented
     pass
 
+# @post_router.exception_handler(Exception)
+# async def global_exception(request:Request, exc: Exception):
+#     return JSONResponse(
+#         status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+#         content={"message":str(exc)}
+#     )
