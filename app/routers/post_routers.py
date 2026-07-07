@@ -37,6 +37,7 @@ def get_posts():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="UNEXPECTED_ERROR_OCCURED"
         )
+        
     
 @post_router.get("/posts/", response_model=PostOut)
 def get_post(post_id):
@@ -68,9 +69,6 @@ def get_post_by_title(title:str):
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="UNEXPECTED_ERROR_OCCURED"
         )
-    
-
-    
 
     
 @post_router.delete("/posts/", response_model=SuccessAction)
@@ -87,7 +85,6 @@ def delete_post(post_id:str, user_id: Annotated[str, Depends(get_current_user)])
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="UNEXPECTED ERROR OCCURED"
         )
-
 
 
 @post_router.patch("/posts/{post_id}")

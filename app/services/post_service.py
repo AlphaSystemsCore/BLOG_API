@@ -65,3 +65,7 @@ def delete_post_service(user_id, post_id):
         "post_id":post_id,
         "status":"delete"
     }
+
+def update_post(user_id, post_update:PostUpdate):
+    # to be implemented
+    pass
