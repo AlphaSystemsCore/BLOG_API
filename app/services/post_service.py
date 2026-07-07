@@ -1,4 +1,4 @@
-from app.schemas.post_schemas import PostsIn, PostOut
+from app.schemas.post_schemas import PostIn, PostOut
 from app.repositories.post_repos import create_post_repo, get_all_post_repo, get_post_by_id_repo, get_post_by_title_repo, delete_post_repo
 from app.exceptions.post_exception import *
 
@@ -46,11 +46,11 @@ def get_post_by_title_service(title: str):
         }
 
 # user restricted action
-def create_post_service(user_id, post: PostsIn):
+def create_post_service(user_id, post_in: PostIn):
     """Creates the post using the PostIn schema in post_schemas"""
-    post_id = create_post_repo(user_id, post.title, post.content)
+    post_id = create_post_repo(user_id, post_in.title, post_in.content)
     if post_id is None:
-        raise FailedToCreatePostError("Failed to create post")
+        raise FailedToCreatePostError("Failed to create post: post_id.title")
     return {
         "post_id": post_id,
         "status": "created",
@@ -60,10 +60,10 @@ def delete_post_service(user_id, post_id):
     """Deletes the post by post_id and user_id who created the post"""
     updated_rows = delete_post_repo(user_id, post_id)
     if not updated_rows:
-        raise DeletionFailedError("Post not deleted {post_id}".format(post_id))
+        raise DeletionFailedError("Failed to delete post: {post_id}".format(post_id))
     return {
         "post_id":post_id,
-        "status":"delete"
+        "status":"deleted"
     }
 
 def update_post(user_id, post_update:PostUpdate):
@@ -73,7 +73,7 @@ def update_post(user_id, post_update:PostUpdate):
 def publish_post_service(user_id:str, post_id:str):
     row_updated = publish_post_repo
     if not row_updated:
-        raise PublishPostFailed()
+        raise PublishPostFailedError(f"Failed to publish this post: {post_id}")
     return {
         "post_id":post_id,
         "status": "published"

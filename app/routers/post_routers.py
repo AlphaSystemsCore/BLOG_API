@@ -12,9 +12,9 @@ post_router = APIRouter(tags=["posts"])
 
 
 @post_router.post("/posts", response_model=SuccessAction)
-def create_post(post: PostsIn, user_id: Annotated[str, Depends(get_current_user)]):
+def create_post(post_in: PostIn, user_id: Annotated[str, Depends(get_current_user)]):
     try:
-        return create_post_service(user_id, post)
+        return create_post_service(user_id, post_in)
     except FailedToCreatePostError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -87,10 +87,26 @@ def delete_post(post_id:str, user_id: Annotated[str, Depends(get_current_user)])
         )
 
 
-@post_router.patch("/posts/{post_id}")
+@post_router.patch("/posts/{post_id}", response_model=SuccessAction)
 def publish_post(post_id: str, user_id: Annotated[str, Depends(get_current_user)]):
-    return publish_post_service(user_id, post_id)
-    
+    try:
+        return publish_post_service(user_id, post_id)
+    except PublishPostFailedError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="UNEXPECTED ERROR OCCURED"
+        )
+
+@post_router.patch("/posts/{post_id}")
+def update_post(post_id, user_id: Annotated[str, Depends(get_current_user)]):
+    # to be implemented
+    pass
+
 # @post_router.exception_handler(Exception)
 # async def global_exception(request:Request, exc: Exception):
 #     return JSONResponse(

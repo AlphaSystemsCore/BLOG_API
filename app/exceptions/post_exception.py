@@ -4,3 +4,5 @@ class FailedToCreatePostError(Exception):
     pass
 class DeletionFailedError(Exception):
     pass
+class PublishPostFailedError(Exception):
+    pass

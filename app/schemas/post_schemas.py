@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from datetime import datetime
 
-class PostsIn(BaseModel):
+class PostIn(BaseModel):
     title: str
     content:str
 
