@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from typing import Annotated
+from typing import Annotated, List
 
 from app.auth.jwt_handler import get_current_user
 from app.schemas.post_schemas import PostsIn, CreatePostResponse, PostOut
@@ -15,7 +15,7 @@ def create_post(post: PostsIn, user_id: Annotated[str, Depends(get_current_user)
     return {"post_id": post_id}
 
 
-@post_router.get("/posts")
+@post_router.get("/posts",response_model=List[PostOut])
 # access not restricted 
 def get_posts():
     return get_all_post_service()

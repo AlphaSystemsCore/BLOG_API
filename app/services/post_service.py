@@ -1,4 +1,4 @@
-from app.schemas.post_schemas import PostsIn
+from app.schemas.post_schemas import PostsIn, PostOut
 from app.repositories.post_repos import create_post_repo, get_all_post_repo, get_post_by_id_repo, get_post_by_title_repo, delete_post_repo
 
 
@@ -7,12 +7,24 @@ class PostNotFoundError(Exception):
 class FailedToCreatePostError(Exception):
     pass
 
+
+
 def get_all_post_service():
     """Returns all posts, return a tuple of posts"""
     posts = get_all_post_repo()
     if not posts:
         return []
-    return posts
+    post_list =[]
+    for p in posts:
+        post_dict = {
+            "post_id":p[0],
+            "title":p[1],
+            "content":p[2],
+            "created_at":p[3]
+        }
+        post_list.append(post_dict)
+    return post_list
+
 
 def get_post_by_id_service(post_id: str):
     """Gets post by post_id"""
