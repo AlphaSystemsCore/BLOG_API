@@ -1,13 +1,7 @@
 from app.schemas.post_schemas import PostsIn, PostOut
 from app.repositories.post_repos import create_post_repo, get_all_post_repo, get_post_by_id_repo, get_post_by_title_repo, delete_post_repo
+from app.exceptions.post_exception import *
 
-
-class PostNotFoundError(Exception):
-    pass
-class FailedToCreatePostError(Exception):
-    pass
-class DeletionFailedError(Exception):
-    pass
 
 
 def get_all_post_service():
@@ -51,7 +45,7 @@ def get_post_by_title_service(title: str):
             "created_at":post[3]
         }
 
-# user defined actions in posts
+# user restricted action
 def create_post_service(user_id, post: PostsIn):
     """Creates the post using the PostIn schema in post_schemas"""
     post_id = create_post_repo(user_id, post.title, post.content)
