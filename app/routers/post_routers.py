@@ -1,9 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status, Request
+from fastapi import APIRouter, Depends, HTTPException, status, Request, Query
 from fastapi.responses import JSONResponse
 from typing import Annotated, List
 
 from app.auth.jwt_handler import get_current_user
-from app.schemas.post_schemas import PostsIn, SuccessAction, PostOut
+from app.schemas.post_schemas import PostIn, SuccessAction, PostOut, Pagination
 from app.services.post_service import create_post_service, get_all_post_service, get_post_by_id_service, get_post_by_title_service, delete_post_service
 from app.exceptions.post_exception import *
 
@@ -28,8 +28,9 @@ def create_post(post_in: PostIn, user_id: Annotated[str, Depends(get_current_use
         )
 
 
-@post_router.get("/posts",response_model=List[PostOut])
+@post_router.get("/posts/",response_model=List[PostOut])
 def get_posts():
+    # to implement pagination 
     try:
         return get_all_post_service()
     except Exception as e:
@@ -39,8 +40,8 @@ def get_posts():
         )
 
     
-@post_router.get("/posts/", response_model=PostOut)
-def get_post(post_id):
+@post_router.get("/posts", response_model=PostOut)
+def get_post(post_id:Annotated[str, Query()]):
     try:
         return get_post_by_id_service(post_id)
     except PostNotFoundError as e:
@@ -55,8 +56,8 @@ def get_post(post_id):
         )
     
 
-@post_router.get("/posts/", response_model=PostOut)
-def get_post_by_title(title:str):
+@post_router.get("/posts/by-title", response_model=PostOut)
+def get_post_by_title(title:Annotated[str, Query()]):
     try:
         return get_post_by_title_service(title)
     except PostNotFoundError as e:
@@ -71,10 +72,10 @@ def get_post_by_title(title:str):
         )
 
     
-@post_router.delete("/posts/", response_model=SuccessAction)
+@post_router.delete("/posts/{post_id}", response_model=SuccessAction)
 def delete_post(post_id:str, user_id: Annotated[str, Depends(get_current_user)]):
     try:
-        return delete_post_service(user_i, post_id)
+        return delete_post_service(user_id, post_id)
     except DeletionFailedError as e:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -87,7 +88,7 @@ def delete_post(post_id:str, user_id: Annotated[str, Depends(get_current_user)])
         )
 
 
-@post_router.patch("/posts/{post_id}", response_model=SuccessAction)
+@post_router.patch("/posts/{post_id}/publish", response_model=SuccessAction)
 def publish_post(post_id: str, user_id: Annotated[str, Depends(get_current_user)]):
     try:
         return publish_post_service(user_id, post_id)
