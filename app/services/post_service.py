@@ -69,3 +69,12 @@ def delete_post_service(user_id, post_id):
 def update_post(user_id, post_update:PostUpdate):
     # to be implemented
     pass
+
+def publish_post_service(user_id:str, post_id:str):
+    row_updated = publish_post_repo
+    if not row_updated:
+        raise PublishPostFailed()
+    return {
+        "post_id":post_id,
+        "status": "published"
+    } 

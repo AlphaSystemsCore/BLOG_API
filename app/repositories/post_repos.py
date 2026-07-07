@@ -50,3 +50,14 @@ def delete_post_repo(user_id:str, post_id:str):
         )
         updated_rows = cur.rowcount
     return updated_rows
+
+
+def publish_post_repo(user_id, post_id):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            UPDATE posts
+            SET status = 'published' , updated_at = NOW()
+            WHERE user_id = %s AND post_id = %s
+            """, (user_id, post_id)
+        )

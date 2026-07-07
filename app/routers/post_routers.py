@@ -37,7 +37,7 @@ def get_posts():
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="UNEXPECTED_ERROR_OCCURED"
         )
-        
+
     
 @post_router.get("/posts/", response_model=PostOut)
 def get_post(post_id):
@@ -89,9 +89,8 @@ def delete_post(post_id:str, user_id: Annotated[str, Depends(get_current_user)])
 
 @post_router.patch("/posts/{post_id}")
 def publish_post(post_id: str, user_id: Annotated[str, Depends(get_current_user)]):
-    # to be implemented
-    pass
-
+    return publish_post_service(user_id, post_id)
+    
 # @post_router.exception_handler(Exception)
 # async def global_exception(request:Request, exc: Exception):
 #     return JSONResponse(
