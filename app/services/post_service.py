@@ -25,7 +25,7 @@ def get_post_by_id_service(post_id: str):
     """return a dictionary of post using the PostOut schema"""
     post = get_post_by_id_repo(post_id)
     if post is None:
-        return []
+        raise PostNotFoundError(f"Post not found: {post_id}")
     return {
             "post_id":post[0],
             "title":post[1],
@@ -37,7 +37,7 @@ def get_post_by_title_service(title: str):
     """Gets the post by it's title"""
     post = get_post_by_title_repo(title)
     if post is None:
-        raise PostNotFoundError("Post not found")
+        raise PostNotFoundError("Post not found: {title}")
     return {
             "post_id":post[0],
             "title":post[1],
@@ -60,7 +60,7 @@ def delete_post_service(user_id, post_id):
     """Deletes the post by post_id and user_id who created the post"""
     updated_rows = delete_post_repo(user_id, post_id)
     if not updated_rows:
-        raise DeletionFailedError("Post not deleted")
+        raise DeletionFailedError("Post not deleted {post_id}".format(post_id))
     return {
         "post_id":post_id,
         "status":"delete"
