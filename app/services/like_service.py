@@ -1,6 +1,10 @@
 from app.repositories.like_repos import create_like_repo, delete_like_repo, get_total_like_count_repo
 
 # to add and raise better exceptions later
+"""to be moved to schemas"""
+class StatusAction(Exception):
+    like_id:str
+    status:str
 
 def create_like_service(user_id:str, post_id:str):
     """creates like to a post"""

@@ -6,12 +6,13 @@ def create_like_repo(user_id:str, post_id:str):
             """
             INSERT INTO likes
             (user_id, post_id)
-            VALUES(%s, %s)
+            VALUES(%s, %s) RETURINING like_id
             """, (user_id, post_id)
         )
-        updated_row = cur.rowcount
-    return updated_row
+        row = cur.fetchone()
+    return row
 
+# to reason about what to return and what inputs to take to delete like
 def delete_like_repo(user_id, post_id):
     with get_cur() as cur:
         cur.execute(

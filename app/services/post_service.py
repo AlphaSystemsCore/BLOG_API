@@ -3,6 +3,7 @@ from app.repositories.post_repos import create_post_repo, get_all_post_repo, get
 from app.exceptions.post_exception import *
 
 
+# to add pagination later
 
 def get_all_post_service():
     """returns a list of dictionary"""
