@@ -1,7 +1,8 @@
 from pwdlib import PasswordHash
 
+DUMMY_PASSWD = 
 password_hash = PasswordHash.recommended()
-DUMMY_HASH = password_hash.hash("jkljkljkljklj") # to be taken in .env file
+DUMMY_HASH = password_hash.hash(DUMMY_PASSWD) # to be taken in .env file
 
 def hash_password(plain_password: str) -> str:
     return password_hash.hash(plain_password)

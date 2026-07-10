@@ -7,6 +7,8 @@ from app.auth.token_handler import hash_token
 from app.auth.password_handler import hash_password, verify_password, DUMMY_HASH
 from app.repositories.auth_repos import register_user_save_evt, consume_token_repo, save_refresh_token_repo, get_hashed_password_repo, consume_refresh_token_repo
 from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError, RefreshTokenAlreadyConsumed
+# disclaimer
+# to be moved to .env file this is just for demo
 EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES=15
 TOKEN_BYTE_SIZE=32
 ACCESS_TOKEN_VALID_TIME_MINUTES=15

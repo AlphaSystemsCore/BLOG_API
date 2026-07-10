@@ -4,12 +4,10 @@ from fastapi import HTTPException, Depends, status
 from typing import Annotated
 from datetime import datetime, timedelta, timezone
 
-# for development only values
-ALGORITHM = "HS256"
-ACCESS_TOKEN_SECRET="43d34b96c25e5cdddcfa4362134f580ee17d2004a2b21004c5dfca79e696bc25"
-REFRESH_TOKEN_SECRET = "08678f712780dfa5bb45e108ada6f698d2ec565390a3069c2884df5e39e001d9"
-REFRESH_TOKEN_EXPIRY_DAYS=20
-ACCESS_TOKEN_EXPIRY_MINUTES=20
+ACCESS_TOKEN_SECRET
+REFRESH_TOKEN_SECRET
+REFRESH_TOKEN_EXPIRY_DAYS
+ACCESS_TOKEN_EXPIRY_MINUTES
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auths/login")
 

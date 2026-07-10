@@ -1,13 +1,8 @@
 import psycopg2 
 from psycopg2.pool  import SimpleConnectionPool
 from contextlib import contextmanager
-from app.core.db_config import load_config
 import logging
-from datetime import datetime, timezone
 
-logging.basicConfig(level=logging.ERROR,filename="db_logs.txt")
-
-config = load_config()
 
 db_pool = psycopg2.pool.SimpleConnectionPool(
     minconn=1,
