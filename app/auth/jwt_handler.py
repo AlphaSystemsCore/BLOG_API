@@ -4,10 +4,7 @@ from fastapi import HTTPException, Depends, status
 from typing import Annotated
 from datetime import datetime, timedelta, timezone
 
-ACCESS_TOKEN_SECRET
-REFRESH_TOKEN_SECRET
-REFRESH_TOKEN_EXPIRY_DAYS
-ACCESS_TOKEN_EXPIRY_MINUTES
+from app.core.load_envs import ACCESS_TOKEN_SECRET, REFRESH_TOKEN_SECRET, REFRESH_TOKEN_EXPIRY_DAYS, ACCESS_TOKEN_EXPIRY_MINUTES, ALGORITHM
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auths/login")
 
@@ -81,4 +78,8 @@ def decode_refresh_token(token:str):
 
     else:
         return user_id, jti, refresh_token
+
+if __name__ == '__main__':
+    token = create_access_token({"sub":"akljdfkljasklfjkl"})
+    print(token)
     

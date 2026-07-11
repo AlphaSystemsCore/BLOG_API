@@ -9,10 +9,7 @@ from app.repositories.auth_repos import register_user_save_evt, consume_token_re
 from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError, RefreshTokenAlreadyConsumed
 # disclaimer
 # to be moved to .env file this is just for demo
-EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES=15
-TOKEN_BYTE_SIZE=32
-ACCESS_TOKEN_VALID_TIME_MINUTES=15
-REFRESH_EXPIRE_TIME_DAYS=30
+from app.core.load_envs import EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES, TOKEN_BYTE_SIZE, ACCESS_TOKEN_EXPIRY_MINUTES, REFRESH_EXPIRE_TIME_DAYS
 
 def gen_random_service():
     """generating random value"""

@@ -3,11 +3,12 @@ from psycopg2.pool  import SimpleConnectionPool
 from contextlib import contextmanager
 import logging
 
+from app.core.load_envs import DATABASE_URL
 
 db_pool = psycopg2.pool.SimpleConnectionPool(
     minconn=1,
-    maxconn = 20,
-    **config
+    maxconn=20,
+    DATABASE_URL=DATABASE_URL
 )
 
 @contextmanager
