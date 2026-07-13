@@ -45,3 +45,5 @@ if __name__ == "__main__":
             print("Inserting table....")
             count +=1
             print(count)
+
+print(DATABASE_URL)
