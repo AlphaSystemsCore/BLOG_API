@@ -38,7 +38,7 @@ def get_post_by_title_service(title: str):
     """Gets the post by it's title"""
     post = get_post_by_title_repo(title)
     if post is None:
-        raise PostNotFoundError("Post not found: {title}")
+        raise PostNotFoundError(f"Post not found: {title}")
     return {
             "post_id":post[0],
             "title":post[1],

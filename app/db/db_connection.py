@@ -1,14 +1,15 @@
 import psycopg2 
 from psycopg2.pool  import SimpleConnectionPool
+from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 import logging
 
 from app.core.load_envs import DATABASE_URL
 
 db_pool = psycopg2.pool.SimpleConnectionPool(
-    minconn=1,
-    maxconn=20,
-    DATABASE_URL=DATABASE_URL
+    1,
+    20,
+    DATABASE_URL
 )
 
 @contextmanager
@@ -25,7 +26,7 @@ def get_conn():
 @contextmanager
 def get_cur():
     with get_conn() as conn:
-        cur = conn.cursor()
+        cur = conn.cursor(cursor_factory=RealDictCursor)   
         try:
             yield cur
             conn.commit()
@@ -46,4 +47,3 @@ if __name__ == "__main__":
             count +=1
             print(count)
 
-print(DATABASE_URL)

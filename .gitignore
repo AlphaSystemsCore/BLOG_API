@@ -5,5 +5,7 @@ database.ini
 requirements.txt
 __init__.py 
 .env
+/app/models
+
 
 

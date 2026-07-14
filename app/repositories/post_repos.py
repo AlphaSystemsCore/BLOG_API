@@ -7,22 +7,20 @@ def create_post_repo(user_id:str, title: str, content:str ):
             """
             INSERT INTO posts 
                 (user_id, title, content)
-                VALUES(%s, %s, %s) RETURNING post_id
+                VALUES(%s, %s, %s) RETURNING post_id, user_id, title, content
             """, (user_id, title, content)
         )
-        row = cur.fetchone()
-    return row
+        post = cur.fetchone()
+    return post
 
 def get_all_post_repo(): 
-    # to add limit and offset (pagination) in the next version
+    """returns all posts in the database"""
     with get_cur() as cur:
         cur.execute(
             "SELECT p.post_id, p.title, p.content, p.created_at FROM posts p"
         )
-        row = cur.fetchall()
-    return row
+        post = cur.fetchall()
     
-
 def get_post_by_id_repo(post_id: str):
     with get_cur() as cur:
         cur.execute("""
