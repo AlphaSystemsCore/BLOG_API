@@ -4,6 +4,12 @@ from datetime import datetime
 class PostIn(BaseModel):
     title: str
     content:str
+    
+class CreatePostOut(BaseModel):
+    post_id:str
+    title:str
+    content:str
+    created_at:datetime
 
 class PostOut(BaseModel):
     post_id:str

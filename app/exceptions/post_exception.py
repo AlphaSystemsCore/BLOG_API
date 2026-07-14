@@ -1,6 +1,6 @@
 class PostNotFoundError(Exception):
     pass
-class FailedToCreatePostError(Exception):
+class PostCreationFailedError(Exception):
     pass
 class DeletionFailedError(Exception):
     pass
