@@ -10,7 +10,7 @@ def create_post_repo(user_id:str, title: str, content:str ):
             """
             INSERT INTO posts 
                 (user_id, title, content)
-                VALUES(%s, %s, %s) RETURNING post_id, user_id, title, content
+                VALUES(%s, %s, %s) RETURNING post_id, title, content, created_at
             """, (user_id, title, content)
         )
         post = cur.fetchone()
@@ -53,7 +53,7 @@ def get_post_by_id_repo(post_id: str):
                 ON l.post_id = p.post_id
             LEFT JOIN comments c
                 ON c.post_id = p.post_id
-            WHERE p.status = 'drafted' AND p.is_allowed = true AND title = %s
+            WHERE p.status = 'published' AND p.is_allowed = true AND title = %s
             GROUP BY p.post_id, u.username, p.title, p.content, p.created_at
             """(post_id)
         )
@@ -74,7 +74,7 @@ def get_post_by_title_repo(title:str):
             ON l.post_id = p.post_id
             LEFT JOIN comments c
             ON c.post_id = p.post_id
-            WHERE p.status = 'drafted' AND p.is_allowed = true AND title = %s
+            WHERE p.status = 'published' AND p.is_allowed = true AND title = %s
             GROUP BY p.post_id, u.username, p.title, p.content, p.created_at
             """(title)
         )
@@ -95,7 +95,7 @@ def get_posts_by_author(username):
             ON l.post_id = p.post_id
             LEFT JOIN comments c
             ON c.post_id = p.post_id
-            WHERE p.status = 'drafted' AND p.is_allowed = true AND u.username = %s
+            WHERE p.status = 'published' AND p.is_allowed = true AND u.username = %s
             GROUP BY p.post_id, u.username, p.title, p.content, p.created_at
             """(username)
         )
@@ -113,12 +113,12 @@ def delete_post_repo(user_id:str, post_id:str):
 
 
 def publish_post_repo(user_id, post_id):
-    """Publishes the post so that it can become available to the public"""
+    """making the post available to the public"""
     with get_cur() as cur:
         cur.execute(
             """
             UPDATE posts
-            SET status = 'published' , updated_at = NOW()
+            SET status = 'published', updated_at = NOW()
             WHERE user_id = %s AND post_id = %s AND status <> 'published' RERURNING status
             """, (user_id, post_id)
             )
