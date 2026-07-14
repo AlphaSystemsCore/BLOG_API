@@ -12,14 +12,22 @@ def create_post_repo(user_id:str, title: str, content:str ):
         )
         post = cur.fetchone()
     return post
-
+# to implement pagination on this
 def get_all_post_repo(): 
-    """returns all posts in the database"""
+    """Returns all posts that are published """
     with get_cur() as cur:
         cur.execute(
-            "SELECT p.post_id, p.title, p.content, p.created_at FROM posts p"
+            """
+            SELECT
+                p.post_id, u.username,  p.title, p.content, p.created_at 
+            FROM posts p
+            JOIN user u
+            USING(post_id)
+            WHERE p.is_allowed = true AND p.status = 'published'
+            """
         )
         post = cur.fetchall()
+    return post
     
 def get_post_by_id_repo(post_id: str):
     with get_cur() as cur:
