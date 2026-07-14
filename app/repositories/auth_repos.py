@@ -11,7 +11,7 @@ def register_user_save_evt(username: str, email: str, hashed_password: str, hash
             VALUES(%s) RETURNING credential_id
             """, (hashed_password,)
         )
-        credential_id = cur.fetchone()[0]
+        credential_id = cur.fetchone().get("credential_id")
         cur.execute(
 
             """
@@ -21,7 +21,7 @@ def register_user_save_evt(username: str, email: str, hashed_password: str, hash
             RETURNING user_id
             """,(username, email, credential_id)
         )
-        user_id = cur.fetchone()[0]
+        user_id = cur.fetchone().get("user_id")
         cur.execute(
             """
             INSERT INTO email_verification

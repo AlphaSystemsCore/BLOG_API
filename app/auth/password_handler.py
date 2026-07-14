@@ -1,6 +1,6 @@
 from pwdlib import PasswordHash
 
-from app.core.env_core import DUMMY_PASSWD
+from app.core.load_envs import DUMMY_PASSWD
 
 
 password_hash = PasswordHash.recommended()

@@ -8,18 +8,9 @@ from app.exceptions.post_exception import *
 def get_all_post_service():
     """returns a list of dictionary"""
     posts = get_all_post_repo()
-    if not posts:
-        return []
-    post_list =[]
-    for p in posts:
-        post_dict = {
-            "post_id":p[0],
-            "title":p[1],
-            "content":p[2],
-            "created_at":p[3]
-        }
-        post_list.append(post_dict)
-    return post_list
+    if posts is None:
+        raise PostNotFoundError("Posts not found error")
+    return posts
 
 
 def get_post_by_id_service(post_id: str):

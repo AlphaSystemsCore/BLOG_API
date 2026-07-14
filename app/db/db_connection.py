@@ -9,7 +9,11 @@ from app.core.load_envs import DATABASE_URL
 db_pool = psycopg2.pool.SimpleConnectionPool(
     1,
     20,
-    DATABASE_URL
+    host="localhost",
+    database="blog",
+    user="postgres",
+    password="@create2026",
+    port=5432,
 )
 
 @contextmanager

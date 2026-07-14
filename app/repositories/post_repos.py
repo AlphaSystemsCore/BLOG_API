@@ -1,7 +1,10 @@
 from app.db.db_connection import get_cur
 
 def create_post_repo(user_id:str, title: str, content:str ):
-    """Creates the post using title, content and user_id"""
+    """ 
+    Creates the post using title, content and user_id,
+    the next version must include media for posts
+    """
     with get_cur() as cur:
         cur.execute(
             """
@@ -12,58 +15,113 @@ def create_post_repo(user_id:str, title: str, content:str ):
         )
         post = cur.fetchone()
     return post
+
 # to implement pagination on this
+# to change the status to published later
 def get_all_post_repo(): 
     """Returns all posts that are published """
     with get_cur() as cur:
         cur.execute(
             """
             SELECT
-                p.post_id, u.username,  p.title, p.content, p.created_at 
+                p.post_id, u.username AS author, p.title, p.content, COUNT(l.post_id) AS likes, COUNT(c.post_id) AS comments, p.created_at 
             FROM posts p
-            JOIN user u
-            USING(post_id)
-            WHERE p.is_allowed = true AND p.status = 'published'
+            LEFT JOIN users u
+            ON p.user_id = u.user_id
+            LEFT JOIN likes l
+            ON l.post_id = p.post_id
+            LEFT JOIN comments c
+            ON c.post_id = p.post_id
+            WHERE p.status = 'drafted' AND p.is_allowed = true
+            GROUP BY p.post_id, u.username, p.title, p.content, p.created_at
             """
         )
         post = cur.fetchall()
+        print(post)
     return post
     
 def get_post_by_id_repo(post_id: str):
     with get_cur() as cur:
-        cur.execute("""
-        SELECT p.post_id, p.title, p.content, p.created_at 
-            FROM posts p 
-            WHERE p.post_id = %s""", (post_id,)
+        cur.execute(
+            """
+            SELECT
+                p.post_id, u.username AS author, p.title, p.content, COUNT(l.post_id) AS likes, COUNT(c.post_id) AS comments, p.created_at 
+            FROM posts p
+            LEFT JOIN users u
+                ON p.user_id = u.user_id
+            LEFT JOIN likes l
+                ON l.post_id = p.post_id
+            LEFT JOIN comments c
+                ON c.post_id = p.post_id
+            WHERE p.status = 'drafted' AND p.is_allowed = true AND title = %s
+            GROUP BY p.post_id, u.username, p.title, p.content, p.created_at
+            """(post_id)
         )
-        row = cur.fetchone()
-    return row
+        post = cur.fetchone()
+    return post
 
 def get_post_by_title_repo(title:str):
+    """Fetch's the post by its title"""
     with get_cur() as cur:
-        cur.execute("""
-        SELECT p.post_id, p.title, p.content, p.created_at 
-            FROM posts p 
-            WHERE p.title = %s""", (title,)
+        cur.execute(
+            """
+            SELECT
+                p.post_id, u.username AS author, p.title, p.content, COUNT(l.post_id) AS likes, COUNT(c.post_id) AS comments, p.created_at 
+            FROM posts p
+            LEFT JOIN users u
+            ON p.user_id = u.user_id
+            LEFT JOIN likes l
+            ON l.post_id = p.post_id
+            LEFT JOIN comments c
+            ON c.post_id = p.post_id
+            WHERE p.status = 'drafted' AND p.is_allowed = true AND title = %s
+            GROUP BY p.post_id, u.username, p.title, p.content, p.created_at
+            """(title)
         )
-        row = cur.fetchone()
-    return row
+        post = cur.fetchone()
+    return post
+
+def get_posts_by_author(username):
+    """Get post by Author"""
+    with get_cur() as cur:
+        cur.execute(
+            """
+            SELECT
+                p.post_id, u.username AS author, p.title, p.content, COUNT(l.post_id) AS likes, COUNT(c.post_id) AS comments, p.created_at 
+            FROM posts p
+            LEFT JOIN users u
+            ON p.user_id = u.user_id
+            LEFT JOIN likes l
+            ON l.post_id = p.post_id
+            LEFT JOIN comments c
+            ON c.post_id = p.post_id
+            WHERE p.status = 'drafted' AND p.is_allowed = true AND u.username = %s
+            GROUP BY p.post_id, u.username, p.title, p.content, p.created_at
+            """(username)
+        )
+        post = cur.fetchall()
+    return post
 
 def delete_post_repo(user_id:str, post_id:str):
+    """Deletes a post from using user_id and post_id"""
     with get_cur() as cur:
         cur.execute(
             "DELETE FROM posts WHERE user_id = %s AND post_id = %s", (user_id, post_id,)
         )
-        updated_rows = cur.rowcount
-    return updated_rows
+        updated_row = cur.rowcount
+    return updated_row
 
 
 def publish_post_repo(user_id, post_id):
+    """Publishes the post so that it can become available to the public"""
     with get_cur() as cur:
         cur.execute(
             """
             UPDATE posts
             SET status = 'published' , updated_at = NOW()
-            WHERE user_id = %s AND post_id = %s
+            WHERE user_id = %s AND post_id = %s AND status <> 'published' RERURNING status
             """, (user_id, post_id)
-        )
+            )
+        status = cur.fetchone()
+    return status
+        

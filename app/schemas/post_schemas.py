@@ -7,8 +7,11 @@ class PostIn(BaseModel):
 
 class PostOut(BaseModel):
     post_id:str
+    author:str
     title:str
     content:str
+    likes: int
+    comments:int 
     created_at: datetime
 
 class SuccessAction(BaseModel):
