@@ -31,6 +31,7 @@ def register_user(user: RegisterUser):
 
 @auth_router.post("/auths/verify-email/{user_id}/{email_verification_token}")
 def verify_email(user_id: str, email_verification_token: str):
+    print(user_id)
     # try:
     verify_email_service(user_id, email_verification_token)
     # except InvalidEmailVerificationTokenError as e:
@@ -56,29 +57,29 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
         )
     
     client = request.headers.get('User-Agent')
-    # try:
-    refresh_token, access_token = login_service(form_data.username, form_data.password, client)
-    response = JSONResponse(content={"access_token": access_token, "token_type":"bearer"})
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh_token,
-        httponly=True,
-        secure=False,
-        samesite="strict",
-        path="/auths/refresh"
-    )
-    # except EmailNotFoundError:
-    #     raise AuthCredentialError
-    # except InvalidPasswordError:
-    #     raise CredentialError
-    # except Exception as exc:
-    #     # TO LOG ERROR
-        # raise HTTPException(
-        #     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        #     detail="UNEXPECTED_ERROR"
-        # )
-    # else:
-    return response
+    try:
+        refresh_token, access_token = login_service(form_data.username, form_data.password, client)
+        response = JSONResponse(content={"access_token": access_token, "token_type":"bearer"})
+        response.set_cookie(
+            key="refresh_token",
+            value=refresh_token,
+            httponly=True,
+            secure=False,
+            samesite="strict",
+            path="/auths/refresh"
+        )
+    except EmailNotFoundError:
+        raise AuthCredentialError
+    except InvalidPasswordError:
+        raise CredentialError
+    except Exception as exc:
+        # TO LOG ERROR
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="UNEXPECTED_ERROR"
+        )
+    else:
+        return response
 
 @auth_router.post("/auths/refresh")
 def refresh(request: Request):
