@@ -40,7 +40,9 @@ def email_formater_service(user_id, email_verification_token, email):
     """ email service to send email to be implemented later, now Im using JSON response to validate emails which is not
     even an inch secure.
     """
-    verification_link = f"http://127.0.0.1:8000/auths/verify-email/{user_id}/{email_verification_token}"
+    link = "http://127.0.0.1:8000/auths/verify-email/"
+    path_params = f"{user_id}/{email_verification_token}"
+    verification_link = f"{link}/{path_params}"
     return verification_link
     
 def verify_email_service(user_id: str, email_verification_token:str):
