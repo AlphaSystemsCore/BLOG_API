@@ -56,29 +56,29 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
         )
     
     client = request.headers.get('User-Agent')
-    try:
-        refresh_token, access_token = login_service(form_data.username, form_data.password, client)
-        response = JSONResponse(content={"access_token": access_token, "token_type":"bearer"})
-        response.set_cookie(
-            key="refresh_token",
-            value=refresh_token,
-            httponly=True,
-            secure=False,
-            samesite="strict",
-            path="/auths/refresh"
-        )
-    except EmailNotFoundError:
-        raise AuthCredentialError
-    except InvalidPasswordError:
-        raise CredentialError
-    except Exception as exc:
-        # TO LOG ERROR
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="UNEXPECTED_ERROR"
-        )
-    else:
-        return response
+    # try:
+    refresh_token, access_token = login_service(form_data.username, form_data.password, client)
+    response = JSONResponse(content={"access_token": access_token, "token_type":"bearer"})
+    response.set_cookie(
+        key="refresh_token",
+        value=refresh_token,
+        httponly=True,
+        secure=False,
+        samesite="strict",
+        path="/auths/refresh"
+    )
+    # except EmailNotFoundError:
+    #     raise AuthCredentialError
+    # except InvalidPasswordError:
+    #     raise CredentialError
+    # except Exception as exc:
+    #     # TO LOG ERROR
+        # raise HTTPException(
+        #     status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        #     detail="UNEXPECTED_ERROR"
+        # )
+    # else:
+    return response
 
 @auth_router.post("/auths/refresh")
 def refresh(request: Request):

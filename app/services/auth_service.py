@@ -60,8 +60,8 @@ def login_service(email:str, password: str, client:str):
     if not row:
         verify_password(password, DUMMY_HASH)
         raise EmailNotFoundError
-    user_id = row[1]
-    hashed_password = row[0]
+    user_id = row.get("user_id")
+    hashed_password = row.get("hashed_password")
     if not verify_password(password, hashed_password):
         raise InvalidPasswordError
     refresh_token_jwt = create_refresh_token_service(user_id, client)
@@ -84,7 +84,7 @@ def create_refresh_token_service(user_id: str, client:str):
     try:
         row = save_refresh_token_repo(user_id, hashed_refresh_token_value, client, expire_at)
         if row:
-            jti = row[0]
+            jti = row.get("refresh_token_id")
         payload = {
         "sub": user_id,
         "refresh_token": refresh_token_value,
