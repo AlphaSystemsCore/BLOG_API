@@ -4,7 +4,12 @@ from datetime import datetime
 class PostIn(BaseModel):
     title: str
     content:str
-    
+
+class FieldsToUpdate(BaseModel):
+    post_id:str
+    title:str | None = None
+    content:str | None = None
+
 class CreatePostOut(BaseModel):
     post_id:str
     title:str

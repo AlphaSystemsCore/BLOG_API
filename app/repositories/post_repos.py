@@ -53,9 +53,9 @@ def get_post_by_id_repo(post_id: str):
                 ON l.post_id = p.post_id
             LEFT JOIN comments c
                 ON c.post_id = p.post_id
-            WHERE p.status = 'published' AND p.is_allowed = true AND title = %s
+            WHERE p.status = 'published' AND p.is_allowed = true AND p.post_id = %s
             GROUP BY p.post_id, u.username, p.title, p.content, p.created_at
-            """(post_id)
+            """,(post_id,)
         )
         post = cur.fetchone()
     return post
@@ -74,9 +74,9 @@ def get_post_by_title_repo(title:str):
             ON l.post_id = p.post_id
             LEFT JOIN comments c
             ON c.post_id = p.post_id
-            WHERE p.status = 'published' AND p.is_allowed = true AND title = %s
+            WHERE p.status = 'drafted' AND p.is_allowed = true AND p.title = %s
             GROUP BY p.post_id, u.username, p.title, p.content, p.created_at
-            """(title)
+            """,(title,)
         )
         post = cur.fetchone()
     return post
@@ -95,9 +95,9 @@ def get_posts_by_author(username):
             ON l.post_id = p.post_id
             LEFT JOIN comments c
             ON c.post_id = p.post_id
-            WHERE p.status = 'published' AND p.is_allowed = true AND u.username = %s
+            WHERE p.status = 'drafted' AND p.is_allowed = true AND u.username = %s
             GROUP BY p.post_id, u.username, p.title, p.content, p.created_at
-            """(username)
+            """,(username,)
         )
         post = cur.fetchall()
     return post
@@ -112,7 +112,7 @@ def delete_post_repo(user_id:str, post_id:str):
     return updated_row
 
 
-def publish_post_repo(user_id, post_id):
+def publish_post_repo(user_id:str, post_id:str):
     """making the post available to the public"""
     with get_cur() as cur:
         cur.execute(
@@ -124,4 +124,17 @@ def publish_post_repo(user_id, post_id):
             )
         status = cur.fetchone()
     return status
-        
+
+def update_post_repo(user_id:str, post_id:str, title: str | None, content:str| None):
+    """to update post using tiltle and content"""
+    with get_cur() as cur:
+        cur.execute(
+            """
+            UPDATE posts 
+            SET title = COALECSE(%s, title)
+                content = COALECSE(%s, content)
+            WHERE user_id = %s AND post_id = %s RETURNING post_id, title, content
+            """, (title, content, user_id, post_id)
+        )
+        post = cur.fetchone()
+    return post
