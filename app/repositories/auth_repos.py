@@ -3,7 +3,10 @@ from app.db.db_connection import get_cur
 
 
 def register_user_save_evt(username: str, email: str, hashed_password: str, hashed_evt: str, expire_at: datetime):
-    # evt is email_verification_token 
+    """
+    evt is email_verification_token
+    This repo creates new user
+    """
     with get_cur() as cur:
         cur.execute(
             """
@@ -41,19 +44,26 @@ def consume_token_repo(user_id:str, hashed_email_verification_token: str):
             UPDATE email_verification
                 SET status = 'used',
                     updated_at = NOW()
-                WHERE user_id = %s AND hashed_email_verification_token = %s AND status='active' AND expire_at > NOW()
+                WHERE 
+                    user_id = %s AND 
+                    hashed_email_verification_token = %s AND 
+                    status='active' AND 
+                    expire_at > NOW()
                 RETURNING status
                 """,(user_id, hashed_email_verification_token)
         )
-        row = cur.fetchone()
+        status = cur.fetchone().get('status')
+        if status is None:
+            return None
         cur.execute(
             """
              UPDATE users
                 SET is_verified = True, updated_at = NOW()
-                WHERE user_id = %s
+                WHERE user_id = %s RETURNING user_id
             """ ,(user_id,)
         )
-    return row
+        user_id = cur.fetchone("user_id")
+    return user_id
 
 def get_hashed_password_repo(email:str):
     with get_cur() as cur:
