@@ -134,22 +134,18 @@ def create_refresh_token_service(user_id: str, client:str):
     refresh_token_value = gen_random_service()
     hashed_refresh_token_value = hash_token(refresh_token_value)
     expire_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_EXPIRE_TIME_DAYS)
-    try:
-        row = save_refresh_token_repo(user_id, hashed_refresh_token_value, client, expire_at)
-        if row:
-            jti = row.get("refresh_token_id")
-        payload = {
-        "sub": user_id,
-        "refresh_token": refresh_token_value,
-        "jti": jti,
-        "exp": expire_at
-        }
-        refresh_token_jwt = create_refresh_token(payload)
-    except Exception as exc:
-        print(exc)
-        raise 
-    else:
-        return refresh_token_jwt
+
+    row = save_refresh_token_repo(user_id, hashed_refresh_token_value, client, expire_at)
+    if row:
+        jti = row.get("refresh_token_id")
+    payload = {
+    "sub": user_id,
+    "refresh_token": refresh_token_value,
+    "jti": jti,
+    "exp": expire_at
+    }
+    refresh_token_jwt = create_refresh_token(payload)
+    return refresh_token_jwt
 
 def create_new_access_and_refresh_token_service(refresh_token_jwt: str, client:str):
     """creating new access and refresh tokens during refresh-when the access_token have expired"""
