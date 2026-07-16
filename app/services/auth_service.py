@@ -38,13 +38,23 @@ def create_email_verification_token_service():
     expire_at = datetime.now(timezone.utc) + timedelta(minutes=EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES)
     return email_verification_token, hashed_evt, expire_at
 
+class RegistrationError(Exception):
+    pass
+
 def register_user_service(username: str, email: str, password:str):
-    """this service create user and send an email verification link to the user, to verify their gmail account
-    This to avoid having invalid email and preventing typo email or impersonification using email"""
+    """
+    This service create user and send an email verification link to the user, to verify their gmail account
+    This to avoid having invalid email and preventing typo email or impersonification using email
+    evt is email_verification_token
+    """
     hashed_password = hash_password(password)
     email_verification_token, hashed_evt, expire_at = create_email_verification_token_service()
     try:
-        user_id= register_user_save_evt(username, email, hashed_password, hashed_evt, expire_at)
+        row = register_user_save_evt_repo(username, email, hashed_password, hashed_evt, expire_at)
+
+        if row is None:
+            raise RegistrationError("FAILED TO REGISTER USER, PLEASE TRY AGAIN")
+        user_id = row.get("user_id")
         verification_link = email_formater_service(user_id, email_verification_token, email)
     except errors.UniqueViolation as e:
         print("Error: ", e)
