@@ -2,11 +2,27 @@ from psycopg2 import errors
 import secrets
 from datetime import datetime, timedelta, timezone
 
-from app.auth.jwt_handler import create_access_token, create_refresh_token, decode_refresh_token
+from app.auth.jwt_handler import (
+    create_access_token, 
+    create_refresh_token, 
+    decode_refresh_token)
 from app.auth.token_handler import hash_token
 from app.auth.password_handler import hash_password, verify_password, DUMMY_HASH
-from app.repositories.auth_repos import register_user_save_evt, consume_token_repo, save_refresh_token_repo, get_hashed_password_repo, consume_refresh_token_repo, create_new_email_verification_token_repo
-from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError, RefreshTokenAlreadyConsumed, FailedToCreateVerificationLinkError
+from app.repositories.auth_repos import (
+    register_user_save_evt, 
+    consume_token_repo, 
+    save_refresh_token_repo, 
+    get_hashed_password_repo, 
+    consume_refresh_token_repo, 
+    create_new_email_verification_token_repo
+)
+from app.exceptions.auth_exception import (
+    InvalidEmailVerificationTokenError, 
+    EmailNotFoundError, 
+    InvalidPasswordError, 
+    RefreshTokenAlreadyConsumed, 
+    FailedToCreateVerificationLinkError
+)
 # disclaimer
 # to be moved to .env file this is just for demo
 from app.core.load_envs import EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES, TOKEN_BYTE_SIZE, ACCESS_TOKEN_EXPIRY_MINUTES, REFRESH_EXPIRE_TIME_DAYS

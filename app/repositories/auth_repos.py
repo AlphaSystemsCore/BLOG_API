@@ -136,14 +136,17 @@ def consume_refresh_token_repo(refresh_token_id:str, hashed_refresh_token:str):
     return is_revoked
 
 def create_new_email_verification_token_repo(email:str, hashed_evt:str, expire_at: datetime):
-    """lookup for user, revoke the token then create new token"""
+    """lookup for user only who is not verified, revoke the token then create new token"""
     with get_cur() as cur:
         cur.execute(
             """
-            SELECT user_id FROM users WHERE email = %s
+            SELECT user_id FROM users 
+            WHERE email = %s AND is_verified = false
             """,(email,)
         )
         user_id = cur.fetchone().get("user_id")
+        if user_id is None:
+            return None
         cur.execute(
             """
             UPDATE email_verification
