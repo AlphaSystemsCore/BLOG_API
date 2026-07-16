@@ -130,7 +130,7 @@ def create_access_token_service(user_id: str):
     return access_token
 
 def create_refresh_token_service(user_id: str, client:str):
-    """ all contained creating refresh token, hashing it, saving it and returning the signed token"""
+    """ all contained creating refresh token, hashing it, saving it and returning the signed token(jwt)"""
     refresh_token_value = gen_random_service()
     hashed_refresh_token_value = hash_token(refresh_token_value)
     expire_at = datetime.now(timezone.utc) + timedelta(days=REFRESH_EXPIRE_TIME_DAYS)
@@ -153,18 +153,19 @@ def create_new_access_and_refresh_token_service(refresh_token_jwt: str, client:s
     """creating new access token """
     access_token = create_access_token_service(user_id)
 
+    #hashing the refresh token to check it against the stored hash
     hashed_refresh_token_value = hash_token(refresh_token_value)
     verify_token_service(jti, refresh_token_value)
     refresh_token = create_refresh_token_service(user_id, client)
-    print(access_token)
-    print(refresh_token)
     return access_token, refresh_token
 
-def verify_token_service(jti, refresh_token_value):
-    """consumes and verifys the refresh token"""
-    hashed_refresh_token_value = hash_token(refresh_token_value)
-    if not consume_refresh_token_repo(jti, hashed_refresh_token_value):
-        raise RefreshTokenAlreadyConsumed
+def verify_token_service(jti, hashed_refresh_token_value):
+    """
+    consumes and verifys the refresh token
+    if the refresh_token is used then
+    """
+    if consume_refresh_token_repo(jti, hashed_refresh_token_value) is None:
+        raise RefreshTokenAlreadyConsumed("TOKEN HAVE ALREADY BEEN USED")
     
 
 
