@@ -5,8 +5,8 @@ from datetime import datetime, timedelta, timezone
 from app.auth.jwt_handler import create_access_token, create_refresh_token, decode_refresh_token
 from app.auth.token_handler import hash_token
 from app.auth.password_handler import hash_password, verify_password, DUMMY_HASH
-from app.repositories.auth_repos import register_user_save_evt, consume_token_repo, save_refresh_token_repo, get_hashed_password_repo, consume_refresh_token_repo
-from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError, RefreshTokenAlreadyConsumed
+from app.repositories.auth_repos import register_user_save_evt, consume_token_repo, save_refresh_token_repo, get_hashed_password_repo, consume_refresh_token_repo, create_new_email_verification_token_repo
+from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError, RefreshTokenAlreadyConsumed, FailedToCreateVerificationLinkError
 # disclaimer
 # to be moved to .env file this is just for demo
 from app.core.load_envs import EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES, TOKEN_BYTE_SIZE, ACCESS_TOKEN_EXPIRY_MINUTES, REFRESH_EXPIRE_TIME_DAYS
@@ -29,29 +29,42 @@ def register_user_service(username: str, email: str, password:str):
     email_verification_token, hashed_evt, expire_at = create_email_verification_token_service()
     try:
         user_id= register_user_save_evt(username, email, hashed_password, hashed_evt, expire_at)
-        message = email_formater_service(user_id, email_verification_token, email)
+        verification_link = email_formater_service(user_id, email_verification_token, email)
     except errors.UniqueViolation as e:
         print("Error: ", e)
         raise
     else:
-        return message
+        return verification_link
+
+def resend_email_verification_token(email: str):
+    """
+    Create new email_verification_token and send to the user
+    Later ill add email background process to send link to users emails
+    """
+    email_verification_token, hashed_evt, expire_at = create_email_verification_token_service()
+    user_id = create_new_email_verification_token_repo(email, hashed_evt, expire_at)
+    if user_id is None:
+        raise FailedToCreateVerificationLinkError()
+    verification_link = email_formater_service(user_id, email_verification_token, email)
+    return verification_link
 
 def email_formater_service(user_id, email_verification_token, email):
+
     """ email service to send email to be implemented later, now Im using JSON response to validate emails which is not
     even an inch secure.
     """
-    link = "http://127.0.0.1:8000/auths/verify-email/"
+    link = "http://127.0.0.1:8000/auths/verify-email"
     path_params = f"{user_id}/{email_verification_token}"
     verification_link = f"{link}/{path_params}"
     return verification_link
-    
+
 def verify_email_service(user_id: str, email_verification_token:str):
     """verifys emails using an atomic transaction"""
     hashed_email_verification_token = hash_token(email_verification_token)
     row = consume_token_repo(user_id, hashed_email_verification_token)
     if not row:
         print(row)
-        raise InvalidEmailVerificationTokenError
+        raise InvalidEmailVerificationTokenError()
     print(row)
     return "verified successfully"
 
@@ -119,6 +132,8 @@ def verify_token_service(jti, refresh_token_value):
     if not consume_refresh_token_repo(jti, hashed_refresh_token_value):
         raise RefreshTokenAlreadyConsumed
     
+
+
 
 
 

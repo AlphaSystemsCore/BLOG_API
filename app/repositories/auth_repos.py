@@ -90,23 +90,26 @@ def consume_refresh_token_repo(refresh_token_id, hashed_refresh_token):
     return updated > 0
 
 def create_new_email_verification_token_repo(email:str, hashed_evt:str, expire_at: datetime):
-    """invalidates any token and creates a new one"""
+    """lookup for user, revoke the token then create new token"""
     with get_cur() as cur:
         cur.execute(
             """
-            UPDATE email_verification ev
-            SET status = 'expired' AND updated_at = NOW()
-            FROM users u
-            ON u.user_id = ev.user_id
-            WHERE u.email = %s AND ev.expire_at < NOW() RETURNIG user_id
-            """, (email,)
+            SELECT user_id FROM users WHERE email = %s
+            """,(email,)
         )
-        user_id = cur.fetchone()
+        user_id = cur.fetchone().get("user_id")
+        cur.execute(
+            """
+            UPDATE email_verification
+                SET status = 'revoked', updated_at = NOW()
+            WHERE user_id =%s and status = 'active'
+            """, (user_id,)
+        )
         cur.execute(
             """
             INSERT INTO email_verification
             (hashed_email_verification_token, user_id, expire_at )
-            VALUES(%s, %s, %s)
+            VALUES(%s, %s, %s) 
             """,(hashed_evt, user_id, expire_at)
         )
-        return user_id 
+        return user_id

@@ -6,3 +6,5 @@ class EmailNotFoundError(Exception):
     pass
 class RefreshTokenAlreadyConsumed(Exception):
     pass
+class FailedToCreateVerificationLinkError(Exception):
+    pass

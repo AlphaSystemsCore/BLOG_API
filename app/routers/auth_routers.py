@@ -3,10 +3,17 @@ from psycopg2 import errors
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
+from pydantic import EmailStr
 
-from app.schemas.auth_schemas import RegisterUser, EmailValidate
-from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError
-from app.services.auth_service import register_user_service,  verify_email_service, login_service, create_new_access_and_refresh_token_service
+from app.schemas.auth_schemas import RegisterUser
+from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError, FailedToCreateVerificationLinkError
+from app.services.auth_service import (
+    register_user_service,   
+    verify_email_service, 
+    login_service, 
+    create_new_access_and_refresh_token_service,
+    resend_email_verification_token,
+)
 from app.auth.jwt_handler import get_current_user
 
 auth_router = APIRouter(tags=["Auths"])
@@ -131,8 +138,15 @@ def refresh(request: Request):
     return response
 
 @auth_router.get("/auths/resend-token/{email}")
-def resend_token(email: EmailValidate):
-    pass
+def resend_token(email:EmailStr):
+    try:
+        return resend_email_verification_token(email)
+    except FailedToCreateVerificationLinkError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Link still active or wrong email"
+        )
+        
 
 @auth_router.post("/auths/logout/")
 def logout(request: Request):

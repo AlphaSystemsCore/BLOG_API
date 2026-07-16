@@ -70,7 +70,7 @@ blog_api_table_preliminary = (
     """
     CREATE TABLE IF NOT EXISTS email_verification(
         token_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-        hashed_email_verification_token TEXT NOT NULL,
+        hashed_email_verification_token TEXT UNIQUE NOT NULL,
         user_id UUID NOT NULL,
         status email_verification_status DEFAULT 'active',
         created_at TIMESTAMPTZ DEFAULT NOW(),
@@ -79,9 +79,7 @@ blog_api_table_preliminary = (
     FOREIGN KEY (user_id)  REFERENCES users(user_id) ON DELETE CASCADE
 
     )
-    """,
-
-    "CREATE INDEX idx_hashed_email_verifiacation ON email_verification(hashed_email_verification_token)",
+    """
 
     """
     CREATE INDEX email_verifiaction_user
