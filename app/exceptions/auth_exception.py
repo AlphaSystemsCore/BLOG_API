@@ -8,3 +8,11 @@ class RefreshTokenAlreadyConsumed(Exception):
     pass
 class FailedToCreateVerificationLinkError(Exception):
     pass
+class RegistrationError(Exception):
+    pass
+class EmailLookUpError(Exception):
+    pass
+class TokenExpiredError(Exception):
+    pass
+class InvalidUserIdError(Exception):
+    pass

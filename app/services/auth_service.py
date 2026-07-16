@@ -21,7 +21,11 @@ from app.exceptions.auth_exception import (
     EmailNotFoundError, 
     InvalidPasswordError, 
     RefreshTokenAlreadyConsumed, 
-    FailedToCreateVerificationLinkError
+    FailedToCreateVerificationLinkError,
+    RegistrationError,
+    EmailLookUpError,
+    TokenExpiredError,
+    InvalidUserIdError
 )
 # disclaimer
 # to be moved to .env file this is just for demo
@@ -38,8 +42,6 @@ def create_email_verification_token_service():
     expire_at = datetime.now(timezone.utc) + timedelta(minutes=EMAIL_VERIFICATION_TOKEN_EXPIRES_MINUTES)
     return email_verification_token, hashed_evt, expire_at
 
-class RegistrationError(Exception):
-    pass
 
 def register_user_service(username: str, email: str, password:str):
     """
@@ -61,8 +63,6 @@ def register_user_service(username: str, email: str, password:str):
         raise
     else:
         return verification_link
-class EmailLookUpError(Exception):
-    pass
 
 def resend_email_verification_token(email: str):
     """
@@ -87,10 +87,6 @@ def email_formater_service(user_id, email_verification_token, email):
     path_params = f"{user_id}/{email_verification_token}"
     verification_link = f"{link}/{path_params}"
     return verification_link
-class TokenExpiredError(Exception):
-    pass
-class InvalidUserIdError(Exception):
-    pass
 
 def verify_email_service(user_id: str, email_verification_token:str):
     """verifys emails from the link, and marks user as verified, guarantees email ownership"""
@@ -167,7 +163,11 @@ def verify_token_service(jti, hashed_refresh_token_value):
     if consume_refresh_token_repo(jti, hashed_refresh_token_value) is None:
         raise RefreshTokenAlreadyConsumed("TOKEN HAVE ALREADY BEEN USED")
     
+def logout_service():
+    pass
 
+def logout_all_devices_service():
+    pass
 
 
 
