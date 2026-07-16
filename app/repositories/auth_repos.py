@@ -161,4 +161,4 @@ def create_new_email_verification_token_repo(email:str, hashed_evt:str, expire_a
             VALUES(%s, %s, %s) 
             """,(hashed_evt, user_id, expire_at)
         )
-        return user_id
+    return user_id

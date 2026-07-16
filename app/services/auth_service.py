@@ -61,6 +61,8 @@ def register_user_service(username: str, email: str, password:str):
         raise
     else:
         return verification_link
+class EmailLookUpError(Exception):
+    pass
 
 def resend_email_verification_token(email: str):
     """
@@ -68,9 +70,10 @@ def resend_email_verification_token(email: str):
     Later ill add email background process to send link to users emails
     """
     email_verification_token, hashed_evt, expire_at = create_email_verification_token_service()
+
     user_id = create_new_email_verification_token_repo(email, hashed_evt, expire_at)
     if user_id is None:
-        raise FailedToCreateVerificationLinkError()
+        raise EmailLookUpError("FAILED CHECK YOU EMAIL AND TRY AGAIN")
     verification_link = email_formater_service(user_id, email_verification_token, email)
     return verification_link
 
@@ -86,13 +89,17 @@ def email_formater_service(user_id, email_verification_token, email):
     return verification_link
 
 def verify_email_service(user_id: str, email_verification_token:str):
-    """verifys emails using an atomic transaction"""
+    """verifys emails from the link, and marks user as verified, guarantees email ownership"""
     hashed_email_verification_token = hash_token(email_verification_token)
-    row = consume_token_repo(user_id, hashed_email_verification_token)
-    if not row:
-        print(row)
-        raise InvalidEmailVerificationTokenError()
-    print(row)
+    feedback = consume_token_repo(user_id, hashed_email_verification_token)
+    if feedback == "expired":
+        raise TokenExpiredError("EMAIL VERIFICATION TOKEN HAVE EXPIRED, KINDLY REQUEST FOR ANOTHER ONE")
+    elif feedback == "invalid":
+        raise InvalidEmailVerificationTokenError("INVALID EMAIL VERIFICATION TOKEN")
+    elif feedback is None:
+        raise InvalidUserIdError("THE USER_ID IS INCORRECT")
+    else:
+        user_id = feedback
     return "verified successfully"
 
 
