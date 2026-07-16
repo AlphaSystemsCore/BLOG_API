@@ -2,7 +2,7 @@ from datetime import datetime
 from app.db.db_connection import get_cur
 
 
-def register_user_save_evt(username: str, email: str, hashed_password: str, hashed_evt: str, expire_at: datetime):
+def register_user_save_evt_repo(username: str, email: str, hashed_password: str, hashed_evt: str, expire_at: datetime):
     """
     evt is email_verification_token
     This repo creates new user

@@ -9,7 +9,7 @@ from app.auth.jwt_handler import (
 from app.auth.token_handler import hash_token
 from app.auth.password_handler import hash_password, verify_password, DUMMY_HASH
 from app.repositories.auth_repos import (
-    register_user_save_evt, 
+    register_user_save_evt_repo, 
     consume_token_repo, 
     save_refresh_token_repo, 
     get_hashed_password_repo, 
@@ -56,7 +56,7 @@ def register_user_service(username: str, email: str, password:str):
 
         if row is None:
             raise RegistrationError("FAILED TO REGISTER USER, PLEASE TRY AGAIN")
-        user_id = row.get("user_id")
+        user_id = row
         verification_link = email_formater_service(user_id, email_verification_token, email)
     except errors.UniqueViolation as e:
         print("Error: ", e)

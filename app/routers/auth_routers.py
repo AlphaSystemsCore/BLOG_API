@@ -6,7 +6,7 @@ from typing import Annotated
 from pydantic import EmailStr
 
 from app.schemas.auth_schemas import RegisterUser
-from app.exceptions.auth_exception import InvalidEmailVerificationTokenError, EmailNotFoundError, InvalidPasswordError, FailedToCreateVerificationLinkError
+from app.exceptions.auth_exception import *
 from app.services.auth_service import (
     register_user_service,   
     verify_email_service, 
@@ -23,10 +23,15 @@ auth_router = APIRouter(tags=["Auths"])
 def register_user(user: RegisterUser):
     try:
         verification_link = register_user_service(user.user_name, user.email, user.password)
-    except errors.UniqueViolation:
+    except RegistrationError as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
+    except errors.UniqueViolation as e:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="email/username  already exist in the system"
+            detail="EMAIL OR USERNAME ALREADY EXISTS"
         ) 
 
     else:
@@ -39,20 +44,29 @@ def register_user(user: RegisterUser):
 @auth_router.get("/auths/verify-email/{user_id}/{email_verification_token}")
 def verify_email(user_id: str, email_verification_token: str):
     try:
-        verify_email_service(user_id, email_verification_token)
+        feedback = verify_email_service(user_id, email_verification_token)
     except InvalidEmailVerificationTokenError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Invalid token"
         )
-
+    except TokenExpiredError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e)
+        )
+    except InvalidUserIdError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e)
+        )
     except Exception as e:
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail="INTERNAL_SERVER_ERROR"
         )
     return {
-        "msg":"Email verified successfully"
+        "msg":feedback
     }
 
 @auth_router.post("/auths/login")
@@ -150,6 +164,7 @@ def resend_token(email:EmailStr):
 
 @auth_router.post("/auths/logout/")
 def logout(request: Request):
+    return "to be implemented"
     
 
 @auth_router.post("/auths/logout-all-devices")
