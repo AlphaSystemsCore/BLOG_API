@@ -50,8 +50,9 @@ def resend_email_verification_token(email: str):
 
 def email_formater_service(user_id, email_verification_token, email):
 
-    """ email service to send email to be implemented later, now Im using JSON response to validate emails which is not
-    even an inch secure.
+    """ 
+        email service to send email to be implemented later, now Im using JSON response to validate emails which is not
+        even an inch secure.
     """
     link = "http://127.0.0.1:8000/auths/verify-email"
     path_params = f"{user_id}/{email_verification_token}"
@@ -114,7 +115,7 @@ def create_refresh_token_service(user_id: str, client:str):
         return refresh_token_jwt
 
 def create_new_access_and_refresh_token_service(refresh_token_jwt: str, client:str):
-    """creating new access and refresh tokens during refresh"""
+    """creating new access and refresh tokens during refresh-when the access_token have expired"""
     user_id, jti, refresh_token_value = decode_refresh_token(refresh_token_jwt)
     """creating new access token """
     access_token = create_access_token_service(user_id)

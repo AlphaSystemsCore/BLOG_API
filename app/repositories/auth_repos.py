@@ -12,6 +12,8 @@ def register_user_save_evt(username: str, email: str, hashed_password: str, hash
             """, (hashed_password,)
         )
         credential_id = cur.fetchone().get("credential_id")
+        if credential_id is None:
+            return None
         cur.execute(
 
             """
@@ -22,6 +24,8 @@ def register_user_save_evt(username: str, email: str, hashed_password: str, hash
             """,(username, email, credential_id)
         )
         user_id = cur.fetchone().get("user_id")
+        if user_id is None:
+            return None
         cur.execute(
             """
             INSERT INTO email_verification

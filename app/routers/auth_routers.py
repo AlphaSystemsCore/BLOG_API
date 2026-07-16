@@ -150,11 +150,7 @@ def resend_token(email:EmailStr):
 
 @auth_router.post("/auths/logout/")
 def logout(request: Request):
-
-  
-    return {
-        "msg":"soon to be implemented"
-    }
+    
 
 @auth_router.post("/auths/logout-all-devices")
 def logout_all_devices(user_id: Annotated[str, get_current_user]):
