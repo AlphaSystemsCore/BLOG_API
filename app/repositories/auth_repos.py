@@ -38,32 +38,60 @@ def register_user_save_evt(username: str, email: str, hashed_password: str, hash
         )
     return user_id
 
-def consume_token_repo(user_id:str, hashed_email_verification_token: str):
+def consume_token_repo(user_id: str, hashed_email_verification_token: str):
+    """
+    flags token as used,
+    marks user as verified
+    """
     with get_cur() as cur:
-        cur.execute("""
+        # Expire old tokens
+        cur.execute(
+            """
+            UPDATE email_verification
+                SET status = 'expired'
+            WHERE expire_at < NOW()
+            RETURNING status
+            """
+        )
+        status_row = cur.fetchone()
+        if status_row is not None:
+            return status_row.get("status")
+
+        # Consume active token
+        cur.execute(
+            """
             UPDATE email_verification
                 SET status = 'used',
                     updated_at = NOW()
                 WHERE 
                     user_id = %s AND 
                     hashed_email_verification_token = %s AND 
-                    status='active' AND 
+                    status = 'active' AND 
                     expire_at > NOW()
                 RETURNING status
-                """,(user_id, hashed_email_verification_token)
+            """,
+            (user_id, hashed_email_verification_token)
         )
-        status = cur.fetchone().get('status')
+        status_row = cur.fetchone()
+        status = status_row.get("status") if status_row else None
         if status is None:
-            return None
+            return "invalid"
+
+        # Mark user verified
         cur.execute(
             """
-             UPDATE users
-                SET is_verified = True, updated_at = NOW()
-                WHERE user_id = %s RETURNING user_id
-            """ ,(user_id,)
+            UPDATE users
+                SET is_verified = TRUE, updated_at = NOW()
+                WHERE user_id = %s
+                RETURNING user_id
+            """,
+            (user_id,)
         )
-        user_id = cur.fetchone("user_id")
+        user_row = cur.fetchone()
+        user_id = user_row.get("user_id") if user_row else None
+
     return user_id
+
 
 def get_hashed_password_repo(email:str):
     with get_cur() as cur:
@@ -76,8 +104,7 @@ def get_hashed_password_repo(email:str):
             WHERE u.email = %s AND u.is_verified = true AND u.account_status = 'active'
             """, (email,)
         )
-        row = cur.fetchone()
-    return row
+        hashed_password
 
 def save_refresh_token_repo(user_id, hashed_refresh_token, client, expire_at):
     with get_cur() as cur:
