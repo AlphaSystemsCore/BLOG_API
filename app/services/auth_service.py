@@ -87,6 +87,10 @@ def email_formater_service(user_id, email_verification_token, email):
     path_params = f"{user_id}/{email_verification_token}"
     verification_link = f"{link}/{path_params}"
     return verification_link
+class TokenExpiredError(Exception):
+    pass
+class InvalidUserIdError(Exception):
+    pass
 
 def verify_email_service(user_id: str, email_verification_token:str):
     """verifys emails from the link, and marks user as verified, guarantees email ownership"""
@@ -106,13 +110,13 @@ def verify_email_service(user_id: str, email_verification_token:str):
 def login_service(email:str, password: str, client:str):
     """Logs in the user using email and password"""
     row = get_hashed_password_repo(email)
-    if not row:
+    if row is None:
         verify_password(password, DUMMY_HASH)
-        raise EmailNotFoundError
+        raise EmailNotFoundError("EMAIL NOT FOUND ERROR")
     user_id = row.get("user_id")
     hashed_password = row.get("hashed_password")
     if not verify_password(password, hashed_password):
-        raise InvalidPasswordError
+        raise InvalidPasswordError("INVALID PASSWORD ERROR")
     refresh_token_jwt = create_refresh_token_service(user_id, client)
     access_token_jwt = create_access_token_service(user_id)
     return refresh_token_jwt, access_token_jwt
