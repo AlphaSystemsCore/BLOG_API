@@ -82,7 +82,7 @@ def consume_token_repo(user_id: str, hashed_email_verification_token: str):
             """
             UPDATE users
                 SET is_verified = TRUE, updated_at = NOW()
-                WHERE user_id = %s
+                WHERE user_id = %s 
                 RETURNING user_id
             """,
             (user_id,)
@@ -94,6 +94,7 @@ def consume_token_repo(user_id: str, hashed_email_verification_token: str):
 
 
 def get_hashed_password_repo(email:str):
+    """gets hashed password, if account is active and verified"""
     with get_cur() as cur:
         cur.execute(
             """
@@ -104,9 +105,11 @@ def get_hashed_password_repo(email:str):
             WHERE u.email = %s AND u.is_verified = true AND u.account_status = 'active'
             """, (email,)
         )
-        hashed_password
+        row = cur.fetchone()
+    return row
 
-def save_refresh_token_repo(user_id, hashed_refresh_token, client, expire_at):
+def save_refresh_token_repo(user_id:str, hashed_refresh_token:str, client:str, expire_at:datetime):
+    """stores refresh token in the"""
     with get_cur() as cur:
         cur.execute(
             """
@@ -118,17 +121,19 @@ def save_refresh_token_repo(user_id, hashed_refresh_token, client, expire_at):
         row = cur.fetchone()
     return row
 
-def consume_refresh_token_repo(refresh_token_id, hashed_refresh_token):
+def consume_refresh_token_repo(refresh_token_id:str, hashed_refresh_token:str):
+    """flags refresh token as revoked to avoid double usage"""
     with get_cur() as cur:
         cur.execute(
             """
             UPDATE refresh_token
                 SET is_revoked = True
-                WHERE is_revoked = False AND refresh_token_id =%s AND hashed_refresh_token=%s 
+                WHERE is_revoked = False AND refresh_token_id =%s AND hashed_refresh_token=%s AND expire_at < NOW()
                 """, (refresh_token_id, hashed_refresh_token)
         )
-        updated = cur.rowcount
-    return updated > 0
+        is_revoked = cur.fetchone()
+        is_revoked = is_revoked.get("is_revoked") if is_revoked else None
+    return is_revoked
 
 def create_new_email_verification_token_repo(email:str, hashed_evt:str, expire_at: datetime):
     """lookup for user, revoke the token then create new token"""
