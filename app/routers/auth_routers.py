@@ -160,7 +160,11 @@ def resend_token(email:EmailStr):
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Link still active or wrong email"
         )
-        
+    except EmailLookUpError as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
 
 @auth_router.post("/auths/logout/")
 def logout(request: Request):
