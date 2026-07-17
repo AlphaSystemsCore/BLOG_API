@@ -49,11 +49,13 @@ def consume_token_repo(user_id: str, hashed_email_verification_token: str):
             """
             UPDATE email_verification
                 SET status = 'expired'
-            WHERE expire_at < NOW()
+            WHERE expire_at < NOW() AND user_id = %s AND hashed_email_verification_token = %s
             RETURNING status
-            """
+            """, (user_id, hashed_email_verification_token)
         )
         status_row = cur.fetchone()
+        print(status_row)
+        print(hashed_email_verification_token)
         if status_row is not None:
             return status_row.get("status")
 
@@ -66,8 +68,7 @@ def consume_token_repo(user_id: str, hashed_email_verification_token: str):
                 WHERE 
                     user_id = %s AND 
                     hashed_email_verification_token = %s AND 
-                    status = 'active' AND 
-                    expire_at > NOW()
+                    status = 'active'
                 RETURNING status
             """,
             (user_id, hashed_email_verification_token)

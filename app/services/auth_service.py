@@ -93,6 +93,7 @@ def verify_email_service(user_id: str, email_verification_token:str):
     hashed_email_verification_token = hash_token(email_verification_token)
     feedback = consume_token_repo(user_id, hashed_email_verification_token)
     if feedback == "expired":
+        print(feedback)
         raise TokenExpiredError("EMAIL VERIFICATION TOKEN HAVE EXPIRED, KINDLY REQUEST FOR ANOTHER ONE")
     elif feedback == "invalid":
         raise InvalidEmailVerificationTokenError("INVALID EMAIL VERIFICATION TOKEN")
