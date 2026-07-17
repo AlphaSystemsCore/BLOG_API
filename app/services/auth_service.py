@@ -152,7 +152,7 @@ def create_new_access_and_refresh_token_service(refresh_token_jwt: str, client:s
 
     #hashing the refresh token to check it against the stored hash
     hashed_refresh_token_value = hash_token(refresh_token_value)
-    verify_token_service(jti, refresh_token_value)
+    verify_token_service(jti, hashed_refresh_token_value)
     refresh_token = create_refresh_token_service(user_id, client)
     return access_token, refresh_token
 

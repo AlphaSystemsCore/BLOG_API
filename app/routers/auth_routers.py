@@ -119,24 +119,16 @@ def refresh(request: Request):
             "access_token":new_access_token_jwt,
             "token_type":"bearer"
         })
+        print(new_access_token_jwt)
     except RefreshTokenAlreadyConsumed as exc:
-        response.delete_cookie(key="refresh_token")
+        print(exc)
         raise HTTPException(
+
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid refresh token, please login."
         )
-    except HTTPException as exc:
-        response.delete_cookie(key="refresh_token")
-        raise HTTPException(
-            status_code=401,
-            detail="Invalid refresh token, please login"
-        )
-    except Exception as exc:
-        response.delete_cookie(key="refresh_token")
-        raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="UNEXPECTED_ERROR_OCCURED"
-        )
+
+    
     else:
         response = JSONResponse(content={
             "access_token":new_access_token_jwt,

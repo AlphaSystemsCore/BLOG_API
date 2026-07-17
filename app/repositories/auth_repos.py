@@ -127,10 +127,11 @@ def consume_refresh_token_repo(refresh_token_id:str, hashed_refresh_token:str):
             """
             UPDATE refresh_token
                 SET is_revoked = True
-                WHERE is_revoked = False AND refresh_token_id =%s AND hashed_refresh_token=%s AND expire_at < NOW()
+                WHERE is_revoked = False AND refresh_token_id =%s AND hashed_refresh_token=%s AND expire_at > NOW() RETURNING is_revoked
                 """, (refresh_token_id, hashed_refresh_token)
         )
         is_revoked = cur.fetchone()
+        print(is_revoked)
         is_revoked = is_revoked.get("is_revoked") if is_revoked else None
     return is_revoked
 
