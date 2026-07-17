@@ -121,7 +121,7 @@ def refresh(request: Request):
         })
         print(new_access_token_jwt)
     except RefreshTokenAlreadyConsumed as exc:
-        print(exc)
+        print(response)
         raise HTTPException(
 
             status_code=status.HTTP_401_UNAUTHORIZED,

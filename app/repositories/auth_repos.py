@@ -131,7 +131,6 @@ def consume_refresh_token_repo(refresh_token_id:str, hashed_refresh_token:str):
                 """, (refresh_token_id, hashed_refresh_token)
         )
         is_revoked = cur.fetchone()
-        print(is_revoked)
         is_revoked = is_revoked.get("is_revoked") if is_revoked else None
     return is_revoked
 
