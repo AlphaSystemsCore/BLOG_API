@@ -106,41 +106,32 @@ def refresh(request: Request):
     client = request.headers.get("User-Agent")
     refresh_token_jwt = request.cookies.get("refresh_token")
     if refresh_token_jwt is None:
-        response = Response(status_code=401)
-        response.delete_cookie(key="refresh_token")
         raise HTTPException(
-            status_code=400,
-            detail="Invalid refresh token, please login"
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="REFRESH TOKEN NOT FOUND, PLEASE LOGIN"
         )
-    
     try:
         new_access_token_jwt, new_refresh_token_jwt = create_new_access_and_refresh_token_service(refresh_token_jwt, client)
-        response = JSONResponse(content={
-            "access_token":new_access_token_jwt,
-            "token_type":"bearer"
-        })
-        print(new_access_token_jwt)
-    except RefreshTokenAlreadyConsumed as exc:
-        print(response)
+    except RefreshTokenAlreadyConsumed as e:       
         raise HTTPException(
-
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid refresh token, please login."
+            detail=str(e)
         )
-
-    
-    else:
-        response = JSONResponse(content={
+    response = JSONResponse(
+        content={
             "access_token":new_access_token_jwt,
             "token_type":"bearer"
-        })
-        response.set_cookie(
-            key="refresh_token",
-            value=new_refresh_token_jwt,
-            httponly=True,
-            samesite="strict",
-            path="/auths/refresh"
-        )
+            },
+            status_code=status.HTTP_201_CREATED    
+            )
+    response.set_cookie(
+        key="refresh_token",
+        value=new_access_token_jwt,
+        httponly=True,
+        samesite='lax',
+        secure=True,
+        path="/auths/refresh"
+    )
     return response
 
 @auth_router.get("/auths/resend-token/{email}")

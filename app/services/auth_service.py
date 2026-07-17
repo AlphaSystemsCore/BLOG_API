@@ -162,7 +162,7 @@ def verify_token_service(jti, hashed_refresh_token_value):
     if the refresh_token is used then
     """
     if consume_refresh_token_repo(jti, hashed_refresh_token_value) is None:
-        raise RefreshTokenAlreadyConsumed("TOKEN HAVE ALREADY BEEN USED")
+        raise RefreshTokenAlreadyConsumed("INVALID REFRESH TOKEN, PLEASE LOGIN")
     
 def logout_service():
     pass
