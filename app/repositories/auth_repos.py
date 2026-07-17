@@ -54,8 +54,6 @@ def consume_token_repo(user_id: str, hashed_email_verification_token: str):
             """, (user_id, hashed_email_verification_token)
         )
         status_row = cur.fetchone()
-        print(status_row)
-        print(hashed_email_verification_token)
         if status_row is not None:
             return status_row.get("status")
 
