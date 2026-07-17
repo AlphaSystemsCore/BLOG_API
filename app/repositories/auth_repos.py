@@ -146,7 +146,7 @@ def create_new_email_verification_token_repo(email:str, hashed_evt:str, expire_a
             """,(email,)
         )
         row = cur.fetchone()
-        user_id = row if row else None
+        user_id = row.get("user_id") if row else None
         if user_id is None:
             return None
         cur.execute(

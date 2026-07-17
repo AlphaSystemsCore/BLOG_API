@@ -73,7 +73,7 @@ def resend_email_verification_token(email: str):
 
     user_id = create_new_email_verification_token_repo(email, hashed_evt, expire_at)
     if user_id is None:
-        raise EmailLookUpError("FAILED CHECK YOU EMAIL AND TRY AGAIN")
+        raise EmailLookUpError("FAILED IT SEEMS LIKE THE ACCOUNT IS ALREADY VERIFIED, CHECK YOUR EMAIL AND TRY AGAIN")
     verification_link = email_formater_service(user_id, email_verification_token, email)
     return verification_link
 
