@@ -79,7 +79,4 @@ def decode_refresh_token(token:str):
     else:
         return user_id, jti, refresh_token
 
-if __name__ == '__main__':
-    token = create_access_token({"sub":"akljdfkljasklfjkl"})
-    print(token)
     
