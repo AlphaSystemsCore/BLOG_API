@@ -212,4 +212,15 @@ blog_api_table_preliminary = (
     CREATE INDEX idx_refresh_token_user_id_is_revoked
         ON refresh_token(user_id, is_revoked)
     """
+    """
+    CREATE TABLE IF NOT EXISTS replys(
+    reply_id UUID PRIMARY KEY gen_random_uuid(),
+    comment_id UUID NOT NULL, 
+    user_id UUID NOT NULL,
+    parent_reply_id UUID,
+    content TEXT NOT NULL,
+    FOREIGN KEY user_id REFERENCES users(user_id),
+    FOREIGN KEY parent_reply_id REFERENCES replys(reply_id) 
+    )
+    """
 )
