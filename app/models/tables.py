@@ -159,25 +159,7 @@ blog_api_table_preliminary = (
     )
     """,
 
-    """
-    CREATE TABLE IF NOT EXISTS comments (
-        comment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        content TEXT NOT NULL,
-        post_id UUID NOT NULL, 
-        user_id UUID NOT NULL,
-        parent_comment_id UUID,
-        created_at TIMESTAMPTZ DEFAULT NOW(),
-        updated_at TIMESTAMPTZ,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
-    FOREIGN KEY (parent_comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE
-    )
-    """,
-    """
-    CREATE INDEX  idx_comment_parent_child
-        ON comments(parent_comment_id)
-    """,
-
+    
     """
     CREATE INDEX idx_comments_post_id_user_id
         ON  comments(post_id, user_id)
@@ -211,16 +193,33 @@ blog_api_table_preliminary = (
     """
     CREATE INDEX idx_refresh_token_user_id_is_revoked
         ON refresh_token(user_id, is_revoked)
+    """,
+
     """
+    CREATE TABLE IF NOT EXISTS comments (
+        comment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        content TEXT NOT NULL,
+        post_id UUID NOT NULL, 
+        user_id UUID NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ,
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (parent_comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE
+    )
+    """,
+
     """
     CREATE TABLE IF NOT EXISTS replys(
-    reply_id UUID PRIMARY KEY gen_random_uuid(),
-    comment_id UUID NOT NULL, 
-    user_id UUID NOT NULL,
-    parent_reply_id UUID,
-    content TEXT NOT NULL,
-    FOREIGN KEY user_id REFERENCES users(user_id),
-    FOREIGN KEY parent_reply_id REFERENCES replys(reply_id) 
+        reply_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        comment_id UUID NOT NULL, 
+        user_id UUID NOT NULL,
+        parent_reply_id UUID,
+        content TEXT NOT NULL,
+    FOREIGN KEY user_id REFERENCES users(user_id) ON DELETE CASCASE,
+    FOREIGN KEY parent_reply_id REFERENCES replys(reply_id) ON DELETE CASCADE,
+    FOREIGN KEY comment_id REFERENCES comments(comment_id) ON DELETE CASCADE,
     )
     """
+
 )
