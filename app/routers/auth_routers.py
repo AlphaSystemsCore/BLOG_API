@@ -71,12 +71,10 @@ def verify_email(user_id: str, email_verification_token: str):
 
 @auth_router.post("/auths/login")
 def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
-    
-    
     client = request.headers.get('User-Agent')
     try:
         refresh_token, access_token = login_service(form_data.username, form_data.password, client)
-        response = JSONResponse(content={"access_token": access_token, "token_type":"bearer"})
+        response = JSONResponse(content=ResponseAccessToken(access_token=access_token))
         response.set_cookie(
             key="refresh_token",
             value=refresh_token,
