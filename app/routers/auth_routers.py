@@ -5,7 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from pydantic import EmailStr
 
-from app.schemas.auth_schemas import RegisterUser
+from app.schemas.auth_schemas import RegisterUser, ResponseAccessToken
 from app.exceptions.auth_exception import *
 from app.services.auth_service import (
     register_user_service,   
@@ -71,10 +71,7 @@ def verify_email(user_id: str, email_verification_token: str):
 
 @auth_router.post("/auths/login")
 def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
-    AuthCredentialError = HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Wrong password or email, please try again"
-        )
+    
     
     client = request.headers.get('User-Agent')
     try:
@@ -86,7 +83,7 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
             httponly=True,
             secure=False,
             samesite="strict",
-            path="/auths/refresh"
+            path="/"
         )
     except EmailNotFoundError:
         raise AuthCredentialError
@@ -126,7 +123,7 @@ def refresh(request: Request):
             )
     response.set_cookie(
         key="refresh_token",
-        value=new_access_token_jwt,
+        value=new_refresh_token_jwt,
         httponly=True,
         samesite='lax',
         secure=True,

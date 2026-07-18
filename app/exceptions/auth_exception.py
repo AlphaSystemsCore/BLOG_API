@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 class InvalidEmailVerificationTokenError(Exception):
     """raise when the email_verification_token is invalid, when checked with the stored email_verification_token"""
     pass
@@ -25,3 +26,8 @@ class TokenExpiredError(Exception):
 class InvalidUserIdError(Exception):
     """Raised when the user_id is invalid hence not found in the db lookup"""
     pass
+
+AuthCredentialError = HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Wrong password or email, please try again"
+        )
