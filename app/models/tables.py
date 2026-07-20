@@ -185,7 +185,7 @@ blog_api_table_preliminary = (
     """
     CREATE TABLE IF NOT EXISTS contents(
         content_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        type VARCHAR(80) NOT NULL,
+        type VARCHAR(80) NOT NULL UNIQUE,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ,
 
@@ -195,11 +195,11 @@ blog_api_table_preliminary = (
     """
     CREATE TABLE IF NOT EXISTS likes(
         like_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        post_id UUID NOT NULL,
+        content_id UUID NOT NULL,
         user_id UUID NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW(),
-    CONSTRAINT unique_like UNIQUE(post_id, user_id),
-    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    CONSTRAINT unique_like UNIQUE(content_id, user_id),
+    FOREIGN KEY (content_id) REFERENCES contents(content_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
