@@ -55,12 +55,12 @@ blog_api_table_preliminary = (
     CREATE INDEX users_status
     ON users(account_status)
     """,
-#user can only have one social link
+
     """
     CREATE TABLE IF NOT EXISTS profile(
         profile_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        avatar_link TEXT, 
-        social_link TEXT, 
+        avatar_link TEXT UNIQUE, 
+        social_link TEXT UNIQUE, 
         user_id UUID UNIQUE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
@@ -136,7 +136,7 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS media(
         media_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
-        post_id UUID,
+        content_id UUID NOT NULL,
         file_path TEXT NOT NULL,
         original_filename VARCHAR(100) NOT NULL,
         file_type VARCHAR(100) NOT NULL,
@@ -144,7 +144,7 @@ blog_api_table_preliminary = (
         size INTEGER NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ,
-    FOREIGN KEY (post_id) REFERENCES posts(post_id), 
+    FOREIGN KEY (content_id) REFERENCES posts(content_id), 
     FOREIGN KEY (user_id) REFERENCES users(user_id)
     )
     """,
@@ -189,7 +189,7 @@ blog_api_table_preliminary = (
         content_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         type VARCHAR(80) NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW(),
-        updated_at TIMESTAMPTZ,
+        updated_at TIMESTAMPTZ
 
     )
     """,
@@ -200,7 +200,7 @@ blog_api_table_preliminary = (
         content_id UUID NOT NULL,
         user_id UUID NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW(),
-        updated_at TIMESTAMPZ,
+        updated_at TIMESTAMPTZ,
     CONSTRAINT unique_like UNIQUE(content_id, user_id),
     FOREIGN KEY (content_id) REFERENCES contents(content_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
