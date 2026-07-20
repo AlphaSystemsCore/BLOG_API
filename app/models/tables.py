@@ -182,6 +182,15 @@ blog_api_table_preliminary = (
     CREATE INDEX idx_comments_post_id_user_id
         ON  comments(post_id, user_id)
     """,
+    """
+    CREATE TABLE IF NOT EXISTS contents(
+        content_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+        type VARCHAR(80) NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ,
+
+    )
+    """,
 
     """
     CREATE TABLE IF NOT EXISTS likes(
