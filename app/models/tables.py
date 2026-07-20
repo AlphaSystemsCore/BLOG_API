@@ -119,12 +119,14 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS posts(
         post_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
+        content_id UUID NOT NULL,
         title TEXT UNIQUE NOT NULL,
         content TEXT NOT NULL,
         is_allowed BOOLEAN DEFAULT true,
         status posts_status_type DEFAULT 'drafted',
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ,
+    FOREIGN KEY (content_id) FEFERENCES contents(content_id),
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
@@ -163,13 +165,13 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS comments (
         comment_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         content TEXT NOT NULL,
-        post_id UUID NOT NULL, 
+        content_id UUID NOT NULL, 
         user_id UUID NOT NULL,
         parent_comment_id UUID,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (post_id) REFERENCES posts(post_id) ON DELETE CASCADE,
+    FOREIGN KEY (content_id) REFERENCES contents(content_id) ON DELETE CASCADE,
     FOREIGN KEY (parent_comment_id) REFERENCES comments(comment_id) ON DELETE CASCADE
     )
     """,
@@ -179,13 +181,13 @@ blog_api_table_preliminary = (
     """,
 
     """
-    CREATE INDEX idx_comments_post_id_user_id
-        ON  comments(post_id, user_id)
+    CREATE INDEX idx_comments_content_id_user_id
+        ON  comments(content_id, user_id)
     """,
     """
     CREATE TABLE IF NOT EXISTS contents(
         content_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        type VARCHAR(80) NOT NULL UNIQUE,
+        type VARCHAR(80) NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ,
 
@@ -198,6 +200,7 @@ blog_api_table_preliminary = (
         content_id UUID NOT NULL,
         user_id UUID NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPZ,
     CONSTRAINT unique_like UNIQUE(content_id, user_id),
     FOREIGN KEY (content_id) REFERENCES contents(content_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
