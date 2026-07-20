@@ -120,7 +120,7 @@ blog_api_table_preliminary = (
         post_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
         content_id UUID NOT NULL,
-        title TEXT UNIQUE NOT NULL,
+        title TEXT  NOT NULL,
         content TEXT NOT NULL,
         is_allowed BOOLEAN DEFAULT true,
         status posts_status_type DEFAULT 'drafted',
@@ -137,7 +137,7 @@ blog_api_table_preliminary = (
         media_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
         user_id UUID NOT NULL,
         content_id UUID NOT NULL,
-        file_path TEXT NOT NULL,
+        path TEXT NOT NULL,
         original_filename VARCHAR(100) NOT NULL,
         file_type VARCHAR(100) NOT NULL,
         mime_type VARCHAR(100) NOT NULL,
@@ -149,7 +149,7 @@ blog_api_table_preliminary = (
     )
     """,
 
-    "CREATE INDEX idx_post_id_user_id ON media(user_id, post_id)",
+    "CREATE INDEX idx_post_id_user_id ON media(content_id, post_id)",
 
     """
     CREATE TABLE IF NOT EXISTS posts_tags(
