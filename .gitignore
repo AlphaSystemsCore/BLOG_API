@@ -1,11 +1,8 @@
 db_logs.txt
-venv
 __pycache__
 database.ini
 requirements.txt
 __init__.py 
 .env
 /app/models
-
-
-
+.venv

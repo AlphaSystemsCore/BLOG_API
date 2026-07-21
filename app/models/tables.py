@@ -226,5 +226,5 @@ blog_api_table_production = (
     )
     """,
 
-    "CREATE INDEX idx_refresh_token_active_lookup ON refresh_token(user_id) WHERE is_revoked = false AND expire_at > NOW()"
+    "CREATE INDEX idx_refresh_token_active_lookup ON refresh_token(user_id) WHERE is_revoked = false "
 )

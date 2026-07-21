@@ -41,11 +41,11 @@ def get_cur():
         finally:
             cur.close()
 
-from app.models.tables import blog_api_table_preliminary
+from app.models.tables import blog_api_table_production
 if __name__ == "__main__":
     with get_cur() as cur:
         count = 0
-        for table in blog_api_table_preliminary:
+        for table in blog_api_table_production:
             cur.execute(table)
             print("Inserting table....")
             count +=1
