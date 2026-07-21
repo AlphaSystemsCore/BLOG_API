@@ -20,7 +20,6 @@ blog_api_table_preliminary = (
     )
     """,
 
-   
     """
     CREATE TABLE IF NOT EXISTS users(
         user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -34,8 +33,9 @@ blog_api_table_preliminary = (
     FOREIGN KEY (credential_id) REFERENCES oauth2_credential(credential_id) ON DELETE CASCADE
     )
     """,
+    "CREATE INDEX idx_users_account_status ON users(account_status)",
 
-     """
+    """
     CREATE TABLE users_roles(
         user_id UUID NOT NULL,
         role_id INTEGER NOT NULL DEFAULT '1',
@@ -46,25 +46,30 @@ blog_api_table_preliminary = (
     """,
 
     """
-    CREATE INDEX idx_users_roles
-        ON users_roles(user_id)
-    """,
-
-
-    """
-    CREATE INDEX users_status
-    ON users(account_status)
-    """,
-
-    """
     CREATE TABLE IF NOT EXISTS profile(
         profile_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        avatar_link TEXT UNIQUE, 
-        social_link TEXT UNIQUE, 
+        avatar_link TEXT UNIQUE,
         user_id UUID UNIQUE NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
+
+    """
+    CREATE TYPE plaform_type AS ENUM 
+    ("X (Twitter)","Telegram","Discord","GitHub", "Nostr","Farcaster","Steemit", "YouTube", "LinkedIn", "Reddit")
+    """,
+    
+    """
+    CREATE TABLE IF NOT EXISTS social_handles(
+        social_handle_id UUID PRIMARY KEY  DEFAULT gen_random_uuid(),
+        user_id UUID  NOT NULL,
+        platform VARCHAR(100) NOT NULL,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ,
+    FOREIGN KEY (user_id) REFERENCES users(user_id)
+    )
+    """,
+
     "CREATE TYPE email_verification_status AS ENUM ('active', 'used', 'expired', 'revoked')",
 
     """
