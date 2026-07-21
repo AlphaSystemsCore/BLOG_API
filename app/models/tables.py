@@ -55,18 +55,20 @@ blog_api_table_preliminary = (
     """,
 
     """
-    CREATE TYPE plaform_type AS ENUM 
+    CREATE TYPE platform_type AS ENUM 
     ("X (Twitter)","Telegram","Discord","GitHub", "Nostr","Farcaster","Steemit", "YouTube", "LinkedIn", "Reddit")
     """,
-    
+
     """
     CREATE TABLE IF NOT EXISTS social_handles(
         social_handle_id UUID PRIMARY KEY  DEFAULT gen_random_uuid(),
         user_id UUID  NOT NULL,
-        platform VARCHAR(100) NOT NULL,
+        social_handle_link TEXT NOT NULL CHECK (social_handle_link ~* '^https?://[^\s/$.?#].[^\s]*$'),
+        platform platform_type NOT NULL,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ,
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
+        UNIQUE(user_id, social_handle_link),
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
 
@@ -76,19 +78,15 @@ blog_api_table_preliminary = (
     CREATE TABLE IF NOT EXISTS email_verification(
         token_id INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
         hashed_email_verification_token TEXT UNIQUE NOT NULL,
-        user_id UUID NOT NULL,
+        user_id UUID NOT NULL UNIQUE,
         status email_verification_status DEFAULT 'active',
+        request_count INT DEFAULT 0,
         created_at TIMESTAMPTZ DEFAULT NOW(),
         expire_at TIMESTAMPTZ NOT NULL,
         updated_at TIMESTAMPTZ,
     FOREIGN KEY (user_id)  REFERENCES users(user_id) ON DELETE CASCADE
 
     )
-    """
-
-    """
-    CREATE INDEX email_verifiaction_user
-        ON email_verification(user_id)
     """,
   
     """
