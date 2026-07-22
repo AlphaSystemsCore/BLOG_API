@@ -86,7 +86,7 @@ def login(request: Request, form_data: OAuth2PasswordRequestForm = Depends()):
     except EmailNotFoundError:
         raise AuthCredentialError
     except InvalidPasswordError:
-        raise CredentialError
+        raise AuthCredentialError
     except Exception as exc:
         # TO LOG ERROR
         raise HTTPException(

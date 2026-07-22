@@ -31,7 +31,7 @@ blog_api_table_production = (
     """
     CREATE TABLE IF NOT EXISTS contents(
         content_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-        type VARCHAR(50) NOT NULL, 
+        type VARCHAR(50) NOT NULL, -- to also add soft delete because ill use this to delete entities 
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NULL
     )
