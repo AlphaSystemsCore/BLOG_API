@@ -15,14 +15,14 @@ def create_post_repo(user_id: str, title: str, content: str) ->dict:
         content_id = row.get("content_id") if row else None
 
         if content_id is None:
-            return "content_failed"
+            return None
         cur.execute(
             """
             INSERT INTO posts(user_id, content_id, title, content)
-            VALUES(%s, %s, %s, %s) RETURNING content_id, title, content, status 
+            VALUES(%s, %s, %s, %s) RETURNING content_id, title, content, status, created_at 
             """, (user_id, content_id, title, content)
         )
         row = cur.fetchone()
         if row is None:
-            return "post_failed"
+            return None
     return row

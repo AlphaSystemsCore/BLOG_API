@@ -15,11 +15,9 @@ class PostOut(BaseModel):
     likes: int = 0
     comments:int = 0
     replys: int = 0
-    created_at: str
+    created_at: datetime
 
 class FeedbackOut(BaseModel):
     content_id: str
     message:str
 
-class ContentIdIn(BaseModel):
-    content_id: UUID
