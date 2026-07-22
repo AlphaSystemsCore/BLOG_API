@@ -1,6 +1,9 @@
 from app.db.db_connection import get_cur
 
 def create_post_repo(user_id: str, title: str, content: str):
+    """
+    Creates the content the add, using the content_id it inserts post in the posts table
+    """
     with get_cur() as cur:
         cur.execute(
             """
