@@ -26,3 +26,19 @@ def create_post_repo(user_id: str, title: str, content: str) ->dict:
         if row is None:
             return None
     return row
+
+def delete_post_repo(user_id:str, content_id: str):
+    """
+    deletes the post using the content_id and the user_id  post is flagged as delete for soft deletes.
+    """
+    with get_cur() as cur:
+        cur.execute(
+            """
+            UPDATE posts
+            SET status = 'deleted', deleted_at = NOW()
+            WHERE content_id = %s AND user_id = %s
+            """, (content_id, user_id)
+        )
+        row = cur.rowcount
+    return row
+

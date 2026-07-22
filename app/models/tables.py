@@ -115,7 +115,9 @@ blog_api_table_production = (
         FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
     )
     """,
+
     "CREATE INDEX idx_tags_user_id ON tags(user_id)",
+    
     "CREATE INDEX idx_tag_category ON tags(tag_category)",
 
     """

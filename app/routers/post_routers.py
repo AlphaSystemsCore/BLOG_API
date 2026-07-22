@@ -23,7 +23,9 @@ def create_post(post_in: PostIn, user_id: Annotated[str, Depends(get_current_use
 
 @post_router.delete("/posts")
 def delete_post(content_id:str, user_id: Annotated[str, Depends(get_current_user)]):
-    pass
+    try:
+        delete_post_service(content_id)
+    except:
 
 @post_router.patch("/posts")
 def update_post():
