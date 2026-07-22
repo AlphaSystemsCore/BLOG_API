@@ -1,6 +1,6 @@
 from app.db.db_connection import get_cur
 
-def create_post_repo(user_id: str, title: str, content: str):
+def create_post_repo(user_id: str, title: str, content: str) ->dict:
     """
     Creates the content the add, using the content_id it inserts post in the posts table
     """
@@ -15,10 +15,7 @@ def create_post_repo(user_id: str, title: str, content: str):
         content_id = row.get("content_id") if row else None
 
         if content_id is None:
-            return {
-                "content": None
-            }
-
+            return "content_failed"
         cur.execute(
             """
             INSERT INTO posts(user_id, content_id, title, content)
@@ -27,7 +24,5 @@ def create_post_repo(user_id: str, title: str, content: str):
         )
         row = cur.fetchone()
         if row is None:
-            return {
-                "post":None
-            }
+            return "post_failed"
     return row
