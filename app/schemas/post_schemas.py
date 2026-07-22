@@ -21,3 +21,11 @@ class FeedbackOut(BaseModel):
     content_id: str
     message:str
 
+class Query(BaseModel):
+    author: str | None = None
+    title: str | None = None
+    content_id: str | None = None
+    limit: int = Field(20, le=25)
+    offset: int = Field(0, le=20)
+
+

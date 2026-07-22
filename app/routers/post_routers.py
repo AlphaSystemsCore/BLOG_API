@@ -4,7 +4,7 @@ from typing import Annotated, List
 from uuid import UUID
 
 from app.auth.jwt_handler import get_current_user
-from app.services.post_service import create_post_service
+from app.services.post_service import *
 from app.exceptions.post_exception import BlogException
 from app.schemas.post_schemas import *
 
@@ -22,9 +22,10 @@ def create_post(post_in: PostIn, user_id: Annotated[UUID, Depends(get_current_us
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
-
+# user_id='86c7b890-4811-4786-82e8-49be78f8752e'
+# content_id = "64077f70-be09-429c-8eb7-b703f504f366"
 @post_router.delete("/posts", response_model=FeedbackOut)
-def delete_post(content_id:UUID, user_id: Annotated[UUID, Depends(get_current_user)]):
+def delete_post(content_id: UUID, user_id: Annotated[UUID, Depends(get_current_user)]):
     try:
         return delete_post_service(user_id, content_id)
     except BlogException as e:
@@ -32,7 +33,6 @@ def delete_post(content_id:UUID, user_id: Annotated[UUID, Depends(get_current_us
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
-        
 
 
 @post_router.patch("/posts")
@@ -41,8 +41,4 @@ def update_post():
 
 @post_router.get("/posts/")
 def get_all_posts():
-    pass
-
-@post_router.get("/posts")
-def get_post():
     pass
