@@ -1,6 +1,8 @@
+from uuid import UUID
+
 from app.db.db_connection import get_cur
 
-def create_post_repo(user_id: str, title: str, content: str) ->dict:
+def create_post_repo(user_id: UUID, title: str, content: str) ->dict:
     """
     Creates the content the add, using the content_id it inserts post in the posts table
     """
@@ -27,7 +29,7 @@ def create_post_repo(user_id: str, title: str, content: str) ->dict:
             return None
     return row
 
-def delete_post_repo(user_id:str, content_id: str):
+def delete_post_repo(user_id:UUID, content_id: str):
     """
     deletes the post using the content_id and the user_id  post is flagged as delete for soft deletes.
     """
