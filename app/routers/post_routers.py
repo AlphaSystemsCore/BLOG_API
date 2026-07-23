@@ -39,6 +39,6 @@ def delete_post(content_id: UUID, user_id: Annotated[UUID, Depends(get_current_u
 def update_post():
     pass
 
-@post_router.get("/posts/")
-def get_all_posts():
-    pass
+@post_router.get("/posts")
+def get_posts():
+    return get_posts_service()
