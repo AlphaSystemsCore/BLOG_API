@@ -37,15 +37,20 @@ class PostFilters(BaseModel):
     author: str | None = None
     title: str | None = None
     content_id: UUID | None = None
-
     status: Literal["drafted", "published"] | None = None
-
     created_after: datetime | None = None
     created_before: datetime | None = None
 
+from enum import Enum
+class By(Enum):
+    title = "title"
+    created_at = "created_at"
+    likes = "likes"
+    author = "author"
+    
 
 class SortOptions(BaseModel):
-    by: Literal["created_at", "title", "author", "likes"] = "created_at"
+    by: By | None = None
     direction: Literal["asc", "desc"] = "desc"
 
 

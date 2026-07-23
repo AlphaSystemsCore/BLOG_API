@@ -47,7 +47,15 @@ def delete_post_repo(user_id:UUID, content_id: str):
 
 
 def get_posts(search: PostSearch):
-    base_query = """
+   
+
+    conditions = []
+    params = []
+    group_by = ["p.content_id", "p.title", "p.content", "u.username", "p.status", "p.created_at"]
+    sort_by = []
+
+
+base_query = """
             SELECT 
                 p.content_id, 
                 p.title, 
@@ -70,14 +78,5 @@ def get_posts(search: PostSearch):
                 AND p.is_allowed = True 
                 AND p.status = 'drafted' 
                 AND p.deleted_at IS NULL 
-                AND cm.deleted_at IS NULL
-
-          
+                AND cm.deleted_at IS NULL 
             """
-
-    conditions = []
-    params = []
-    group_by = ["p.content_id", "p.title", "p.content", "u.username", "p.status", "p.created_at"]
-    sort_by = []
-
-

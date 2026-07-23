@@ -7,6 +7,7 @@ from app.auth.jwt_handler import get_current_user
 from app.services.post_service import *
 from app.exceptions.post_exception import BlogException
 from app.schemas.post_schemas import *
+from app.repositories.post_repos import base_query
 
 
 post_router = APIRouter(tags=["posts"])
@@ -48,8 +49,36 @@ def get_posts(
     search = PostSearch(
         filters=post_filters,
         pagination=pagination,
-        sort_options=sort_options
+        sort=sort_options
     )
+    class PostRepository:
+        def search(self, search):
+            params = []
+            conditions = []
+            limit_offset = []
+            order_by = []
+            direction = []
 
-    print(search)
-    
+            for k, v in search.filters.model_dump(exclude_none=True).items():
+                params.append(v)
+                conditions.append(f"{k} = %s")
+
+            for k, v in search.sort.model_dump(exclude_none=True).items():
+                if k == "by":
+                    order_by.append(f"ORDER BY {v}")
+                if k == "direction":
+                    direction.append(v)
+
+            for k, v in search.pagination.model_dump(exclude_none=True).items():
+                if k == "limit":
+                    limit_offset.append(f"LIMIT {v}")
+                if k == "offset":
+                    limit_offset.append(f"OFFSET {v}")
+            query = str(base_query) + " AND ".join(conditions) + " " + " ".join(order_by) + " " + " ".join(direction) + " " + " ".join(limit_offset)
+            print(query)
+        
+    post = PostRepository()
+    post.search(search)
+        
+
+  
