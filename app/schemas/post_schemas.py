@@ -1,6 +1,7 @@
 from pydantic import BaseModel, Field
 from datetime import datetime
 from uuid import UUID
+from typing import Literal
 
 class PostIn(BaseModel):
     title: str
@@ -20,12 +21,35 @@ class PostOut(BaseModel):
 class FeedbackOut(BaseModel):
     content_id: str
     message:str
+from datetime import datetime
+from typing import Literal
+from uuid import UUID
 
-class SearchConstraints(BaseModel):
+from pydantic import BaseModel, Field
+
+
+class Pagination(BaseModel):
+    limit: int = Field(default=20, ge=1, le=100)
+    offset: int = Field(default=0, ge=0)
+
+
+class PostFilters(BaseModel):
     author: str | None = None
     title: str | None = None
-    content_id: str | None = None
-    limit: int = Field(20, le=25)
-    offset: int = Field(0, le=20)
+    content_id: UUID | None = None
+
+    status: Literal["drafted", "published"] | None = None
+
+    created_after: datetime | None = None
+    created_before: datetime | None = None
 
 
+class SortOptions(BaseModel):
+    by: Literal["created_at", "title", "author", "likes"] = "created_at"
+    direction: Literal["asc", "desc"] = "desc"
+
+
+class PostSearch(BaseModel):
+    filters: PostFilters = PostFilters()
+    sort: SortOptions = SortOptions()
+    pagination: Pagination = Pagination()

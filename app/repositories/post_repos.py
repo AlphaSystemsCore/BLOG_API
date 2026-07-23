@@ -46,18 +46,18 @@ def delete_post_repo(user_id:UUID, content_id: str):
 
 def get_posts_repo():
     with get_cur() as cur:
-        cur.execute(
-            """
-            SELECT 
+
+        base_query = """
+             SELECT 
                 p.content_id, 
                 p.title, 
                 p.content, 
                 u.username as author, 
                 p.status,
                 p.created_at, 
-                COUNT(l.like_id) as likes, 
-                COUNT(cm.comment_id) AS comments, 
-                COUNT(cm.parent_comment_id) as replies
+                COUNT( DISTINCT l.like_id) as likes, 
+                COUNT(DISTINCT cm.comment_id) AS comments, 
+                COUNT(DISTINCT cm.parent_comment_id) as replies
 
             FROM posts p
             JOIN users u
@@ -66,6 +66,10 @@ def get_posts_repo():
             ON p.content_id = cm.content_id
             LEFT JOIN likes l
             ON p.content_id = l.content_id
+            """
+        cur.execute(
+            """
+           
             WHERE 
                 u.is_verified = True 
                 AND p.is_allowed = True 
@@ -76,8 +80,14 @@ def get_posts_repo():
 
             """
 
-
         )
+
+def get_user_post():
+    pass
+def get_posts():
+    pass
+def get_post():
+    pass
         row = cur.fetchall()
     print(row)
     return row
