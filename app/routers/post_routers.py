@@ -40,5 +40,16 @@ def update_post():
     pass
 
 @post_router.get("/posts")
-def get_posts():
-    return get_posts_service()
+def get_posts(
+    sort_options: SortOptions = Depends(),
+    pagination: Pagination = Depends(),
+    post_filters: PostFilters = Depends(),
+    ):
+    search = PostSearch(
+        filters=post_filters,
+        pagination=pagination,
+        sort_options=sort_options
+    )
+
+    print(search)
+    

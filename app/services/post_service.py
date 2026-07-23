@@ -20,27 +20,6 @@ def delete_post_service(user_id: UUID, content_id: UUID):
     return FeedbackOut(content_id = content_id, message = "deleted")
 
     
-def get_posts_service():
+def get_posts_service(search):
     """multifunctional gets post, by the given query or by default returns posts with no constraint apart from pagination"""
-    posts = [PostOut(**post) for post in get_posts_repo()]
-    return posts
-    
-    
-    
-    
-    # params = []
-    # if search_constraints.author != None:
-    #     condition += "username = %s "
-    #     params.append(search_constraints.author)
-    # if search_constraints.content_id != None:
-    #     condition += "content_id = %s "
-    #     params.append(search_constraints.content_id)
-    # if search_constraints.title != None:
-    #     condition += "title = %s "
-    #     params.append(search_constraints.title)
-
-    # query = "SELECT * FROM posts"
-    # if condition:
-    #     query += "WHERE" += "AND".join(condition)
-    
-    # get_posts_repo(query, params)
+   

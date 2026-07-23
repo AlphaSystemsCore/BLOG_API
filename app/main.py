@@ -14,3 +14,10 @@ app.include_router(tag_router)
 app.include_router(post_router)
 app.include_router(comment_router)
 app.include_router(like_router)
+
+
+app.get("/")
+def status():
+    return {
+        "serve":"server is on"
+    }
