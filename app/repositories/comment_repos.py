@@ -4,10 +4,19 @@ def create_comment_repo(user_id:str, post_id:str, content:str):
     with get_cur() as cur:
         cur.execute(
             """
+            INSERT INTO contents(type)
+            VALUES('comment') RETURNING content_id
+            """
+        )
+        content_id = cur.fetchone()
+        if content_id is None:
+            return None
+        cur.execute(
+            """
             INSERT INTO comments
-            (content, user_id, post_id)
-            VALUES(%s,%s, %s) RETURNING comment_id
-            """, (content, user_id, post_id)
+            (content, content_id, user_id)
+            VALUES(%s,%s, %s) RETURNING content_id, content, created_at
+            """, (content, content_id, user_id)
         )
         row = cur.fetchone()
     return row

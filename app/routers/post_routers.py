@@ -51,31 +51,7 @@ def get_posts(
         pagination=pagination,
         sort=sort_options
     )
-    class PostRepository:
-        def search(self, search):
-            params = []
-            conditions = []
-            limit_offset = []
-            order_by = []
-            direction = []
-
-            for k, v in search.filters.model_dump(exclude_none=True).items():
-                params.append(v)
-                conditions.append(f"{k} = %s")
-
-            for k, v in search.sort.model_dump(exclude_none=True).items():
-                if k == "by":
-                    order_by.append(f"ORDER BY {v}")
-                if k == "direction":
-                    direction.append(v)
-
-            for k, v in search.pagination.model_dump(exclude_none=True).items():
-                if k == "limit":
-                    limit_offset.append(f"LIMIT {v}")
-                if k == "offset":
-                    limit_offset.append(f"OFFSET {v}")
-            query = str(base_query) + " AND ".join(conditions) + " " + " ".join(order_by) + " " + " ".join(direction) + " " + " ".join(limit_offset)
-            print(query)
+ 
         
     post = PostRepository()
     post.search(search)
