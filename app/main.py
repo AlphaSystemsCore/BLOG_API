@@ -16,7 +16,7 @@ app.include_router(comment_router)
 app.include_router(like_router)
 
 
-app.get("/")
+@app.get("/")
 def status():
     return {
         "serve":"server is on"
