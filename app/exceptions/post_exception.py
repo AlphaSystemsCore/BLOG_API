@@ -11,3 +11,4 @@ class PostNotFoundError(BlogException):
 class PostOperationError(BlogException):
     """Raised when a DB mutation (create, update, delete) fails."""
     pass
+

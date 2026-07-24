@@ -1,11 +1,11 @@
 from app.schemas.comment_schemas import CommentIn
 from app.repositories.comment_repos import create_comment_repo, delete_comment_repo, get_all_comments_repo, get_total_comment_count_repo
-
+from app.exceptions.comment_exception import CommentOperationalError
 
 # will declare a defined exception later
 def create_comment_service(user_id, comment_in: CommentIn):
     """creates comments using the CommentIn model, in comment schemas """
-    comment_id = create_comment_repo(user_id, comment_in.post_id, comment_in.content)
+    comment_id = create_comment_repo(user_id, comment_in.content_id, content_in.content)
     if comment_id is None:
         raise ValueError("Error occured comment not created")
     return comment_id

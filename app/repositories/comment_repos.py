@@ -1,6 +1,6 @@
 from app.db.db_connection import get_cur
 
-def create_comment_repo(user_id:str, post_id:str, content:str):
+def create_comment_repo(user_id:str, content:str):
     with get_cur() as cur:
         cur.execute(
             """
