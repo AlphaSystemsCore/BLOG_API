@@ -6,18 +6,19 @@ from app.exceptions.comment_exception import CommentOperationalError
 def create_comment_service(user_id, comment_in: CommentIn):
     """creates comments using the CommentIn model, in comment_schemas """
     comment = create_comment_repo(user_id, comment_in.content_id, content_in.content)
+    if comment is False:
+        raise CommentOperationalError("Error occured comment not created")
     if comment is None:
         raise CommentOperationalError("Error occured comment not created")
     return CommentOut(**comment)
     
 
-
-def delete_comment_service(user_id:str, content_id: str):
+def delete_comment_service(user_id:str, comment_id: str):
     """deletes comment by from specific user"""
-    updated_rows = delete_comment_repo(user_id, content_id)
+    updated_rows = delete_comment_repo(user_id, comment_id)
     if not updated_rows:
         raise ValueError("Error occured comment not deleted")
-    return {"status":"deleted successfully."}
+    return 
 
 def get_all_comments_service(post_id):
     """gets all comment for a particular post"""

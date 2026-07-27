@@ -8,6 +8,7 @@ class CommentIn(BaseModel):
 
 class CommentOut(BaseModel):
     content_id:UUID
+    comment_id:UUID
     content:str
     created_at: datetime
 

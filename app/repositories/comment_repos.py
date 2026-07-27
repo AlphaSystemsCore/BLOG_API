@@ -8,20 +8,21 @@ def create_comment_repo(user_id:str, content:str):
             VALUES('comment') RETURNING content_id
             """
         )
-        content_id = cur.fetchone()
-        if content_id is None:
-            return None
+        row = cur.fetchone()
+        content_id = row if row is not None else None
+        if content_id == None:
+            return False
         cur.execute(
             """
             INSERT INTO comments
             (content, content_id, user_id)
-            VALUES(%s,%s, %s) RETURNING content_id, content, created_at
+            VALUES(%s,%s, %s) RETURNING content_id, comment_id, content, created_at
             """, (content, content_id, user_id)
         )
         row = cur.fetchone()
     return row
     
-def delete_comment_repo(user_id:str, content_id: str):
+def delete_comment_repo(user_id:str, comment_id: str):
     with get_cur() as cur:
         cur.execute(
             """
