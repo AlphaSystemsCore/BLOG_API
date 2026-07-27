@@ -43,6 +43,11 @@ def get_all_comments_repo(post_id:str):
         )
         row = cur.fetchall()
     return row
+def get_all_comments_limited_repo():
+    with get_cur() as cur:
+        cur.execute(
+            "SELECT * FROM "
+        )
 
 def get_total_comment_count_repo(post_id:str):
     with get_cur() as cur:

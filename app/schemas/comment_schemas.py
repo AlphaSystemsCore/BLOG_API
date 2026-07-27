@@ -12,7 +12,6 @@ class CommentOut(BaseModel):
     content:str
     created_at: datetime
 
-
 class ResponseComment(BaseModel):
     content_id: UUID
     message: str
