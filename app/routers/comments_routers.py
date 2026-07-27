@@ -9,6 +9,11 @@ from app.exceptions.comment_exception import CommentException
 
 comment_router = APIRouter(tags=["comments"])
 
+UNEXPECTED_ERROR = HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="UNEXPECTED ERROR OCCURED"
+        )
+
 @comment_router.post("/comments")
 def create_comment(comment_in:CommentIn, user_id: Annotated[str, Depends(get_current_user)]):
     try:
@@ -20,16 +25,20 @@ def create_comment(comment_in:CommentIn, user_id: Annotated[str, Depends(get_cur
             detail=str(e)
         )
     except Exception as e:
+        raise UNEXPECTED_ERROR
+
+@comment_router.delete("/comments/{content_id}")
+def delete_comment(content_id:str, user_id:Annotated[str, Depends(get_current_user)]):
+    try:
+        return delete_comment_service(user_id, content_id)
+    except CommentException as e:
         raise HTTPException(
-            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail="UNEXPECTED ERROR ENCOUNTERED"
+            status_codes = status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
         )
-
-@comment_router.delete("/comments/{comment_id}")
-def delete_comment(comment_id:str, user_id:Annotated[str, Depends(get_current_user)]):
-    feedback = delete_comment_service(user_id, comment_id)
-    return feedback
-
+    except Exception as e:
+        raise UNEXPECTED_ERROR
+       
 @comment_router.get("/comments/{post_id}")
 def get_all_comments(post_id: str):
     comments = get_all_comments_service(post_id)
