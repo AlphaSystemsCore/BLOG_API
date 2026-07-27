@@ -14,7 +14,7 @@ def create_comment_service(user_id, comment_in: CommentIn):
 
 def delete_comment_service(user_id:str, content_id: str):
     """deletes comment by from specific user"""
-    updated_rows = delete_comment_repo(user_id, comment_id)
+    updated_rows = delete_comment_repo(user_id, content_id)
     if not updated_rows:
         raise ValueError("Error occured comment not deleted")
     return {"status":"deleted successfully."}
