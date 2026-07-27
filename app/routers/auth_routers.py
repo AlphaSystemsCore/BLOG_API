@@ -114,7 +114,7 @@ def refresh(request: Request):
             detail=str(e)
         )
     response = JSONResponse(
-        content=ResponseAccessToken(access_token=new_access_token_jwt),
+        content=ResponseAccessToken(access_token=new_access_token_jwt).model_dump(),
             status_code=status.HTTP_201_CREATED    
             )
     response.set_cookie(
