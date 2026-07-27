@@ -38,8 +38,9 @@ def delete_comment(comment_id:str, user_id:Annotated[str, Depends(get_current_us
         )
     except Exception as e:
         raise UNEXPECTED_ERROR
-       
-@comment_router.get("/comments/{post_id}")
+
+
+@comment_router.get("/comments/{content_id}")
 def get_all_comments(post_id: str):
     comments = get_all_comments_service(post_id)
     return comments
