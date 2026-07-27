@@ -1,4 +1,4 @@
-from app.schemas.comment_schemas import CommentIn, CommentOut
+from app.schemas.comment_schemas import CommentIn, CommentOut, ResponseComment
 from app.repositories.comment_repos import create_comment_repo, delete_comment_repo, get_all_comments_repo, get_total_comment_count_repo
 from app.exceptions.comment_exception import CommentOperationalError
 
@@ -15,10 +15,10 @@ def create_comment_service(user_id, comment_in: CommentIn):
 
 def delete_comment_service(user_id:str, comment_id: str):
     """deletes comment by from specific user"""
-    updated_rows = delete_comment_repo(user_id, comment_id)
-    if not updated_rows:
-        raise ValueError("Error occured comment not deleted")
-    return 
+    updated_row = delete_comment_repo(user_id, comment_id)
+    if updated_row == 0:
+        raise CommentOperationalError("Error occured comment not deleted")
+    return ResponseComment(comment_id=comment_id, message="deleted successfully")
 
 def get_all_comments_service(post_id):
     """gets all comment for a particular post"""

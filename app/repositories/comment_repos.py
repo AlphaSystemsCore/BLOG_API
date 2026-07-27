@@ -30,8 +30,8 @@ def delete_comment_repo(user_id:str, comment_id: str):
             WHERE user_id = %s AND content_id = %s
             """, (user_id, content_id)
         )
-        updated_rows = cur.rowcount
-    return updated_rows
+        updated_row = cur.rowcount
+    return updated_row
 
 def get_all_comments_repo(post_id:str):
     with get_cur() as cur: 
