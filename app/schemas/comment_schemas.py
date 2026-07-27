@@ -13,6 +13,10 @@ class CommentOut(BaseModel):
     created_at: datetime
 
 
-class ResponseComment():
+class ResponseComment(BaseModel):
     content_id: UUID
     message: str
+
+class Pagination(BaseModel):
+    limit:int = 20
+    offset:int = 0
