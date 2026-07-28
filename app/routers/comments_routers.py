@@ -27,7 +27,7 @@ def create_comment(comment_in:CommentIn, user_id: Annotated[str, Depends(get_cur
     except Exception as e:
         raise UNEXPECTED_ERROR
 
-@comment_router.delete("/comments/{content_id}", response_model=ResponseComment)
+@comment_router.delete("/comments/{comment_id}", response_model=ResponseComment)
 def delete_comment(comment_id:str, user_id:Annotated[str, Depends(get_current_user)]):
     try:
         return delete_comment_service(user_id, comment_id)
@@ -40,12 +40,12 @@ def delete_comment(comment_id:str, user_id:Annotated[str, Depends(get_current_us
         raise UNEXPECTED_ERROR
 
 
-@comment_router.get("/comments/{content_id}")
-def get_all_comments(post_id: str):
-    comments = get_all_comments_service(post_id)
-    return comments
+@comment_router.get("/comments/{post_id}")
+def get_comments(post_id:str):
+    """get comments for a post"""
+    pass
 
-@comment_router.get("/comments/{post_id}/counts")
-def count_comments(post_id):
-    count_message = get_total_comment_count_service(post_id)
-    return count_message
+@comment_router.get("/comments/{current_parent_comment_id}/replies")
+def get_comments(comment_id:str):
+    """gets replies for the comments"""
+    pass
