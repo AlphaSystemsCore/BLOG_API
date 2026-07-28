@@ -21,7 +21,7 @@ class Pagination(BaseModel):
     limit:int = 20
     offset:int = 0
 
-class CommentOut(BaseModel):
+class ReplyOut(BaseModel):
     parent_comment_id:UUID
     comment_id:UUID
     author:str = "You"
