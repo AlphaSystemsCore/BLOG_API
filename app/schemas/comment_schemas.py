@@ -7,7 +7,6 @@ class CommentIn(BaseModel):
     content:str
 
 class CommentOut(BaseModel):
-    content_id:UUID
     comment_id:UUID
     author:str = "You"
     content:str
@@ -22,3 +21,10 @@ class Pagination(BaseModel):
     limit:int = 20
     offset:int = 0
 
+class CommentOut(BaseModel):
+    parent_comment_id:UUID
+    comment_id:UUID
+    author:str = "You"
+    content:str
+    replies:int = 0
+    created_at: datetime
