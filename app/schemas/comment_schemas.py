@@ -13,6 +13,7 @@ class CommentOut(BaseModel):
     replies:int = 0
     created_at: datetime
 
+
 class ResponseComment(BaseModel):
     content_id: UUID
     message: str
@@ -20,6 +21,11 @@ class ResponseComment(BaseModel):
 class Pagination(BaseModel):
     limit:int = 20
     offset:int = 0
+
+class ReplyIn(BaseModel):
+    content_id:UUID
+    current_parent_comment_id: UUID
+    content: str
 
 class ReplyOut(BaseModel):
     parent_comment_id:UUID

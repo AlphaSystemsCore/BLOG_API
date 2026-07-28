@@ -2,7 +2,7 @@ from fastapi import APIRouter, status, HTTPException, Depends
 from typing import Annotated
 
 from app.auth.jwt_handler import get_current_user
-from app.schemas.comment_schemas import CommentIn, CommentOut, ResponseComment, ReplyOut
+from app.schemas.comment_schemas import CommentIn, CommentOut, ResponseComment, ReplyOut, ReplyIn
 from app.services.comment_service import create_comment_service, get_all_comments_service, delete_comment_service, get_total_comment_count_service
 from app.exceptions.comment_exception import CommentException
 
@@ -53,14 +53,14 @@ def delete_comment(comment_id:str, user_id:Annotated[str, Depends(get_current_us
 
 
 @comment_router.post("/comments/{parent_comment_id}")
-def create_reply(parent_comment_id, user_id: str):
+def create_reply(reply_in: ReplyIn, user_id: str):
     """reply a comment/reply"""
     pass
 
 
 @comment_router.get("/comments/{current_parent_comment_id}/replies", response_model=ReplyOut)
-def get_comments(comment_id:str):
-    """gets replies for the comments"""
+def get_replies(current_parent_comment_id):
+    """gets replies on the comments or replies"""
     pass
 
 
