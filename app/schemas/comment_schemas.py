@@ -22,6 +22,11 @@ class Pagination(BaseModel):
     limit:int = 20
     offset:int = 0
 
+class ContentToUpdate(BaseModel):
+    comment_id:UUID
+    content:str
+    
+
 class ReplyIn(BaseModel):
     content_id:UUID
     current_parent_comment_id: UUID

@@ -14,7 +14,7 @@ def create_comment_repo(user_id:UUID, content_id:UUID, content:str):
         row = cur.fetchone()
 
 
-def get_comment_repo(content_id:UUID, limit:int, offset:int):
+def get_comments_repo(content_id:UUID, limit:int, offset:int):
     """
     fetch comment using content_id
     cm comment
@@ -23,21 +23,73 @@ def get_comment_repo(content_id:UUID, limit:int, offset:int):
     with get_cur() as cur:
         cur.execute(
             """
-            SELECT cm.comment_id, u.username as author, cm.content, COUNT(DISTINCT ccm.parent_comment_id) as replies, created_at
+            SELECT cm.comment_id, u.username as author, cm.content, COUNT(DISTINCT ccm.comment_id) as replies, created_at
             FROM comments c
             LEFT JOIN users u
             USING(user_id)
             JOIN comments ccm
             ON c.comment_id = ccm.parent_comment_id
+            WHERE content_id = %s , parent_comment_id IS NULL AND deleted_at is NOT NULL
             GROUP BY cm.comment_id, author, content, created_at
             ORDER BY cm.created_at DESC
-            """
+            """, (content_id, limit, offset)
         )
         row = cur.fetchall()
 
     return row
 
-def
+def update_comment_repo(user_id:UUID, comment_id:UUID, content:str):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            UPDATE comments
+                SET content = %s, updated_at = NOW()
+            WHERE user_id = %s AND comment_id = %s
+            """, (content, user_id, comment_id)
+        )
+        row = cur.rowcount
+    return row
+
+
+def delete_comment_repo(user_id:UUID, comment_id:UUID):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            DELETE FROM comments
+                WHERE user_id = %s AND comment_id = %s
+            """, (user_id, comment_id)
+        )
+        row = rowcount
+    return row
+
+def create_reply_repo(user_id:UUID, parent_comment_id:UUID, content:str):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            INSERT INTO comments
+            (user_id, parent_comment_id, content)
+            VALUES(%s, %s, %s) RETURNING parent_comment_id, comment_id, content, created_at
+            """, (user_id, parent_comment_id, content)
+        )
+        row = fetchone()
+    return row
+
+def get_replies_repo(current_parent_comment_id:UUID):
+    with get_cur() as cur:
+        cur.execute(
+            """
+            SELECT r.parent_comment_id, r.comment_id, u.username as author, r.content, COUNT(cr.comment_id) as replies, created_at
+            FROM comments r
+            JOIN users u
+            USING(user_id)
+            JOIN comments as cr
+            ON r.comment_id = cr.parent_comment_id
+            WHERE parent_comment_id = %s AND comment_id IS NOT NULL AND deleted_at IS NOT NULL
+            LIMIT %s 
+            OFFSET %s
+            """, (current_parent_comment_id,  limit, offset)
+        )
+
 
     
 
