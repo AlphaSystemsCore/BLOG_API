@@ -40,12 +40,12 @@ def delete_comment(comment_id:str, user_id:Annotated[str, Depends(get_current_us
         raise UNEXPECTED_ERROR
 
 
-@comment_router.get("/comments/{post_id}")
+@comment_router.get("/comments/{post_id}", response_model=CommentOut)
 def get_comments(post_id:str):
     """get comments for a post"""
     pass
 
-@comment_router.get("/comments/{current_parent_comment_id}/replies")
+@comment_router.get("/comments/{current_parent_comment_id}/replies", response_model=CommentOut)
 def get_comments(comment_id:str):
     """gets replies for the comments"""
     pass
