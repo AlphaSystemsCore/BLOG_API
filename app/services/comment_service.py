@@ -5,6 +5,7 @@ from app.exceptions.comment_exception import CommentOperationalError
 from uuid import UUID
 def create_comment_service(user_id, comment_in: CommentIn):
     """creates comment and return the created object"""
+    create_comment_repo(user_id, comment_in.content_id, comment_in.content)
     pass
 
 def get_comment_service(content_id:UUID, pagination: Pagination):
