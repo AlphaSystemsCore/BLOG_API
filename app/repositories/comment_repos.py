@@ -1,6 +1,7 @@
 from app.db.db_connection import get_cur
 
 def create_comment_repo(user_id:str, content:str):
+    """creates the content, the use the content_id to link the comment"""
     with get_cur() as cur:
         cur.execute(
             """
@@ -23,6 +24,7 @@ def create_comment_repo(user_id:str, content:str):
     return row
     
 def delete_comment_repo(user_id:str, comment_id: str):
+    """deletes the comment using user_id"""
     with get_cur() as cur:
         cur.execute(
             """
@@ -43,6 +45,7 @@ def get_all_comments_repo(post_id:str):
         )
         row = cur.fetchall()
     return row
+
 def get_all_comments_limited_repo():
     with get_cur() as cur:
         cur.execute(
