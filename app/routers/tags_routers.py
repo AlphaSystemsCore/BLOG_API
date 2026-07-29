@@ -37,7 +37,7 @@ def create_tag(tag: TagsIn, user_id: Annotated[str, Depends(get_current_user)]):
         }
 
 @tag_router.delete("/tags")
-def delete_tag(tag_id:str, user_id: Annotated[str, get_current_user]):
+def delete_tag(tag_id:str, user_id: Annotated[str,Depends(get_current_user)]):
     try:
         delete_tag_service(tag_id)
     except TagNotFoundError as e:
