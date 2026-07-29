@@ -1,5 +1,12 @@
-from app.schemas.comment_schemas import CommentIn, CommentOut, ResponseComment, Pagination, ReplyIn, ContentToUpdate
-from app.repositories.comment_repos import create_comment_repo, delete_comment_repo, get_all_comments_repo, get_total_comment_count_repo
+from app.schemas.comment_schemas import CommentIn, CommentOut, ResponseComment, Pagination, ReplyIn,ReplyOut, ContentToUpdate
+from app.repositories.comment_repos import (
+    create_comment_repo, 
+    delete_comment_repo, 
+    get_comments_repo,
+    update_comment_repo,
+    create_reply_repo,
+    get_replies_repo, 
+    )
 from app.exceptions.comment_exception import CommentOperationalError
 
 from uuid import UUID
@@ -35,10 +42,16 @@ def delete_comment_service(user_id:str, comment_id:str):
 
 def create_reply(user_id: UUID, reply_in: ReplyIn):
     """creates reply using the parent_comment_id to link reply to a comment"""
-    create_reply_repo(user_id, reply_in.current_parent_comment_id, reply_in.content)
-    pass
+    row = create_reply_repo(user_id, reply_in.current_parent_comment_id, reply_in.content)
+    if row is None:
+        raise CommentOperationalError("Failed to create reply, please try again")
+    return ReplyOut(**row)
+    
 
 def get_replies_service(current_parent_comment_id:UUID):
     """fetch  reply or nested replies when parent_comment_id is given"""
-    get_replies_repo(current_parent_comment_id)
-    pass
+    row = get_replies_repo(current_parent_comment_id)
+    if row is None:
+        raise CommentOperationalError("No replies found")
+    replies = [ReplyOut(**reply) for reply in row]
+    return replies
