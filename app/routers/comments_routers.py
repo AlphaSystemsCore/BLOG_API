@@ -3,7 +3,7 @@ from typing import Annotated
 
 from app.exceptions.comment_exception import CommentException
 from app.auth.jwt_handler import get_current_user
-from app.schemas.comment_schemas import CommentIn, CommentOut, ResponseComment, ReplyOut, ReplyIn
+from app.schemas.comment_schemas import CommentIn, CommentOut, ResponseComment, ReplyOut, ReplyIn, Pagination
 from app.services.comment_service import(
     create_comment_service,
     get_comments_service,
@@ -33,10 +33,19 @@ def create_comment(comment_in:CommentIn, user_id: Annotated[str, Depends(get_cur
         )
 
 
-@comment_router.get("/comments/{content_id}", response_model=CommentOut)
-def get_comments(post_id:str):
+@comment_router.get("/comments/{post_id}", response_model=CommentOut)
+def get_comments(post_id:str, pagination: Annotated[Pagination, Depends()]):
     """get comments for a post"""
-    pass
+    try:
+        return get_comments_service(post_id, pagination)
+    except CommentException as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+        )
+    
+
+    
 
 
 @comment_router.patch("/comment/{comment_id}")
