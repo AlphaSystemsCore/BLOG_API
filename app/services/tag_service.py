@@ -10,7 +10,7 @@ def create_tag_service(user_id:UUID, tag_in:TagIn):
     try:
         tag = save_tag_repo(user_id, tag_in.tag_name, tag_in.tag_category)
     except errors.UniqueViolation:
-        raise
+        raise 
     if tag is None:
         raise TagOperationalError("Failed to create tag")
     return TagOut(*tag)
@@ -27,8 +27,7 @@ def delete_tag_service(tag_id:UUID):
 def get_tags_service():
     """get tags"""
     tags = get_tags_repo()
-    if tags is None:
-        raise TagNotFoundError
-    else:
-        return tags
+    if not tags:
+        raise TagOperationalError("No tags found")
+    return [TagOut(**tag) for tag in tags]
     
