@@ -40,17 +40,21 @@ def get_comments(post_id:str, pagination: Annotated[Pagination, Depends()]):
         return get_comments_service(post_id, pagination)
     except CommentException as e:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_404_NOT_FOUND,
             detail=str(e)
         )
-    
-
-    
 
 
 @comment_router.patch("/comment/{comment_id}")
-def update_comment(comment_id:str, user_id: str):
+def update_comment(comment_id:str, user_id:Annotated[str, Depends(get_current_user)]):
     """update a comment"""
+    try:
+        return update_comment(comment_id, user_id)
+    except CommentException as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST, 
+            detail=str(e)
+        )
 
 
 @comment_router.delete("/comments/{comment_id}", response_model=ResponseComment)
