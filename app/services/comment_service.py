@@ -25,7 +25,7 @@ def get_comments_service(content_id:UUID, pagination: Pagination):
     comments = [CommentOut(**comment)for comment in rows]
     return comments
 
-def update_comment(user_id:str, content_to_update:ContentToUpdate):
+def update_comment_service(user_id:str, content_to_update:ContentToUpdate):
     """modifies the created comment by user_id"""
     row_count = update_comment_repo(user_id, content_to_update.comment_id, content_to_update.content)
     if row_count == 0:
@@ -40,7 +40,7 @@ def delete_comment_service(user_id:str, comment_id:str):
         raise CommentOperationalError(f"Failed to delete comment, please try again")
     return ResponseComment(comment_id=comment_id, message="comment ")
 
-def create_reply(user_id: UUID, reply_in: ReplyIn):
+def create_reply_service(user_id: UUID, reply_in: ReplyIn):
     """creates reply using the parent_comment_id to link reply to a comment"""
     row = create_reply_repo(user_id, reply_in.current_parent_comment_id, reply_in.content)
     if row is None:
