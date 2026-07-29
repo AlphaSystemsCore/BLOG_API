@@ -83,7 +83,7 @@ def create_reply(reply_in: ReplyIn, user_id:Annotated[UUID, Depends(get_current_
 
 
 @comment_router.get("/comments/{current_parent_comment_id}/replies", response_model=ReplyOut)
-def get_replies(current_parent_comment_id):
+def get_replies(current_parent_comment_id:UUID, pagination:Annotated(Pagination, Depends())):
     """gets replies on the comments or replies"""
     try: 
         return get_replies_service(current_parent_comment_id)
