@@ -1,6 +1,7 @@
 from fastapi import APIRouter, status, HTTPException, Depends
 from typing import Annotated
 
+from app.exceptions.comment_exception import CommentException
 from app.auth.jwt_handler import get_current_user
 from app.schemas.comment_schemas import CommentIn, CommentOut, ResponseComment, ReplyOut, ReplyIn
 from app.services.comment_service import(
@@ -11,7 +12,7 @@ from app.services.comment_service import(
     create_reply_service,
     get_replies_service
     )
-from app.exceptions.comment_exception import CommentException
+
 
 
 comment_router = APIRouter(tags=["comments"])
@@ -25,6 +26,11 @@ UNEXPECTED_ERROR = HTTPException(
 def create_comment(comment_in:CommentIn, user_id: Annotated[str, Depends(get_current_user)]):
     try:
         return create_comment_service(user_id, comment_in)
+    except CommentException as e:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=str(e)
+        )
 
 
 @comment_router.get("/comments/{content_id}", response_model=CommentOut)
