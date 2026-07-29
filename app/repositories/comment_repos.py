@@ -78,17 +78,32 @@ def get_replies_repo(current_parent_comment_id:UUID):
     with get_cur() as cur:
         cur.execute(
             """
-            SELECT r.parent_comment_id, r.comment_id, u.username as author, r.content, COUNT(cr.comment_id) as replies, created_at
+            SELECT 
+                r.parent_comment_id, 
+                r.comment_id, 
+                u.username as author, 
+                r.content, 
+                COUNT(cr.comment_id) as replies, 
+                r.created_at
             FROM comments r
-            JOIN users u
+                JOIN users u
             USING(user_id)
-            JOIN comments as cr
+                JOIN comments as cr
             ON r.comment_id = cr.parent_comment_id
-            WHERE parent_comment_id = %s AND comment_id IS NOT NULL AND deleted_at IS NOT NULL
+            WHERE 
+                r.parent_comment_id = %s 
+                AND r.parent_comment_id IS NOT NULL 
+                AND r.deleted_at IS NOT NULL
+            GROUP BY r.parent_commit_id, r.comment_id, u.username, r.content, r.created_at
+            ORDER BY r.created_at DESC
             LIMIT %s 
             OFFSET %s
+
             """, (current_parent_comment_id,  limit, offset)
         )
+        row = cur.fetchall()
+    return row
+
 
 
     
