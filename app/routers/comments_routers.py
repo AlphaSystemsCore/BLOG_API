@@ -64,17 +64,21 @@ def delete_comment(comment_id:str, user_id:Annotated[str, Depends(get_current_us
         return delete_comment_service(user_id, comment_id)
     except CommentException as e:
         raise HTTPException(
-            status_codes = status.HTTP_500_INTERNAL_SERVER_ERROR,
+            status_codes = status.HTTP_400_BAD_REQUEST,
             detail=str(e)
         )
-    except Exception as e:
-        raise UNEXPECTED_ERROR
-
 
 @comment_router.post("/comments/{parent_comment_id}")
-def create_reply(reply_in: ReplyIn, user_id: str):
+def create_reply(reply_in: ReplyIn, user_id:Annotated[UUID, get_current_user]):
     """reply a comment/reply"""
-    pass
+    try:
+        return create_reply_service(user_id, reply_in)
+    except CommentException as e:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=str(e)
+
+        )
 
 
 @comment_router.get("/comments/{current_parent_comment_id}/replies", response_model=ReplyOut)
