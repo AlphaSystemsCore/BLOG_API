@@ -1,18 +1,24 @@
 from psycopg2 import errors
+from uuid import UUID
+
 from app.repositories.tag_repos import save_tag_repo, get_tags_repo, delete_tag_repo
 from app.exceptions.tag_exceptions import TagNotFoundError
+from app.schemas.tag_schemas import TagOut, TagIn
 
-def create_tag_service(user_id, tag_name, tag_category):
-    """creating  tags service"""
+def create_tag_service(user_id:UUID, tag_in:TagIn):
+    """creating  new tag"""
     try:
-        save_tag_repo(user_id, tag_name, tag_category)
+        tag = save_tag_repo(user_id, tag_in.tag_name, tag_in.tag_category)
     except errors.UniqueViolation:
         raise
+    if tag is None:
+        raise TagOperationalError("Failed to create tag")
+    return TagOut(*tag)
 
 
 
-def delete_tag_service(tag_id):
-    """deleting tags service"""
+def delete_tag_service(tag_id:UUID):
+    """deleting tag service, only when user is authorized"""
     row_updated = delete_tag_repo(tag_id)
     if not row_updated:
         raise TagNotFoundError("Tag not found")
