@@ -70,7 +70,7 @@ def delete_comment(comment_id:str, user_id:Annotated[UUID, Depends(get_current_u
         )
 
 @comment_router.post("/comments/{parent_comment_id}")
-def create_reply(reply_in: ReplyIn, user_id:Annotated[UUID, get_current_user]):
+def create_reply(reply_in: ReplyIn, user_id:Annotated[UUID, Depends(get_current_user)]):
     """reply a comment/reply"""
     try:
         return create_reply_service(user_id, reply_in)
