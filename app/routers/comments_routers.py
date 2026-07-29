@@ -84,7 +84,15 @@ def create_reply(reply_in: ReplyIn, user_id:Annotated[UUID, get_current_user]):
 @comment_router.get("/comments/{current_parent_comment_id}/replies", response_model=ReplyOut)
 def get_replies(current_parent_comment_id):
     """gets replies on the comments or replies"""
-    pass
+    try: 
+        return get_replies_service(current_parent_comment_id)
+    except CommentException as e:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=str(e)
+        )
+
+        
 
 
 
