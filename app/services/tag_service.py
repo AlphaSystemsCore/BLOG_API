@@ -2,7 +2,7 @@ from psycopg2 import errors
 from uuid import UUID
 
 from app.repositories.tag_repos import save_tag_repo, get_tags_repo, delete_tag_repo
-from app.exceptions.tag_exceptions import TagNotFoundError
+from app.exceptions.tag_exceptions import TagOperationalError
 from app.schemas.tag_schemas import TagOut, TagIn
 
 def create_tag_service(user_id:UUID, tag_in:TagIn):
@@ -19,9 +19,10 @@ def create_tag_service(user_id:UUID, tag_in:TagIn):
 
 def delete_tag_service(tag_id:UUID):
     """deleting tag service, only when user is authorized"""
-    row_updated = delete_tag_repo(tag_id)
-    if not row_updated:
-        raise TagNotFoundError("Tag not found")
+    row_count = delete_tag_repo(tag_id)
+    if row_count == 0:
+        raise TagOperationalError("Tag not deleted, please try again")
+    
 
 def get_tags_service():
     """get tags"""

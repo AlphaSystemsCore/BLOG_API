@@ -1,6 +1,3 @@
-class TagNotFoundError(Exception):
-    pass
-
 class TagExceptions(Exception):
    """parent tags exception"""
    pass
