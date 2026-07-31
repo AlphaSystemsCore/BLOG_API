@@ -54,7 +54,7 @@ def get_posts(
     get_posts_repo(search)
         
 
-def get_posts_repo(search):
+
         
     base_query = """
             SELECT 
@@ -81,6 +81,9 @@ def get_posts_repo(search):
                 AND p.deleted_at IS NULL 
                 AND cm.deleted_at IS NULL 
             """
+def get_posts_repo(search):
+    temp = PostRepository(search)
+    print(search)
 
 class PostRepository:      
     def __init__(self, search):

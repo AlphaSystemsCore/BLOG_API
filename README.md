@@ -1,11 +1,6 @@
+©️alphamint Blog api
 UNDERCONSTRUCTION
-BLOG API
-This is a crypto bogapi
-©️alphamint
+This is a crypto blog...
+This is a backend of a crypto blog  api.
 
-Note:rtk is reputation_tokens
-***Minting of rtk***
-When user signup they are given 5 tokens
-When they like a token is deducted
-This is to make sure  likes are trusted and aligned to the content
-When the content 
+
