@@ -20,6 +20,7 @@ def delete_post_service(user_id: UUID, content_id: UUID):
     return FeedbackOut(content_id = content_id, message = "deleted")
 
     
-def get_posts_service(search):
-    """multifunctional gets post, by the given query or by default returns posts with no constraint apart from pagination"""
+def get_posts_service_user(search):
+    """dynamic search..."""
+
    

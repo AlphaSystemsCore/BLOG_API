@@ -23,8 +23,7 @@ def create_post(post_in: PostIn, user_id: Annotated[UUID, Depends(get_current_us
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
-# user_id='86c7b890-4811-4786-82e8-49be78f8752e'
-# content_id = "64077f70-be09-429c-8eb7-b703f504f366"
+
 @post_router.delete("/posts", response_model=FeedbackOut)
 def delete_post(content_id: UUID, user_id: Annotated[UUID, Depends(get_current_user)]):
     try:
@@ -52,9 +51,40 @@ def get_posts(
         sort=sort_options
     )
  
-        
-    post = PostRepository()
-    post.search(search)
+    get_posts_repo(search)
         
 
-  
+def get_posts_repo(search):
+        
+    base_query = """
+            SELECT 
+                p.content_id, 
+                p.title, 
+                p.content, 
+                u.username as author, 
+                p.status,
+                p.created_at, 
+                COUNT( DISTINCT l.like_id) as likes, 
+                COUNT(DISTINCT cm.comment_id) AS comments, 
+                COUNT(DISTINCT cm.parent_comment_id) as replies
+            FROM posts p
+            JOIN users u
+                ON u.user_id = p.user_id
+            LEFT JOIN comments cm
+                ON p.content_id = cm.content_id
+            LEFT JOIN likes l
+                ON p.content_id = l.content_id
+            WHERE 
+                u.is_verified = True 
+                AND p.is_allowed = True 
+                AND p.status = 'drafted' 
+                AND p.deleted_at IS NULL 
+                AND cm.deleted_at IS NULL 
+            """
+
+class PostRepository:      
+    def __init__(self, search):
+        self.params = []
+        self.conditions = []
+        self.direction = []
+        group = "GROUP BY p.content_id, p.title, p.content, u.username, p.status, p.create_at"

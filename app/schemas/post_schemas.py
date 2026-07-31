@@ -21,17 +21,10 @@ class PostOut(BaseModel):
 class FeedbackOut(BaseModel):
     content_id: str
     message:str
-from datetime import datetime
-from typing import Literal
-from uuid import UUID
-
-from pydantic import BaseModel, Field
-
 
 class Pagination(BaseModel):
     limit: int = Field(default=20, ge=1, le=100)
     offset: int = Field(default=0, ge=0)
-
 
 class PostFilters(BaseModel):
     author: str | None = None
