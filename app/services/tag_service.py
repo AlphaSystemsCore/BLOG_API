@@ -3,7 +3,8 @@ from uuid import UUID
 
 from app.repositories.tag_repos import save_tag_repo, get_tags_repo, delete_tag_repo
 from app.exceptions.tag_exceptions import TagOperationalError
-from app.schemas.tag_schemas import TagOut, TagIn
+from app.schemas.tag_schemas import TagOut, TagIn, TagResponse
+
 
 def create_tag_service(user_id:UUID, tag_in:TagIn):
     """creating  new tag"""
@@ -15,13 +16,12 @@ def create_tag_service(user_id:UUID, tag_in:TagIn):
         raise TagOperationalError("Failed to create tag")
     return TagOut(*tag)
 
-
-
 def delete_tag_service(tag_id:UUID):
     """deleting tag service, only when user is authorized"""
     row_count = delete_tag_repo(tag_id)
     if row_count == 0:
         raise TagOperationalError("Tag not deleted, please try again")
+    return TagResponse(tag_id=tag_id, message="deleted successfully")
     
 
 def get_tags_service():

@@ -11,3 +11,8 @@ class TagOut(BaseModel):
     tag_name:str
     tag_category:str
 
+class TagResponse(BaseModel):
+    tag_id: UUID
+    message: str
+
+    
