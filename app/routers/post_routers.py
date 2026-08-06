@@ -70,15 +70,14 @@ def create_sort(search):
         "comments": "comments",
         "replies":"replies"
     }
-    sort_dict = search.sort.by
-    sort_column = sort_dict.get("by")
-    valid_column = sort_map.get(sort_column)
-    if valid_column is None:
-        raise
+    sort_by = search.sort.by
+    sort_column = sort_map.get(sort_by)
+    if sort_column is None:
+        raise ValueError(f"Invalid sort_by column{sort_by}")
     direction = sort_dict.sort.direction
-    order_clause = f"ORDER BY {valid_column} {direction}"
+    order_clause = f"ORDER BY {sort_column} {direction}"
     return order_clause
-
+    
 
 @post_router.get("/posts")
 def get_posts(
