@@ -53,8 +53,6 @@ def get_posts(
  
     get_posts_repo(search)
         
-
-
         
     base_query = """
             SELECT 
@@ -82,12 +80,16 @@ def get_posts(
                 AND cm.deleted_at IS NULL 
             """
 def get_posts_repo(search):
-    temp = PostRepository(search)
-    print(search)
+    
+    filter = search.filters.model_dump(exclude_none=True)
+    pagination = search.pagination.model_dump(exclude_none=True)
+    sort = sort.search.sort.model_dump(exclude_none=True)
 
-class PostRepository:      
-    def __init__(self, search):
-        self.params = []
-        self.conditions = []
-        self.direction = []
-        group = "GROUP BY p.content_id, p.title, p.content, u.username, p.status, p.create_at"
+    conditions = []
+    parameters = []
+
+    for k, v in filter.items():
+        conditions.append(k)
+
+
+ 
