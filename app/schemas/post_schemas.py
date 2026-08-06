@@ -6,7 +6,6 @@ from typing import Literal
 from enum import Enum
 class By(Enum):
     title = "title"
-    created_at = "created_at"
     likes = "likes"
     author = "author"
     
@@ -37,6 +36,7 @@ class Pagination(BaseModel):
 class PostFilters(BaseModel):
     author: str | None = None
     title: str | None = None
+
     content_id: UUID | None = None
     status: Literal["drafted", "published"] | None = None
     created_after: datetime | None = None
@@ -44,7 +44,7 @@ class PostFilters(BaseModel):
 
 
 class SortOptions(BaseModel):
-    by: By | None = None
+    by: By | str = "created_at"
     direction: Literal["asc", "desc"] = "desc"
 
 

@@ -39,18 +39,6 @@ def delete_post(content_id: UUID, user_id: Annotated[UUID, Depends(get_current_u
 def update_post():
     pass
 
-@post_router.get("/posts")
-def get_posts(
-    sort_options: SortOptions = Depends(),
-    pagination: Pagination = Depends(),
-    post_filters: PostFilters = Depends(),
-    ):
-    search = PostSearch(
-        filters=post_filters,
-        pagination=pagination,
-        sort=sort_options
-    )
-
 def get_filters(search):
     parameters = []
     conditions = []
@@ -68,35 +56,64 @@ def get_filters(search):
         condition = column_map.get(k)
         if condition is None:
             raise ValueError("Invalid filter")
-        conditions.append(map.get(k))
+        conditions.append(condition)
         parameters.append(v)
-       
-    return parameters, conditions
+    return conditions, parameters
 
+def create_sort(search):
+    sort_map = {
+        "title":"p.title",
+        "created_at": "p.created_at",
+        "likes":"like_count",
+        "author":"u.username"
+    }
+    sort_dict = search.sort_options.model_dump(exclude_none=True)
+    sort_column = sort_dict.get("by")
+    valid_column = sort_map.get(sort_column)
+    if valid_column is None:
+        raise
+    direction = sort_dict.get("direction")
+    
+    return valid_column, direction
+
+
+@post_router.get("/posts")
+def get_posts(
+    sort_options: SortOptions = Depends(),
+    pagination: Pagination = Depends(),
+    post_filters: PostFilters = Depends(),
+    ):
+    search = PostSearch(
+        filters=post_filters,
+        pagination=pagination,
+        sort=sort_options
+    )
+    conditions, parameters = get_filters(search)
+    return conditions, parameters
 
     
-    base_query = """
-            SELECT 
-                p.content_id, 
-                p.title, 
-                p.content, 
-                u.username as author, 
-                p.status,
-                p.created_at, 
-                COUNT( DISTINCT l.like_id) as likes, 
-                COUNT(DISTINCT cm.comment_id) AS comments, 
-                COUNT(DISTINCT cm.parent_comment_id) as replies
-            FROM posts p
-            JOIN users u
-                ON u.user_id = p.user_id
-            LEFT JOIN comments cm
-                ON p.content_id = cm.content_id
-            LEFT JOIN likes l
-                ON p.content_id = l.content_id
-            WHERE 
-                u.is_verified = True 
-                AND p.is_allowed = True 
-                AND p.status = 'drafted' 
-                AND p.deleted_at IS NULL 
-                AND cm.deleted_at IS NULL 
-            """
+base_query = """
+        SELECT 
+            p.content_id, 
+            p.title, 
+            p.content, 
+            u.username as author, 
+            p.status,
+            p.created_at, 
+            COUNT( DISTINCT l.like_id) as likes, 
+            COUNT(DISTINCT cm.comment_id) AS comments, 
+            COUNT(DISTINCT cm.parent_comment_id) as replies
+        FROM posts p
+        JOIN users u
+            ON u.user_id = p.user_id
+        LEFT JOIN comments cm
+            ON p.content_id = cm.content_id
+        LEFT JOIN likes l
+            ON p.content_id = l.content_id
+        WHERE 
+            u.is_verified = True 
+            AND p.is_allowed = True 
+            AND p.status = 'drafted' 
+            AND p.deleted_at IS NULL 
+            AND cm.deleted_at IS NULL 
+        """
