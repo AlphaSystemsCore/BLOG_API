@@ -62,7 +62,7 @@ def get_filters(search):
     return conditions, parameters
 
 def create_sort(search):
-    "this is a helper to extract field and create an order clause for sorting"
+    "helper, to extract field and create an order clause for sorting"
     sort_map = {
         "title":"p.title",
         "created_at": "p.created_at",
@@ -74,9 +74,12 @@ def create_sort(search):
     sort_by = search.sort.by
     sort_column = sort_map.get(sort_by)
     if sort_column is None:
-        raise ValueError(f"Invalid sort_by column{sort_by}")
+        raise ValueError(
+        f"Invalid sort_field {sort_by}"
+        f"Allowed field are ', '.join(sort_map.keys())"
+        )
     direction = search.sort.direction.uppper()
-    order_clause = f"ORDER BY {sort_column} {direction}"
+    order_clause = f"ORDER BY {sort_column} {direction} NULLS LAST"
     return order_clause
 
 
