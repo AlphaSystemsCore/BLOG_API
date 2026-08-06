@@ -13,7 +13,7 @@ tag_router = APIRouter(tags=["tags/hashtags"])
 
 
 @tag_router.post("/tags")
-def create_tag(tag_in: TagsIn, user_id: Annotated[UUID, Depends(get_current_user)]):
+def create_tag(tag_in: TagIn, user_id: Annotated[UUID, Depends(get_current_user)]):
     try:
         return create_tag_service(user_id, tag_in)
     except errors.UniqueViolation:

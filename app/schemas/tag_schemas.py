@@ -1,5 +1,6 @@
 from pydantic import BaseModel 
 from typing import Literal
+from uuid import UUID
 
 class TagIn(BaseModel):
     tag_name: str
