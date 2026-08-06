@@ -40,6 +40,7 @@ def update_post():
     pass
 
 def get_filters(search):
+    "helper, to create, sql filter, by dynamically creating the parameters and condition needed for filtering data"
     parameters = []
     conditions = []
     filters = search.filters.model_dump(exclude_none=True)
@@ -74,10 +75,10 @@ def create_sort(search):
     sort_column = sort_map.get(sort_by)
     if sort_column is None:
         raise ValueError(f"Invalid sort_by column{sort_by}")
-    direction = sort_dict.sort.direction
+    direction = search.sort.direction.uppper()
     order_clause = f"ORDER BY {sort_column} {direction}"
     return order_clause
-    
+
 
 @post_router.get("/posts")
 def get_posts(
