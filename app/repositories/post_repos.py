@@ -92,10 +92,10 @@ def pagination_helper(search):
     pagination_clause = []
     limit = search.pagination.limit
     offset = search.pagination.offset
-    pagination_clause = f" LIMIT %s OFFESET %s "
+    pagination_clause = f" LIMIT %s OFFSET %s "
     parameters = [limit, offset]
     return pagination_clause, parameters
-    
+
 def sql_assembler(search):
     base_query = """
         SELECT 
@@ -124,17 +124,28 @@ def sql_assembler(search):
         """
     conditions, parameters = filters_helper(search)
     order_by_clause = sort_helper(search)
-    pagination = pagination_helper(search)
-    group_by_clause = " GROUP BY p.content_id, p.title, u.username, p.status, p.created_at "
+    pagination_clause, pagination_params = pagination_helper(search)
+    parameters += pagination_params
+
+    group_by_clause = " GROUP BY p.content_id, p.title, p.content, u.username, p.status, p.created_at "
     if not conditions:
-        dynamic_sql = base_query + group_by_clause + order_by_clause + pagination
+        dynamic_sql = base_query + group_by_clause + order_by_clause + pagination_clause
         return dynamic_sql, parameters
 
-
     dynamic_sql = base_query
-    dynamic_sql+=' AND' + ' AND '.join(conditions)
+    dynamic_sql+=' AND ' + ' AND '.join(conditions)
     dynamic_sql+=group_by_clause
     dynamic_sql+=order_by_clause
-    dynamic_sql+=pagination
+    dynamic_sql+=pagination_clause
 
     return dynamic_sql, parameters
+
+def get_posts_repo(search):
+    sql, parameters = sql_assembler(search)
+    with get_cur() as cur:
+        cur.execute(
+            sql, parameters
+
+        )
+        row = cur.fetchall()
+    return row

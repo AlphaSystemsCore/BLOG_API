@@ -39,7 +39,7 @@ def delete_post(content_id: UUID, user_id: Annotated[UUID, Depends(get_current_u
 def update_post():
     pass
 
-
+from app.repositories.post_repos import get_posts_repo
 @post_router.get("/posts")
 def get_posts(
     sort_options: SortOptions = Depends(),
@@ -51,6 +51,7 @@ def get_posts(
         pagination=pagination,
         sort=sort_options
     )
-    return "on progress"
+
+    return get_posts_repo(search)
 
     
