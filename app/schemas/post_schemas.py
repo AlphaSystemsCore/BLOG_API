@@ -3,6 +3,14 @@ from datetime import datetime
 from uuid import UUID
 from typing import Literal
 
+from enum import Enum
+class By(Enum):
+    title = "title"
+    created_at = "created_at"
+    likes = "likes"
+    author = "author"
+    
+
 class PostIn(BaseModel):
     title: str
     content:str
@@ -30,17 +38,10 @@ class PostFilters(BaseModel):
     author: str | None = None
     title: str | None = None
     content_id: UUID | None = None
-    # status: Literal["drafted", "published"] | None = None
+    status: Literal["drafted", "published"] | None = None
     created_after: datetime | None = None
     created_before: datetime | None = None
 
-from enum import Enum
-class By(Enum):
-    title = "title"
-    created_at = "created_at"
-    likes = "likes"
-    author = "author"
-    
 
 class SortOptions(BaseModel):
     by: By | None = None

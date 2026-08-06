@@ -50,21 +50,31 @@ def get_posts(
         pagination=pagination,
         sort=sort_options
     )
-    return search
-    
-def get_posts_repo(search):
-    
-    filter = search.filters.model_dump(exclude_none=True)
-    pagination = search.pagination.model_dump(exclude_none=True)
-    sort = sort.search.sort.model_dump(exclude_none=True)
 
-    conditions = []
+def get_filters(search):
     parameters = []
+    conditions = []
+    filters = search.filters.model_dump(exclude_none=True)
+    column_map = {
+        "author":"u.username = %s",
+        "title":"p.title = %s",
+        "content_id": "p.content_id = %s",
+        "status": "p.status = %s",
+        "created_after":"p.created_at >= %s",
+        "created_before":"p.created_at <= %s",
+    }
 
-    for k, v in filter.items():
-        conditions.append(k)
-    
+    for k, v in filters.items():
+        condition = column_map.get(k)
+        if condition is None:
+            raise ValueError("Invalid filter")
+        conditions.append(map.get(k))
+        parameters.append(v)
        
+    return parameters, conditions
+
+
+    
     base_query = """
             SELECT 
                 p.content_id, 
