@@ -89,10 +89,13 @@ def sort_helper(search):
 
 def pagination_helper(search):
     "helper, extract data from search and create a pagination the return the stringed OFFSET and LIMIT"
+    pagination_clause = []
     limit = search.pagination.limit
     offset = search.pagination.offset
-    return  f" LIMIT {limit} OFFSET {offset} "
-
+    pagination_clause = f" LIMIT %s OFFESET %s "
+    parameters = [limit, offset]
+    return pagination_clause, parameters
+    
 def sql_assembler(search):
     base_query = """
         SELECT 
@@ -126,7 +129,7 @@ def sql_assembler(search):
     if not conditions:
         dynamic_sql = base_query + group_by_clause + order_by_clause + pagination
         return dynamic_sql, parameters
-        
+
 
     dynamic_sql = base_query
     dynamic_sql+=' AND' + ' AND '.join(conditions)
