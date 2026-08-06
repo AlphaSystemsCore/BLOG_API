@@ -56,7 +56,7 @@ def get_filters(search):
     for k, v in filters.items():
         condition = column_map.get(k)
         if condition is None:
-            raise ValueError("Invalid filter")
+            raise ValueError(f"Invalid filter field: {k} \nAllowed field fields are {','.join(column_map.keys())}")
         conditions.append(condition)
         parameters.append(v)
     return conditions, parameters
@@ -75,8 +75,7 @@ def create_sort(search):
     sort_column = sort_map.get(sort_by)
     if sort_column is None:
         raise ValueError(
-        f"Invalid sort_field {sort_by}"
-        f"Allowed field are ', '.join(sort_map.keys())"
+        f"Invalid sort_field {sort_by}\nAllowed field are {', '.join(sort_map.keys())}"
         )
     direction = search.sort.direction.uppper()
     order_clause = f"ORDER BY {sort_column} {direction} NULLS LAST"
