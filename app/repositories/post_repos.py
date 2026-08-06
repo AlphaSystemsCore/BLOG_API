@@ -97,6 +97,7 @@ def pagination_helper(search):
     return pagination_clause, parameters
 
 def sql_assembler(search):
+    "combines the sql fragments and put them together as an qsl statement, it's the assembler"
     base_query = """
         SELECT 
             p.content_id, 
