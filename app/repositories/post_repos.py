@@ -92,3 +92,30 @@ def pagination_helper(search):
     limit = search.pagination.limit
     offset = search.pagination.offset
     return  f"LIMIT {limit} OFFSET {offset}"
+
+def get_posts_assembler(search):
+    base_query = """
+        SELECT 
+            p.content_id, 
+            p.title, 
+            p.content, 
+            u.username as author, 
+            p.status,
+            p.created_at, 
+            COUNT( DISTINCT l.like_id) as likes, 
+            COUNT(DISTINCT cm.comment_id) AS comments, 
+            COUNT(DISTINCT cm.parent_comment_id) as replies
+        FROM posts p
+        JOIN users u
+            ON u.user_id = p.user_id
+        LEFT JOIN comments cm
+            ON p.content_id = cm.content_id
+        LEFT JOIN likes l
+            ON p.content_id = l.content_id
+        WHERE 
+            u.is_verified = True 
+            AND p.is_allowed = True 
+            AND p.status = 'drafted' 
+            AND p.deleted_at IS NULL 
+            AND cm.deleted_at IS NULL 
+        """
