@@ -50,10 +50,21 @@ def get_posts(
         pagination=pagination,
         sort=sort_options
     )
- 
-    get_posts_repo(search)
-        
-        
+    return search
+    
+def get_posts_repo(search):
+    
+    filter = search.filters.model_dump(exclude_none=True)
+    pagination = search.pagination.model_dump(exclude_none=True)
+    sort = sort.search.sort.model_dump(exclude_none=True)
+
+    conditions = []
+    parameters = []
+
+    for k, v in filter.items():
+        conditions.append(k)
+    
+       
     base_query = """
             SELECT 
                 p.content_id, 
@@ -79,17 +90,3 @@ def get_posts(
                 AND p.deleted_at IS NULL 
                 AND cm.deleted_at IS NULL 
             """
-def get_posts_repo(search):
-    
-    filter = search.filters.model_dump(exclude_none=True)
-    pagination = search.pagination.model_dump(exclude_none=True)
-    sort = sort.search.sort.model_dump(exclude_none=True)
-
-    conditions = []
-    parameters = []
-
-    for k, v in filter.items():
-        conditions.append(k)
-
-
- 
