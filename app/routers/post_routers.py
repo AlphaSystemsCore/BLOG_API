@@ -61,20 +61,23 @@ def get_filters(search):
     return conditions, parameters
 
 def create_sort(search):
+    "this is a helper to extract field and create an order clause for sorting"
     sort_map = {
         "title":"p.title",
         "created_at": "p.created_at",
-        "likes":"like_count",
-        "author":"u.username"
+        "likes":"likes",
+        "author":"u.username",
+        "comments": "comments",
+        "replies":"replies"
     }
-    sort_dict = search.sort_options.model_dump(exclude_none=True)
+    sort_dict = search.sort.by
     sort_column = sort_dict.get("by")
     valid_column = sort_map.get(sort_column)
     if valid_column is None:
         raise
-    direction = sort_dict.get("direction")
-    
-    return valid_column, direction
+    direction = sort_dict.sort.direction
+    order_clause = f"ORDER BY {valid_column} {direction}"
+    return order_clause
 
 
 @post_router.get("/posts")

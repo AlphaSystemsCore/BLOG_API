@@ -6,6 +6,8 @@ from typing import Literal
 from enum import Enum
 class By(Enum):
     title = "title"
+    comments = "comments"
+    replies = "replies"
     likes = "likes"
     author = "author"
     
