@@ -84,16 +84,16 @@ def sort_helper(search):
         f"Invalid sort_field {sort_by}\nAllowed field are {', '.join(sort_map.keys())}"
         )
     direction = search.sort.direction.upper()
-    order_clause = f"ORDER BY {sort_column} {direction} NULLS LAST"
+    order_clause = f" ORDER BY {sort_column} {direction} NULLS LAST "
     return order_clause
 
 def pagination_helper(search):
     "helper, extract data from search and create a pagination the return the stringed OFFSET and LIMIT"
     limit = search.pagination.limit
     offset = search.pagination.offset
-    return  f"LIMIT {limit} OFFSET {offset}"
+    return  f" LIMIT {limit} OFFSET {offset} "
 
-def get_posts_assembler(search):
+def sql_assembler(search):
     base_query = """
         SELECT 
             p.content_id, 
@@ -119,3 +119,19 @@ def get_posts_assembler(search):
             AND p.deleted_at IS NULL 
             AND cm.deleted_at IS NULL 
         """
+    conditions, parameters = filters_helper(search)
+    order_by_clause = sort_helper(search)
+    pagination = pagination_helper(search)
+    group_by_clause = " GROUP BY p.content_id, p.title, u.username, p.status, p.created_at "
+    if not conditions:
+        dynamic_sql = base_query + group_by_clause + order_by_clause + pagination
+        return dynamic_sql, parameters
+        
+
+    dynamic_sql = base_query
+    dynamic_sql+=' AND' + ' AND '.join(conditions)
+    dynamic_sql+=group_by_clause
+    dynamic_sql+=order_by_clause
+    dynamic_sql+=pagination
+
+    return dynamic_sql, parameters
