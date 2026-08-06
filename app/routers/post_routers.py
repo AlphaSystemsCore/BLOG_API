@@ -39,48 +39,6 @@ def delete_post(content_id: UUID, user_id: Annotated[UUID, Depends(get_current_u
 def update_post():
     pass
 
-def get_filters(search):
-    "helper, to create, sql filter, by dynamically creating the parameters and condition needed for filtering data"
-    parameters = []
-    conditions = []
-    filters = search.filters.model_dump(exclude_none=True)
-    column_map = {
-        "author":"u.username = %s",
-        "title":"p.title = %s",
-        "content_id": "p.content_id = %s",
-        "status": "p.status = %s",
-        "created_after":"p.created_at >= %s",
-        "created_before":"p.created_at <= %s",
-    }
-
-    for k, v in filters.items():
-        condition = column_map.get(k)
-        if condition is None:
-            raise ValueError(f"Invalid filter field: {k} \nAllowed field fields are {','.join(column_map.keys())}")
-        conditions.append(condition)
-        parameters.append(v)
-    return conditions, parameters
-
-def create_sort(search):
-    "helper, to extract field and create an order clause for sorting"
-    sort_map = {
-        "title":"p.title",
-        "created_at": "p.created_at",
-        "likes":"likes",
-        "author":"u.username",
-        "comments": "comments",
-        "replies":"replies"
-    }
-    sort_by = search.sort.by
-    sort_column = sort_map.get(sort_by)
-    if sort_column is None:
-        raise ValueError(
-        f"Invalid sort_field {sort_by}\nAllowed field are {', '.join(sort_map.keys())}"
-        )
-    direction = search.sort.direction.upper()
-    order_clause = f"ORDER BY {sort_column} {direction} NULLS LAST"
-    return order_clause
-
 
 @post_router.get("/posts")
 def get_posts(
@@ -93,7 +51,7 @@ def get_posts(
         pagination=pagination,
         sort=sort_options
     )
-    return create_sort(search)
+    return "on progress"
 
     
 base_query = """
