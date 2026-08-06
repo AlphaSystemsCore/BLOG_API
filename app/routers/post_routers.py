@@ -77,7 +77,7 @@ def create_sort(search):
         raise ValueError(
         f"Invalid sort_field {sort_by}\nAllowed field are {', '.join(sort_map.keys())}"
         )
-    direction = search.sort.direction.uppper()
+    direction = search.sort.direction.upper()
     order_clause = f"ORDER BY {sort_column} {direction} NULLS LAST"
     return order_clause
 
@@ -93,8 +93,7 @@ def get_posts(
         pagination=pagination,
         sort=sort_options
     )
-    conditions, parameters = get_filters(search)
-    return conditions, parameters
+    return create_sort(search)
 
     
 base_query = """
