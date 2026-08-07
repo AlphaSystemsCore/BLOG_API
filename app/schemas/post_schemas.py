@@ -4,7 +4,8 @@ from uuid import UUID
 from typing import Literal
 
 from enum import Enum
-class By(Enum):
+class By(str, Enum):
+    created_at: "created_at"
     title = "title"
     comments = "comments"
     replies = "replies"
@@ -44,7 +45,7 @@ class PostFiltersOthers(BaseModel):
 
 
 class SortOptions(BaseModel):
-    by: By | str = "created_at"
+    by: By = By.created_at
     direction: Literal["asc", "desc"] = "desc"
 
 
