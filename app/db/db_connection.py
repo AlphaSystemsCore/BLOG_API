@@ -5,11 +5,19 @@ from contextlib import contextmanager
 import logging
 
 from app.core.load_envs import DATABASE_URL
+# I have created this for local dev and testing
+local_db_params = {
+    "host":"localhost",
+    "database":"blog",
+    "user":"postgres",
+    "password":"@create2026",
+    "port":"5432"
+}
 
 db_pool = psycopg2.pool.SimpleConnectionPool(
     1,
     20,
-    DATABASE_URL
+    **local_db_params
 )
 
 @contextmanager

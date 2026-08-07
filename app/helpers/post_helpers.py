@@ -1,3 +1,4 @@
+from app.exceptions.post_exception import PostOperationError
 def filters_helper(search):
     """
     helper, to create, sql filter, by dynamically creating the parameters and condition needed for filtering data
@@ -17,7 +18,7 @@ def filters_helper(search):
     for k, v in filters.items():
         condition = column_map.get(k)
         if condition is None:
-            raise ValueError(f"Invalid filter field: {k} \nAllowed field fields are {','.join(column_map.keys())}")
+            raise PostOperationError(f"Invalid filter field: {k}\nAllowed fields or columns are {','.join(column_map.keys())}")
         conditions.append(condition)
         parameters.append(v)
     return conditions, parameters
@@ -26,6 +27,7 @@ def sort_helper(search):
     """
     helper, to extract field and create an order clause for sorting
     """
+    parameters = []
     sort_map = {
         "title":"p.title",
         "created_at": "p.created_at",
@@ -37,10 +39,11 @@ def sort_helper(search):
     sort_by = search.sort.by
     sort_column = sort_map.get(sort_by)
     if sort_column is None:
-        raise ValueError(
-        f"Invalid sort_field {sort_by}\nAllowed field are {', '.join(sort_map.keys())}"
+        raise PostOperationError(
+        f"Invalid sort field; You entered this: {sort_by}\nAllowed field are {', '.join(sort_map.keys())}"
         )
     direction = search.sort.direction.upper()
+
     order_clause = f" ORDER BY {sort_column} {direction} NULLS LAST "
     return order_clause
 

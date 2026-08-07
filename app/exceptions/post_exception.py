@@ -9,6 +9,5 @@ class PostNotFoundError(BlogException):
         self.post_id = post_id
 
 class PostOperationError(BlogException):
-    """Raised when a DB mutation (create, update, delete) fails."""
+    """Raised when a DB mutation (create, update, delete, read) fails."""
     pass
-

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from datetime import datetime
+from datetime import date
 from uuid import UUID
 from typing import Literal
 
@@ -25,7 +25,7 @@ class PostOut(BaseModel):
     likes: int = 0
     comments:int = 0
     replies: int = 0
-    created_at: datetime
+    created_at: date
 
 class FeedbackOut(BaseModel):
     content_id: str
@@ -40,8 +40,8 @@ class PostFilters(BaseModel):
     title: str | None = None
     content_id: UUID | None = None
     status: Literal["drafted", "published"] | None = None
-    created_after: datetime | None = None
-    created_before: datetime | None = None
+    created_after: date | None = None
+    created_before: date| None = None
 
 
 class SortOptions(BaseModel):

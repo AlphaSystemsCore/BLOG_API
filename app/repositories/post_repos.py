@@ -73,29 +73,31 @@ def sql_assembler(search):
             AND cm.deleted_at IS NULL 
         """
     conditions, parameters = filters_helper(search)
-    order_by_clause = sort_helper(search)
-    pagination_clause, pagination_params = pagination_helper(search)
-    parameters += pagination_params
+    sort_clause= sort_helper(search)
+    pagination_clause, pagination_parameters = pagination_helper(search)
+    #combining parameters
+    parameters += pagination_parameters
 
     group_by_clause = " GROUP BY p.content_id, p.title, p.content, u.username, p.status, p.created_at "
+
     if not conditions:
-        dynamic_sql = base_query + group_by_clause + order_by_clause + pagination_clause
+        # when filter have not been given, reside to this
+        dynamic_sql = base_query + group_by_clause + sort_clause + pagination_clause
         return dynamic_sql, parameters
 
     dynamic_sql = base_query
-    dynamic_sql+=' AND ' + ' AND '.join(conditions)
-    dynamic_sql+=group_by_clause
-    dynamic_sql+=order_by_clause
-    dynamic_sql+=pagination_clause
+    dynamic_sql +=' AND ' + ' AND '.join(conditions) + group_by_clause + sort_clause + pagination_clause
 
-    return dynamic_sql, parameters
+    return str(dynamic_sql), parameters
 
 def get_posts_repo(search):
     sql, parameters = sql_assembler(search)
+    print(sql, parameters)
     with get_cur() as cur:
         cur.execute(
             sql, parameters
 
         )
         row = cur.fetchall()
+    
     return row
