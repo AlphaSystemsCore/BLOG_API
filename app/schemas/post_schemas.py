@@ -35,11 +35,10 @@ class Pagination(BaseModel):
     limit: int = Field(default=20, ge=1, le=50)
     offset: int = Field(default=0, ge=0)
 
-class PostFilters(BaseModel):
+class PostFiltersOthers(BaseModel):
     author: str | None = None
     title: str | None = None
     content_id: UUID | None = None
-    status: Literal["drafted", "published"] | None = None
     created_after: date | None = None
     created_before: date| None = None
 
@@ -49,7 +48,22 @@ class SortOptions(BaseModel):
     direction: Literal["asc", "desc"] = "desc"
 
 
-class PostSearch(BaseModel):
-    filters: PostFilters = PostFilters()
+class PostSearchOthers(BaseModel):
+    filters: PostFiltersOthers = PostFiltersOthers()
     sort: SortOptions = SortOptions()
     pagination: Pagination = Pagination()
+
+
+class PostFiltersOwner(BaseModel):
+    author: str | None = None
+    title: str | None = None
+    content_id: UUID | None = None
+    status: Literal["drafted", "published"] | None = None
+    created_after: date | None = None
+    created_before: date| None = None
+
+class PostSearchOwner(BaseModel):
+    filters: PostFiltersOwner = PostFiltersOwner()
+    sort: SortOptions = SortOptions()
+    pagination: Pagination = Pagination()
+

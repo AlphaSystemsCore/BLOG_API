@@ -11,7 +11,7 @@ from app.schemas.post_schemas import *
 
 
 post_router = APIRouter(tags=["posts"])
-from app.schemas.post_schemas import *
+
 
 
 @post_router.post("/posts", response_model=PostOut)
@@ -44,9 +44,9 @@ from app.repositories.post_repos import get_posts_repo
 def get_posts(
     sort_options: SortOptions = Depends(),
     pagination: Pagination = Depends(),
-    post_filters: PostFilters = Depends(),
+    post_filters: PostFiltersOthers = Depends(),
     ):
-    search = PostSearch(
+    search = PostSearchOthers(
         filters=post_filters,
         pagination=pagination,
         sort=sort_options

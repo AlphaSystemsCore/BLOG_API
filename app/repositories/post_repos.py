@@ -1,6 +1,5 @@
 from uuid import UUID
 
-from app.schemas.post_schemas import PostSearch
 from app.db.db_connection import get_cur
 from app.helpers.post_helpers import filters_helper, sort_helper, pagination_helper
 
@@ -76,7 +75,7 @@ def sql_assembler(search):
     sort_clause= sort_helper(search)
     pagination_clause, pagination_parameters = pagination_helper(search)
     #combining parameters
-    parameters += pagination_parameters
+    parameters +=  pagination_parameters
 
     group_by_clause = " GROUP BY p.content_id, p.title, p.content, u.username, p.status, p.created_at "
 
